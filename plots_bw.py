@@ -1,0 +1,1947 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 22 17:05:52 2024
+
+@author: Lukas
+"""
+
+import numpy as np
+import matplotlib
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+import codecs, json
+
+### --- Sience Grayscale Plot --- ###
+
+def plot_fit_group(data, pix_size, fps):
+    
+    arr_referenc =  np.arange(len(data))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 6)
+    
+    #fig.savefig('test2png.png', dpi=100)
+    #color pattern: '#00429d' blue, '#b03a2e' red, '#1e8449' green
+    ax.scatter(arr_referenc,data, color='#00429d', marker='^', facecolors='none')
+    
+    #adds a title and axes labels
+    #ax.set_title('')
+    plt.xlabel('Time [frames]')
+    plt.ylabel('Wave position [pixel]')
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='-', linewidth=0.25, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    #ax.set_ylim(ymax=20)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    coef = np.polyfit(arr_referenc,data,1)
+    poly1d_fn = np.poly1d(coef)             # poly1d_fn is now a function which takes in x and returns an estimate for y
+    
+    ax.plot(arr_referenc, poly1d_fn(arr_referenc), '--k') #'--k'=black dashed line, 'yo' = yellow circle marker
+    
+    plt.show()    
+
+    return poly1d_fn
+
+def plot_a(data):
+    arr_referenc =  np.arange(len(data))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 6)
+    #x_peak = find_peaks(data,height=2.4)
+    #print(x_peak[0][0])
+    #fig.savefig('test2png.png', dpi=100)
+    #color pattern: '#00429d' blue, '#b03a2e' red, '#1e8449' green
+    ax.plot(arr_referenc,data, color='#00429d', linewidth=0.5)
+    
+    #adds a title and axes labels
+    #ax.set_title('')
+    plt.xlabel('Time [frames]')
+    plt.ylabel('Wavespeed [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(125))
+    #ax.yaxis.set_minor_locator(MultipleLocator(.1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='-', linewidth=0.25, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    #ax.set_ylim(ymax=20)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def plot_2025(data, data2, title):
+    arr_referenc =  np.arange(len(data))
+    arr_referenc2 =  np.arange(len(data2))
+ 
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    #x_peak = find_peaks(data,height=2.4)
+    #print(x_peak[0][0])
+    #fig.savefig('test2png.png', dpi=100)
+    #color pattern: '#00429d' blue, '#b03a2e' red, '#1e8449' green
+    ax.scatter(arr_referenc,data, marker='^', color='#00429d', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc2,data2, marker='s', color='#00cc00', linewidth=.7, s=5, facecolors='none')
+
+    ax.legend(['20 Pa', '25 Pa'], loc='upper right', prop={'size': 9})
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('T [frames]')
+    plt.ylabel('$C_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+    
+def plot_30(data, data2, title):
+        arr_referenc =  np.arange(len(data))
+        arr_referenc2 =  np.arange(len(data2))
+     
+        fig, ax = plt.subplots(dpi=600)
+        fig.set_size_inches(6, 3)
+        #x_peak = find_peaks(data,height=2.4)
+        #print(x_peak[0][0])
+        #fig.savefig('test2png.png', dpi=100)
+        #color pattern: '#00429d' blue, '#b03a2e' red, '#1e8449' green
+        ax.scatter(arr_referenc,data, marker='^', color='#00429d', linewidth=.7, s=5, facecolors='none')
+        ax.scatter(arr_referenc2,data2, marker='s', color='#00cc00', linewidth=.7, s=5, facecolors='none')
+
+        ax.legend(['30 Pa, forward', '30 Pa, backward'], loc='upper right', prop={'size': 9})
+        
+        #adds a title and axes labels
+        ax.set_title(title)
+        plt.xlabel('T [frames]')
+        plt.ylabel('$C_{DAW}$ [mm]')
+     
+        #removing top and right borders
+        #ax.spines['top'].set_visible(False)
+        #ax.spines['right'].set_visible(False) 
+        
+        #Edit tick 
+        ax.xaxis.set_minor_locator(MultipleLocator(10))
+        ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+        #add vertical lines
+        #ax.axvline(left, linestyle='dashed', color='b');
+        #ax.axvline(right, linestyle='dashed', color='b');
+
+        #adds major gridlines
+        ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+        
+        #ax limit
+        ax.set_xlim(xmin=0)
+        
+        #legend
+        #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+        
+        plt.show()    
+
+def bigplot_2(data, data2, title, legend):
+    arr_referenc =  np.arange(len(data))
+    arr_referenc2 =  np.arange(len(data2))
+    
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.scatter(arr_referenc,data, marker='^', color='#00429d', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc2,data2, marker='s', color='#00cc00', linewidth=.7, s=5, facecolors='none')
+    ax.legend(legend, loc='upper right', prop={'size': 9})
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('T [frames]')
+    plt.ylabel('$C_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def bigplot_3(data, data2, data3, title):
+    arr_referenc =  np.arange(len(data))
+    arr_referenc2 =  np.arange(len(data2))
+    arr_referenc3 =  np.arange(len(data3))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.scatter(arr_referenc,data, marker='^', color='#00429d', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc2,data2, marker='s', color='#00cc00', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc3,data3, marker='o', color='#ff8000', linewidth=.7, s=5, facecolors='none')
+    ax.legend(['20 Pa', '25 Pa', '30 Pa'], loc='upper right', prop={'size': 9})
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('T [frames]')
+    plt.ylabel('$C_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def bigplot_4(data, data2, data3, data4, title, legend):
+    arr_referenc =  np.arange(len(data))
+    arr_referenc2 =  np.arange(len(data2))
+    arr_referenc3 =  np.arange(len(data3))
+    arr_referenc4 =  np.arange(len(data4))
+    
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.scatter(arr_referenc,data, marker='^', color='#00429d', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc2,data2, marker='s', color='#00cc00', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc3,data3, marker='o', color='#ff8000', linewidth=.7, s=5, facecolors='none')
+    ax.scatter(arr_referenc4,data4, marker='x', color='#ff0000', linewidth=.7, s=5)
+    ax.legend(legend, loc='upper right', prop={'size': 9})
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('T [frames]')
+    plt.ylabel('$C_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def v_group_5(theory, data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    arr_referenc =  np.arange(10, 105, 5)
+    ax.plot(arr_referenc , theory*1000, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(30, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(40,data2, yerr=error2, marker='s', color='#00cc00', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(100,data5, yerr=error5, marker='o', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.60, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$v_{group}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def v_group_5_30pa(theory, data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    arr_referenc =  np.arange(10, 105, 5)
+    ax.plot(arr_referenc , theory*1000, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(40, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(50,data2, yerr=error2, marker='s', color='#00cc00', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(100,data5, yerr=error5, marker='o', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.60, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$v_{group}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def c_daw_4(theory, data1, error1, data3, error3, data4, error4, data5, error5, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    arr_referenc =  np.arange(10, 105, 5)
+    ax.plot(arr_referenc , theory, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(40, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(100,data5, yerr=error5, marker='o', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.60, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$C_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()
+
+def lambda_daw_5(theory, data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    #arr_referenc =  np.arange(10, 105, 5)
+    #ax.plot(arr_referenc , theory, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(30, data1, yerr=error1, fmt='^', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(40, data2, yerr=error2, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(100,data5, yerr=error5, marker='o', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper left', prop={'size': 9}, bbox_to_anchor=(0.08, 0.90, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$\lambda_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(.5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=25)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()
+
+def lambda_daw_5_2(theory, data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    #arr_referenc =  np.arange(10, 105, 5)
+    #ax.plot(arr_referenc , theory, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(40, data1, yerr=error1, fmt='^', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(50, data2, yerr=error2, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(100,data5, yerr=error5, marker='o', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='lower right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.10, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$\lambda_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(.5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=25)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()
+
+def lambda_daw_4(data1, error1, data2, error2, data3, error3, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    #arr_referenc =  np.arange(10, 105, 5)
+    #ax.plot(arr_referenc , theory, c= "red", linestyle=':', linewidth=.9)
+    #ax.errorbar(15, data, yerr=error, fmt='s', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(20, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(25,data2, yerr=error2, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(30,data3, yerr=error3, marker='x', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    #ax.legend(legend, loc='upper left', prop={'size': 9}, bbox_to_anchor=(0.08, 0.90, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Pressure')
+    plt.ylabel('$\lambda_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(.5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=15)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()
+    
+def c_daw_4_30pa(theory, data1, error1, data3, error3, data4, error4, data5, error5, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    arr_referenc =  np.arange(10, 105, 5)
+    ax.plot(arr_referenc , theory, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(40, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.errorbar(100,data5, yerr=error5, marker='o', color='#000000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.60, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$C_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()
+
+def c_daw_3(theory, data1, error1, data3, error3, data4, error4, title, legend):
+  
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    arr_referenc =  np.arange(10, 105, 5)
+    ax.plot(arr_referenc , theory, c= "red", linestyle=':', linewidth=.9)
+    ax.errorbar(40, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(60,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(80,data4, yerr=error4, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.60, .90, .01))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$C_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()   
+
+def bigploterror_3(data, error, data2, error2, data3, error3, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(2, data2, yerr=error2, fmt='s', color='#00cc00', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(3, data3, yerr=error3, fmt='o', color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .25, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show()
+    
+def bigploterror_3_cdaw(data, error, data2, error2, data3, error3, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(2, data2, yerr=error2, fmt='s', color='#00cc00', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(3, data3, yerr=error3, fmt='o', color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .25, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$C_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show()    
+
+def bigploterror_4_cdaw(data, error, data2, error2, data3, error3, data4, error4, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    #arr_referenc4 =  np.arange(len(data4))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(2, data2, yerr=error2, fmt='s', color='#00cc00', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(3, data3, yerr=error3, fmt='o', color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(4, data4, yerr=error4, fmt='x',color='#ff0000', markersize=2, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.45, .95, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$C_{daw}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show()    
+
+def bigploterror_4(data, error, data2, error2, data3, error3, data4, error4, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    #arr_referenc4 =  np.arange(len(data4))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(2, data2, yerr=error2, fmt='s', color='#00cc00', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(3, data3, yerr=error3, fmt='o', color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(4, data4, yerr=error4, fmt='x',color='#ff0000', markersize=2, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show()    
+
+def bigploterror_6_3ov3(data, error, data2, error2, data3, error3, data4, error4, data5, error5, data6, error6, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    #arr_referenc4 =  np.arange(len(data4))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(1, data2, yerr=error2, fmt='x', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(2, data3, yerr=error3, fmt='^', color='#00cc00', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(2, data4, yerr=error4, fmt='x', color='#00cc00', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(3, data5, yerr=error5, fmt='^',color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(3, data6, yerr=error6, fmt='x',color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show() 
+
+def bigploterror_12(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, data, error, data2, error2, data3, error3, data4, error4, data5, error5, data6, error6, data7, error7, data8, error8, data9, error9, data10, error10, data11, error11, data12, error12, xlabel, legend):
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.errorbar(x1, data, yerr=error, fmt='x', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x2, data2, yerr=error2, fmt='x', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x3, data3, yerr=error3, fmt='x', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x4, data4, yerr=error4, fmt='x', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x5, data5, yerr=error5, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x6, data6, yerr=error6, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x7, data7, yerr=error7, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x8, data8, yerr=error8, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x9, data9, yerr=error9, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x10, data10, yerr=error10, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x11, data11, yerr=error11, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x12, data12, yerr=error12, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    #ax.set_title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show() 
+    
+def bigploterror_12_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, data, error, data2, error2, data3, error3, data4, error4, data5, error5, data6, error6, data7, error7, data8, error8, data9, error9, data10, error10, data11, error11, data12, error12, xlabel, legend):
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.errorbar(x1, data, yerr=error, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x2, data2, yerr=error2, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x3, data3, yerr=error3, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x4, data4, yerr=error4, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x5, data5, yerr=error5, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x6, data6, yerr=error6, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x7, data7, yerr=error7, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x8, data8, yerr=error8, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x9, data9, yerr=error9, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x10, data10, yerr=error10, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x11, data11, yerr=error11, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x12, data12, yerr=error12, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    #ax.set_title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel('$c_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show()
+    
+def bigploterror_12_3(x1, dx1, x2, dx2, x3, dx3, x4, dx4, x5, dx5, x6, dx6, x7, dx7, x8, dx8, x9, dx9, x10, dx10, x11, dx11, x12, dx12, data, error, data2, error2, data3, error3, data4, error4, data5, error5, data6, error6, data7, error7, data8, error8, data9, error9, data10, error10, data11, error11, data12, error12, xlabel, legend):
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.errorbar(x1, data, yerr=error, xerr=dx1, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x2, data2, yerr=error2, xerr=dx2, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x3, data3, yerr=error3, xerr=dx3, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x4, data4, yerr=error4, xerr=dx4, fmt='x', color='#000000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x5, data5, yerr=error5, xerr=dx5, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x6, data6, yerr=error6, xerr=dx6, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x7, data7, yerr=error7, xerr=dx7, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x8, data8, yerr=error8, xerr=dx8, fmt='s', color='#00429d', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x9, data9, yerr=error9, xerr=dx9, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x10, data10, yerr=error10, xerr=dx10, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x11, data11, yerr=error11, xerr=dx11, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.errorbar(x12, data12, yerr=error12, xerr=dx12, fmt='^', color='#ff8000', markersize=3, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.04, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    #ax.set_title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel('$c_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show()
+    
+def cdaw_bigploterror_6_3ov3_theory(data, error, theory, data2, error2, theory2, data3, error3, theory3, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    #arr_referenc4 =  np.arange(len(data4))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)        
+    ax.errorbar(2, data2, yerr=error2, fmt='x', color='#00cc00', markersize=3, linewidth=1, capsize=1)    
+    ax.errorbar(3, data3, yerr=error3, fmt='o',color='#ff8000', markersize=3, linewidth=1, capsize=1)
+
+    ax.scatter(1,theory, marker='^' , color='#000000', linewidth=1, s=30, facecolors='none')
+    ax.scatter(2,theory2, marker='x', color='#000000', linewidth=1, s=30)
+    ax.scatter(3,theory3, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
+    
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$C_{Daw}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show() 
+    
+def group_bigploterror_6_3ov3_theory(data, error, theory, data2, error2, theory2, data3, error3, theory3, title, legend):
+    #arr_referenc =  np.arange(len(data))
+    #arr_referenc2 =  np.arange(len(data2))
+    #arr_referenc3 =  np.arange(len(data3))
+    #arr_referenc4 =  np.arange(len(data4))
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)        
+    ax.errorbar(2, data2, yerr=error2, fmt='x', color='#00cc00', markersize=3, linewidth=1, capsize=1)    
+    ax.errorbar(3, data3, yerr=error3, fmt='o',color='#ff8000', markersize=3, linewidth=1, capsize=1)
+
+    ax.scatter(1,theory, marker='^' , color='#000000', linewidth=1, s=30, facecolors='none')
+    ax.scatter(2,theory2, marker='x', color='#000000', linewidth=1, s=30)
+    ax.scatter(3,theory3, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
+    
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show() 
+    
+def bigploterror_6(data, error, data2, error2, data3, error3, data4, error4, data5, error5, data6, error6, title, legend):
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.errorbar(1, data, yerr=error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(2, data2, yerr=error2, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(3, data3, yerr=error3, fmt='o', color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(4, data4, yerr=error4, fmt='o',color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(5, data5, yerr=error3, fmt='x', color='#ff0000', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(6, data6, yerr=error4, fmt='x',color='#ff0000', markersize=2, linewidth=1, capsize=1)
+    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.05, 0.5, .9, .1))
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('Run')
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    plt.show() 
+    
+def bigplot_speed(data, data2, data3, data4, error_15, error_20, error_25, error_30):
+    arr_referenc =  np.arange(len(data))
+    arr_referenc2 =  np.arange(len(data2))
+    arr_referenc3 =  np.arange(len(data3))
+    arr_referenc4 =  np.arange(len(data4))
+    fig, ax = plt.subplots(dpi=1200)
+    fig.set_size_inches(6, 6)
+    #x_peak = find_peaks(data,height=2.4)
+    #print(x_peak[0][0])
+    #fig.savefig('test2png.png', dpi=100)
+    #color pattern: '#00429d' blue, '#b03a2e' red, '#1e8449' green
+    ax.errorbar(arr_referenc, data, yerr=error_15, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)                          # , linewidth=1.25)
+    ax.errorbar(arr_referenc2, data2, yerr=error_20, fmt='s', color='#00cc00', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(arr_referenc3, data3, yerr=error_25, fmt='o', color='#ff8000', markersize=2, linewidth=1, capsize=1)
+    ax.errorbar(arr_referenc4, data4, yerr=error_30, fmt='x',color='#ff0000', markersize=2, linewidth=1, capsize=1)
+    ax.legend(['15 Pa','20 Pa', '25 Pa', '30 Pa'], loc='upper right', prop={'size': 9})
+        
+    #adds a title and axes labels
+    #ax.set_title('')
+    plt.xlabel('T [s]')
+    plt.ylabel('$C_{DAW}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(25))
+    ax.yaxis.set_major_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axhline(63.76, linestyle='--', color='#00429d', linewidth=1);
+    #ax.axhline(60.94, linestyle='-.', color='#00cc00', linewidth=1);
+    #ax.axhline(60.2, linestyle=':', color='#ff8000', linewidth=1);
+    #ax.axhline(58.4, linestyle=':', color='#ff0000', linewidth=1);
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    
+    labels = [item.get_text() for item in ax.get_xticklabels()]
+    labels[0] = '0.0'
+    labels[1] = '0.25'
+    labels[2] = '0.5'
+    labels[3] = '0.75'
+    labels[4] = '1.0'
+    labels[5] = '1.25'
+
+    ax.set_xticklabels(labels)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def allplot_noerror(data, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, title, legend):
+    
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    #DC
+    #20
+    ax.scatter(20,data, marker='o', color='#000000', linewidth=1, s=8, facecolors='none') #30
+    ax.scatter(20,data2, marker='s', color='#8f8f8f', linewidth=1, s=8, facecolors='none') #40
+    ax.scatter(20,data3, marker='^', color='#e8b31a', linewidth=1, s=8, facecolors='none') #60
+    ax.scatter(20,data4, marker='s', color='#df8c10', linewidth=1, s=8) #80
+    ax.scatter(20,data5, marker='x', color='#d4660a', linewidth=1, s=8) #100
+    #25
+    ax.scatter(25,data6, marker='o', color='#000000', linewidth=1, s=8, facecolors='none')
+    ax.scatter(25,data7, marker='s', color='#8f8f8f', linewidth=1, s=8, facecolors='none') #40
+    ax.scatter(25,data8, marker='^', color='#e8b31a', linewidth=1, s=8, facecolors='none') #60
+    ax.scatter(25,data9, marker='s', color='#df8c10', linewidth=1, s=8) #80
+    ax.scatter(25,data10, marker='x', color='#d4660a', linewidth=1, s=8) #100
+    #30
+    ax.scatter(30,data11, marker='s', color='#8f8f8f', linewidth=1, s=8, facecolors='none') #40
+    ax.scatter(30,data12, marker='^', color='#020080', linewidth=1, s=8, facecolors='none') #50
+    ax.scatter(30,data13, marker='^', color='#e8b31a', linewidth=1, s=8, facecolors='none') #60
+    ax.scatter(30,data14, marker='s', color='#df8c10', linewidth=1, s=8) #80
+    ax.scatter(30,data15, marker='x', color='#d4660a', linewidth=1, s=8) #100
+    #
+    #ax.legend(legend, loc='upper right', prop={'size': 9})
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('P [Pa]')
+    plt.ylabel('$v_{group}$ [mm/s]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=15, xmax=35)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+def dispersion_relation(k_20, k_25, k_30, k_35, k_40, w_20, w_25, w_30, w_35, w_40):
+
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.scatter(w_20, k_20, marker='^', color='#00429d', linewidth=2, s=20, facecolors='none')
+    ax.scatter(w_25, k_25, marker='o', color='#8f8f8f', linewidth=2, s=20, facecolors='none')
+    ax.scatter(w_30, k_30, marker='x', color='#ff8000', linewidth=2, s=20)
+    ax.scatter(w_35, k_35, marker='s', color='#000000', linewidth=2, s=20)
+    #ax.scatter(w_40, k_40, marker='s', color='#000000', linewidth=2, s=20)
+    ax.legend(['100','40', '60', '80', '30'], loc='lower right', prop={'size': 9})
+
+    #adds a title and axes labels
+    ax.set_title('Dispersion Relation')
+    plt.ylabel('$\omega$/$\omega_{pd}$')
+    plt.xlabel('k$\lambda_{D}$')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    #ax.xaxis.set_minor_locator(MultipleLocator(10))
+    #ax.yaxis.set_minor_locator(MultipleLocator(1))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    #ax.set_xlim(xmin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
+#%% Cloud speed DC100
+
+#   MAIN   #
+
+###################
+### Cloud speed ###
+###################
+
+trials = 15
+
+cloud_speed_20pa_103901 = json.load(open('group-vel/VM2_AVI_230125_103901_20pa_headspeed.json'))
+cloud_speed_20pa_103947 = json.load(open('group-vel/VM2_AVI_230125_103947_20pa_headspeed.json'))
+cloud_speed_20pa_104625 = json.load(open('group-vel/VM2_AVI_230125_104625_20pa_headspeed.json'))
+cloud_speed_20pa_104809 = json.load(open('group-vel/VM2_AVI_230125_104809_20pa_headspeed.json'))
+cloud_speed_25pa_110808 = json.load(open('group-vel/VM2_AVI_230125_110808_25pa_headspeed.json'))
+cloud_speed_25pa_111329 = json.load(open('group-vel/VM2_AVI_230125_111329_25pa_headspeed.json'))
+cloud_speed_30pa_105732 = json.load(open('group-vel/VM2_AVI_230125_105732_30pa_headspeed.json'))
+cloud_speed_30pa_110231 = json.load(open('group-vel/VM2_AVI_230125_110231_30pa_headspeed.json'))
+
+# compare group velocities #
+
+data_20 = np.average(cloud_speed_20pa_103901['velocities'][:trials])     #This converts to numpy
+error_20 = np.average(cloud_speed_20pa_103901['errors'][:trials]) + np.std(cloud_speed_20pa_103901['velocities'][:trials])/np.sqrt(trials)   #This converts to numpy
+data_20_2 = np.average(cloud_speed_20pa_103947['velocities'][:trials])     #This converts to numpy
+error_20_2 = np.average(cloud_speed_20pa_103947['errors'][:trials]) + np.std(cloud_speed_20pa_103947['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+data_20_3 = np.average(cloud_speed_20pa_104625['velocities'][:trials])     #This converts to numpy
+error_20_3 = np.average(cloud_speed_20pa_104625['errors'][:trials]) + np.std(cloud_speed_20pa_104625['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+data_20_4 = np.average(cloud_speed_20pa_104809['velocities'][:trials])     #This converts to numpy
+error_20_4 = np.average(cloud_speed_20pa_104809['errors'][:trials]) + np.std(cloud_speed_20pa_104809['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+
+bigploterror_4(data_20, error_20, data_20_2, error_20_2, data_20_3, error_20_3, data_20_4, error_20_4, 'Compare group velocities 20pa', ['20 Pa 10:39:01', '20 Pa 10:39:47', '20 Pa 10:46:25', '20 Pa 10:48:09'])
+
+data_25 = np.average(cloud_speed_25pa_110808['velocities'][:trials])     #This converts to numpy
+error_25 = np.average(cloud_speed_25pa_110808['errors'][:trials]) + np.std(cloud_speed_25pa_110808['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+data_25_2 = np.average(cloud_speed_25pa_111329['velocities'][:trials])     #This converts to numpy
+error_25_2 = np.average(cloud_speed_25pa_111329['errors'][:trials]) + np.std(cloud_speed_25pa_111329['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+data_30 = np.average(cloud_speed_30pa_105732['velocities'][:trials])     #This converts to numpy
+error_30 = np.average(cloud_speed_30pa_105732['errors'][:trials]) + np.std(cloud_speed_30pa_105732['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+data_30_2 = np.average(cloud_speed_30pa_110231['velocities'][:trials])     #This converts to numpy
+error_30_2 = np.average(cloud_speed_30pa_110231['errors'][:trials]) + np.std(cloud_speed_30pa_110231['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+
+bigploterror_4(data_25, error_25, data_25_2, error_25_2, data_30, error_30, data_30_2, error_30_2, 'Compare group velocities 25-30pa', ['25 Pa 11:08:08', '25 Pa 11:13:29', '30 Pa 10:57:32', '30 Pa 11:02:31'])
+
+data_20_average = np.average([data_20, data_20_2, data_20_4])
+error_20_average = np.std([data_20, data_20_2, data_20_4]) + np.average([error_20, error_20_2, error_20_4]/np.sqrt(len([error_20, error_20_2, error_20_4])))
+
+data_25_average = np.average([data_25, data_25_2])
+error_25_average = np.std([error_25, error_25_2]) + np.average([error_25, error_25_2]/np.sqrt(len([error_25, error_25_2])))
+
+data_30_average = np.average([data_30, data_30_2])
+error_30_average = np.std([error_30, error_30_2]) + np.average([error_30, error_30_2]/np.sqrt(len([error_30, error_30_2])))
+
+bigploterror_3(data_20_average, error_20_average, data_25_average, error_25_average, data_30_average, error_30_average, ' ',['20Pa', '25Pa', '30Pa'])
+
+# Import Math #
+obj_text_f = codecs.open('theory/theo_ dustspeed_neutralandiondrag_dc100_z_depleted.txt', 'r', encoding='utf-8').read()
+theory = np.array(json.loads(obj_text_f)) #This reads json to list
+theo_plot = theory[:,0]
+z = theory[:,1]
+
+group_bigploterror_6_3ov3_theory(data_20_average, error_20_average, theo_plot[1]*1000, data_25_average, error_25_average, theo_plot[2]*1000, data_30_average, error_30_average, theo_plot[3]*1000, ' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
+
+
+#%% Phase speeds DC100
+
+##########################
+### Phase speeds DC100 ###
+##########################
+
+# load VM2_AVI_230125_103901_20pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_103901_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_103901_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_103901_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_103901['velocities'][:trials])     #This converts to numpy
+VM2_AVI_230125_103901_20pa_speedlist_backward = -np.array(b20) + np.average(cloud_speed_20pa_103901['velocities'][:trials])     #This converts to numpy
+
+# load VM2_AVI_230125_103947_20pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_103947_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_103947_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_103947_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_103947['velocities'][:trials])     #This converts to numpy
+VM2_AVI_230125_103947_20pa_speedlist_backward = -np.array(b20) + np.average(cloud_speed_20pa_103947['velocities'][:trials])     #This converts to numpy
+
+# load VM2_AVI_230125_104625_20pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_104625_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_104625_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_104625_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_104625['velocities'][:trials])     #This converts to numpy
+VM2_AVI_230125_104625_20pa_speedlist_backward = -np.array(b20) + np.average(cloud_speed_20pa_104625['velocities'][:trials])     #This converts to numpy
+
+# load VM2_AVI_230125_104625_20pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_104809_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_104809_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_104809_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_104809['velocities'][:trials])     #This converts to numpy
+VM2_AVI_230125_104809_20pa_speedlist_backward = -np.array(b20) + np.average(cloud_speed_20pa_104809['velocities'][:trials])     #This converts to numpy
+
+# load VM2_AVI_230125_110808_25pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_110808_25pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_110808_25pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f25 = json.loads(obj_text_f) #This reads json to list
+b25 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_110808_25pa_speedlist_forward = -np.array(f25) + np.average(cloud_speed_25pa_110808['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_110808_25pa_speedlist_backward = np.array(b25) + np.average(cloud_speed_25pa_110808['velocities'][:trials])      #This converts to numpy
+
+# load VM2_AVI_230125_111329_25pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_111329_25pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_111329_25pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f25 = json.loads(obj_text_f) #This reads json to list
+b25 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_111329_25pa_speedlist_forward = -np.array(f25) + np.average(cloud_speed_25pa_111329['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_111329_25pa_speedlist_backward = np.array(b25) + np.average(cloud_speed_25pa_111329['velocities'][:trials])      #This converts to numpy
+
+# load VM2_AVI_230125_105732_30pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_105732_30pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_105732_30pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f30 = json.loads(obj_text_f) #This reads json to list
+b30 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_105732_30pa_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_105732['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_105732_30pa_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_105732['velocities'][:trials])      #This converts to numpy
+
+# load VM2_AVI_230125_110231_30pa #
+
+obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_110231_30pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_110231_30pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f30 = json.loads(obj_text_f) #This reads json to list
+b30 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_110231_30pa_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_110231['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_110231_30pa_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_110231['velocities'][:trials])      #This converts to numpy
+
+# PLOT #
+
+#bigplot_4(VM2_AVI_230125_103901_20pa_speedlist_forward, VM2_AVI_230125_103947_20pa_speedlist_forward, VM2_AVI_230125_104625_20pa_speedlist_forward, VM2_AVI_230125_104809_20pa_speedlist_forward, 'Forward', ['20 Pa 10:39:01', '20 Pa 10:39:47', '20 Pa 10:46:25', '20 Pa 10:48:09'])
+#bigplot_4(VM2_AVI_230125_103901_20pa_speedlist_backward, VM2_AVI_230125_103947_20pa_speedlist_backward, VM2_AVI_230125_104625_20pa_speedlist_backward, VM2_AVI_230125_104809_20pa_speedlist_backward, 'Backward', ['20 Pa 10:39:01', '20 Pa 10:39:47', '20 Pa 10:46:25', '20 Pa 10:48:09'])
+
+#bigplot_4(VM2_AVI_230125_110808_25pa_speedlist_forward, VM2_AVI_230125_111329_25pa_speedlist_forward, VM2_AVI_230125_110808_25pa_speedlist_backward, VM2_AVI_230125_111329_25pa_speedlist_backward, ' ', ['25 Pa 11:13:29 F', '25 Pa 11:08:08 F', '25 Pa 11:13:29 B', '25 Pa 11:08:08 B'])
+
+#bigplot_4(VM2_AVI_230125_105732_30pa_speedlist_forward, VM2_AVI_230125_110231_30pa_speedlist_forward, VM2_AVI_230125_105732_30pa_speedlist_backward, VM2_AVI_230125_110231_30pa_speedlist_backward, ' ', ['30 Pa 10:57:32 F', '30 Pa 11:02:31 F', '30 Pa 10:57:32 B', '30 Pa 11:02:31 B'])
+
+#title_f = 't1 = 2ms, t3 = 2ms; I1 = 0.5mA, I3 = -0.5mA'
+#title_b = 't1 = 0ms, t3 = 2ms; I1 = 0.5mA, I3 = -0.5mA'
+#bigplot_3(VM2_AVI_230125_103901_20pa_speedlist_forward, VM2_AVI_230125_111329_25pa_speedlist_forward, VM2_AVI_230125_110231_30pa_speedlist_forward, title_f)
+#bigplot_3(VM2_AVI_230125_103901_20pa_speedlist_backward, VM2_AVI_230125_111329_25pa_speedlist_backward, VM2_AVI_230125_110231_30pa_speedlist_backward, title_b)
+
+
+# Calculate Avergae and Compare Plot 1DC #
+a = [np.average(VM2_AVI_230125_103901_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)]), np.average(VM2_AVI_230125_103947_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)]), np.average(VM2_AVI_230125_104625_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)]), np.average(VM2_AVI_230125_104809_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)])]
+speedlist_average_20pa_forward = np.average(a)
+error_speedlist_average_20pa_forward = np.std(a)/np.sqrt(len(a))
+a = [np.average(VM2_AVI_230125_103901_20pa_speedlist_backward[:100]),np.average(VM2_AVI_230125_103947_20pa_speedlist_backward[:100]), np.average(VM2_AVI_230125_104809_20pa_speedlist_backward[:100])]
+speedlist_average_20pa_backward = np.average(a)
+error_speedlist_average_20pa_backward = np.std(a)/np.sqrt(len(a))
+a = [np.average(VM2_AVI_230125_110808_25pa_speedlist_forward[:len(VM2_AVI_230125_110808_25pa_speedlist_forward)]),np.average(VM2_AVI_230125_111329_25pa_speedlist_forward[:len(VM2_AVI_230125_110808_25pa_speedlist_forward)])]
+speedlist_average_25pa_forward = np.average(a)
+error_speedlist_average_25pa_forward = np.std(a)/np.sqrt(len(a))+ error_25_average
+a = [np.average(VM2_AVI_230125_110808_25pa_speedlist_backward[:100]),np.average(VM2_AVI_230125_111329_25pa_speedlist_backward[:100])]
+speedlist_average_25pa_backward = np.average(a)
+error_speedlist_average_25pa_backward = np.std(a)/np.sqrt(len(a))
+a = [np.average(VM2_AVI_230125_105732_30pa_speedlist_forward[:len(VM2_AVI_230125_110231_30pa_speedlist_forward)]),np.average(VM2_AVI_230125_110231_30pa_speedlist_forward[:len(VM2_AVI_230125_110231_30pa_speedlist_forward)])]
+speedlist_average_30pa_forward = np.average(a)
+error_speedlist_average_30pa_forward = np.std(a) + error_30_average
+a = [np.average(VM2_AVI_230125_105732_30pa_speedlist_backward[:100]),np.average(VM2_AVI_230125_110231_30pa_speedlist_backward[:100])]
+speedlist_average_30pa_backward = np.average(a) + error_20
+error_speedlist_average_30pa_backward = np.std(a)/np.sqrt(len(a))
+
+bigploterror_6_3ov3(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_backward, error_speedlist_average_20pa_backward, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_backward, error_speedlist_average_25pa_backward, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_backward, error_speedlist_average_25pa_backward, ' ', ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
+
+# Import Math #
+obj_text_f = codecs.open('theory/theo_cdaw_dc100_z0.345.txt', 'r', encoding='utf-8').read()
+theory = np.array(json.loads(obj_text_f)) #This reads json to list
+theo_plot = theory[:,0]
+z = theory[:,1]
+cdaw_bigploterror_6_3ov3_theory(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, theo_plot[1], speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, theo_plot[2], speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, theo_plot[3], ' ', ['20pa theory z='+str(z[1]), '25pa theory z='+str(z[2]), '30pa theory z=' +str(z[3]),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
+
+#%% Group speeds DCXXX
+
+trials = 20
+
+##########################
+### Group speeds DCXXX ###
+##########################
+
+cloud_speed_20pa_t13 = json.load(open('group-vel/VM2_AVI_230125_104518_20pa_t13_headspeed.json'))   #No wave appearing
+cloud_speed_20pa_t13_2 = json.load(open('group-vel/VM2_AVI_230125_104901_20pa_t13_headspeed.json'))
+cloud_speed_20pa_t14 = json.load(open('group-vel/VM2_AVI_230125_104331_20pa_t14_headspeed.json'))
+cloud_speed_20pa_t16 = json.load(open('group-vel/VM2_AVI_230125_104154_20pa_t16_headspeed.json'))
+cloud_speed_20pa_t16_2 = json.load(open('group-vel/VM2_AVI_230125_104227_20pa_t16_headspeed.json'))
+cloud_speed_20pa_t18 = json.load(open('group-vel/VM2_AVI_230125_104101_20pa_t18_headspeed.json'))
+cloud_speed_25pa_t13 = json.load(open('group-vel/VM2_AVI_230125_111238_25pa_t13_headspeed.json'))
+cloud_speed_25pa_t14 = json.load(open('group-vel/VM2_AVI_230125_111238_25pa_t14_headspeed.json'))
+cloud_speed_25pa_t16 = json.load(open('group-vel/VM2_AVI_230125_111037_25pa_t16_headspeed.json'))
+cloud_speed_25pa_t16_2 = json.load(open('group-vel/VM2_AVI_230125_111106_25pa_t16_headspeed.json'))
+cloud_speed_25pa_t18 = json.load(open('group-vel/VM2_AVI_230125_110918_25pa_t18_headspeed.json'))
+cloud_speed_25pa_t18_2 = json.load(open('group-vel/VM2_AVI_230125_110948_25pa_t18_headspeed.json'))
+cloud_speed_30pa_t14 = json.load(open('group-vel/VM2_AVI_230125_110058_30pa_t14_headspeed.json'))
+cloud_speed_30pa_t15 = json.load(open('group-vel/VM2_AVI_230125_110133_30pa_t15_headspeed.json'))
+cloud_speed_30pa_t16 = json.load(open('group-vel/VM2_AVI_230125_110007_30pa_t16_headspeed.json'))
+cloud_speed_30pa_t18 = json.load(open('group-vel/VM2_AVI_230125_105845_30pa_t18_headspeed.json'))
+cloud_speed_30pa_t18_2 = json.load(open('group-vel/VM2_AVI_230125_105926_30pa_t18_headspeed.json'))
+
+# PLOT Cloud speeds #
+data20_t13 = np.average(cloud_speed_20pa_t13_2['velocities'][:trials])#np.average([np.average(cloud_speed_20pa_t13['velocities'][:trials]), np.average(cloud_speed_20pa_t13_2['velocities'][:trials])])     #This converts to numpy
+error20_t13 = np.average([np.average(cloud_speed_20pa_t13['errors'][:trials]) + np.std(cloud_speed_20pa_t13['velocities'][:trials]), np.average(cloud_speed_20pa_t13_2['errors'][:trials]) + np.std(cloud_speed_20pa_t13_2['velocities'][:trials])]) + np.std([np.average(cloud_speed_20pa_t13['errors'][:trials]) + np.std(cloud_speed_20pa_t13['velocities'][:trials]), np.average(cloud_speed_20pa_t13_2['errors'][:trials]) + np.std(cloud_speed_20pa_t13_2['velocities'][:trials])])   #This converts to numpy
+data20_t14 = np.average(cloud_speed_20pa_t14['velocities'][:trials])     #This converts to numpy
+error20_t14 = np.average(cloud_speed_20pa_t14['errors'][:trials]) + np.std(cloud_speed_20pa_t14['velocities'][:trials])     #This converts to numpy
+data20_t16 = np.average([np.average(cloud_speed_20pa_t16['velocities'][:trials]), np.average(cloud_speed_20pa_t16_2['velocities'][:trials])])      #This converts to numpy
+error20_t16 = np.average([np.average(cloud_speed_20pa_t16['errors'][:trials]) + np.std(cloud_speed_20pa_t16['velocities'][:trials]), np.average(cloud_speed_20pa_t16_2['errors'][:trials]) + np.std(cloud_speed_20pa_t16_2['velocities'][:trials])]) + np.std([np.average(cloud_speed_20pa_t16['errors'][:trials]) + np.std(cloud_speed_20pa_t16['velocities'][:trials]), np.average(cloud_speed_20pa_t16_2['errors'][:trials]) + np.std(cloud_speed_20pa_t16_2['velocities'][:trials])])   #This converts to numpy
+data20_t18 = np.average(cloud_speed_20pa_t18['velocities'][:trials])     #This converts to numpy
+error20_t18 = np.average(cloud_speed_20pa_t18['errors'][:trials]) + np.std(cloud_speed_20pa_t18['velocities'][:trials])     #This converts to numpy
+#
+data25_t13 = np.average(cloud_speed_25pa_t13['velocities'][:trials])     #This converts to numpy
+error25_t13 = np.average(cloud_speed_25pa_t13['errors'][:trials]) + np.std(cloud_speed_25pa_t13['velocities'][:trials])     #This converts to numpy
+data25_t14 = np.average(cloud_speed_25pa_t14['velocities'][:trials])     #This converts to numpy
+error25_t14 = np.average(cloud_speed_25pa_t14['errors'][:trials]) + np.std(cloud_speed_25pa_t14['velocities'][:trials])     #This converts to numpy
+data25_t16 = np.average([np.average(cloud_speed_25pa_t16['velocities'][:trials]), np.average(cloud_speed_25pa_t16_2['velocities'][:trials])])     #This converts to numpy
+error25_t16 = np.average([np.average(cloud_speed_25pa_t16['errors'][:trials]) + np.std(cloud_speed_25pa_t16['velocities'][:trials]), np.average(cloud_speed_25pa_t16_2['errors'][:trials]) + np.std(cloud_speed_25pa_t16_2['velocities'][:trials])]) + np.std([np.average(cloud_speed_25pa_t16['errors'][:trials]) + np.std(cloud_speed_25pa_t16['velocities'][:trials]), np.average(cloud_speed_25pa_t16_2['errors'][:trials]) + np.std(cloud_speed_25pa_t16_2['velocities'][:trials])])     #This converts to numpy
+data25_t18 = np.average([np.average(cloud_speed_25pa_t18['velocities'][:trials]), np.average(cloud_speed_25pa_t18_2['velocities'][:trials])])     #This converts to numpy
+error25_t18 = np.average([np.average(cloud_speed_25pa_t18['errors'][:trials]) + np.std(cloud_speed_25pa_t18['velocities'][:trials]), np.average(cloud_speed_25pa_t18_2['errors'][:trials]) + np.std(cloud_speed_25pa_t18_2['velocities'][:trials])]) + np.std([np.average(cloud_speed_25pa_t18['errors'][:trials]) + np.std(cloud_speed_25pa_t18['velocities'][:trials]), np.average(cloud_speed_25pa_t18_2['errors'][:trials]) + np.std(cloud_speed_25pa_t18_2['velocities'][:trials])])     #This converts to numpy
+#
+data30_t14 = np.average(cloud_speed_30pa_t14['velocities'][:trials])     #This converts to numpy
+error30_t14 = np.average(cloud_speed_30pa_t14['errors'][:trials]) + np.std(cloud_speed_30pa_t14['velocities'][:trials])     #This converts to numpy
+data30_t15 = np.average(cloud_speed_30pa_t15['velocities'][:trials])     #This converts to numpy
+error30_t15 = np.average(cloud_speed_30pa_t15['errors'][:trials]) + np.std(cloud_speed_30pa_t15['velocities'][:trials])     #This converts to numpy
+data30_t16 = np.average(cloud_speed_30pa_t16['velocities'][:trials])     #This converts to numpy
+error30_t16 = np.average(cloud_speed_30pa_t16['errors'][:trials]) + np.std(cloud_speed_30pa_t16['velocities'][:trials])     #This converts to numpy
+data30_t18 = np.average([np.average(cloud_speed_30pa_t18['velocities'][:trials]), np.average(cloud_speed_30pa_t18_2['velocities'][:trials])])     #This converts to numpy
+error30_t18 = np.average([np.average(cloud_speed_30pa_t18['errors'][:trials]) + np.std(cloud_speed_30pa_t18['velocities'][:trials]), np.average(cloud_speed_30pa_t18_2['errors'][:trials]) + np.std(cloud_speed_30pa_t18_2['velocities'][:trials])])    #This converts to numpy
+
+#bigploterror_6(data20_t13, error20_t13, data20_t14, error20_t14, data25_t13, error25_t13, data25_t14, error25_t14, data30_t14, error30_t14, data30_t15, error30_t15, 'Compare group velocities 25-30pa RDC', ['20 Pa t13', '20 Pa t14', '25 Pa t13', '25 Pa t14', '30 Pa t14', '30 Pa t15'])
+#bigploterror_6_3ov3(data20_t14, error20_t14, data_20_average, error_20_average, data25_t14, error25_t14, data_25_average, error_25_average, data30_t14, error30_t14, data_30_average, error_30_average, 't_1 = 1.4 ms', ['20 Pa', '20 Pa 100DC', '25 Pa', '25 Pa 100DC', '30 Pa', '30 Pa 100DC'])
+allplot_noerror(data20_t13, data20_t14, data20_t16, data20_t18, data_20_average, data25_t13, data25_t14, data25_t16, data25_t18, data_25_average, data30_t14, data30_t15, data30_t16, data30_t18, data_30_average, '', [''])#data_20_average
+
+# Import Math #
+theory_cloud_speed_20pa = np.array(json.load(open('theory/theo_v_group_20pa_ef-reduce.txt')))
+v_group_5(theory_cloud_speed_20pa, data20_t13, error20_t13, data20_t14, error20_t14, data20_t16, error20_t16, data20_t18, error20_t18, data_20_average, error_20_average , '', ['Theory 20pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
+theory_cloud_speed_25pa = np.array(json.load(open('theory/theo_v_group_25pa_ef-reduce.txt')))
+v_group_5(theory_cloud_speed_25pa, data25_t13, error25_t13, data25_t14, error25_t14, data25_t16, error20_t16, data25_t18, error25_t18, data_25_average, error_25_average, '', ['Theory 25pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
+theory_cloud_speed_30pa = np.array(json.load(open('theory/theo_v_group_30pa_ef-reduce.txt')))
+v_group_5_30pa(theory_cloud_speed_30pa, data30_t14, error30_t14, data30_t15, error30_t15, data30_t16, error30_t16, data30_t18, error30_t18, data_30_average, error_30_average, '', ['Theory 30pa', 'E40%', 'E50%', 'E60%', 'E80%', 'E100%'])
+
+cs_deviation_20 = 100.0 -(100.0/data_20_average)*data20_t14
+cs_deviation_25 = 100.0 -(100.0/data_25_average)*data25_t14
+cs_deviation_30 = 100.0 -(100.0/data_30_average)*data30_t14
+#%% PIV Cloud speeds
+
+########################
+### PIV Cloud speeds ###
+########################
+
+obj_text = codecs.open('PIV/20pa_t13_frame_0472_0473.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/20pa_t13_frame_0472_0473_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa20_t13_frame_0472_0473_weights = np.average(a, weights = b)      #This converts to numpy
+
+obj_text = codecs.open('PIV/20pa_t13_frame_0473_0474.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/20pa_t13_frame_0473_0474_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa20_t13_frame_0473_0474_weights = np.average(a, weights = b)      #This converts to numpy
+
+obj_text = codecs.open('PIV/20pa_t13_head_frame_0316_0317.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/20pa_t13_head_frame_0316_0317_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa20_t13_head_frame_0316_317_weights = np.average(a, weights = b)      #This converts to numpy
+
+p20_t13_backward = (pa20_t13_frame_0472_0473_weights + pa20_t13_frame_0473_0474_weights) /2
+
+p20_t13_deviation = 100.0 - (100.0/p20_t13_backward)*pa20_t13_head_frame_0316_317_weights
+
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0949_0950.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0949_0950_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa25_t13_frame_0949_0950_weights = np.average(a, weights = b)      #This converts to numpy
+
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0950_0951.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0950_0951_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa25_t13_frame_0950_0951_weights = np.average(a, weights = b)      #This converts to numpy
+
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0775_0776.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0775_0776_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa25_t13_frame_0775_0776_weights = np.average(a, weights = b)      #This converts to numpy
+
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0776_0777.txt', 'r', encoding='utf-8').read()
+a = np.array(json.loads(obj_text)) #This reads json to list
+obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0776_0777_R.txt', 'r', encoding='utf-8').read()
+b = np.array(json.loads(obj_text)) #This reads json to list
+pa25_t13_frame_0776_0777_weights = np.average(a, weights = b)      #This converts to numpy
+
+pa25_t13_backward = (pa25_t13_frame_0949_0950_weights + pa25_t13_frame_0950_0951_weights) /2
+
+pa25_t13_forward = (pa25_t13_frame_0775_0776_weights + pa25_t13_frame_0776_0777_weights) /2
+
+p25_t13_deviation = 100.0 - (100.0/pa25_t13_backward)*pa25_t13_forward
+
+#%% Phase speeds DCXXX
+
+##########################
+### Phase speeds DCXXX ###
+##########################
+
+# load VM2_AVI_230125_104901_20pa_t13 #
+obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104901_20pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_104901_20pa_t13_speedlist_backward = np.array(b20) + np.average(cloud_speed_20pa_t13['velocities'][:trials])    #This converts to numpy
+# load VM2_AVI_230125_104331_20pa_t14 #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_104331_20pa_t14_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t14['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_104331_20pa_t14_speedlist_backward = np.array(b20) + np.average(cloud_speed_20pa_t14['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_104101_20pa_t18_speedlist_forward #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104101_20pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_104101_20pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t18['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_104331_20pa_t16 #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104154_20pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_104154_20pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t16['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_104227_20pa_t16 #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104227_20pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_104227_20pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t16_2['velocities'][:trials])      #This converts to numpy
+
+
+# load VM2_AVI_230125_111238_25pa_t13 #
+obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
+b25 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_111238_25pa_t13_speedlist_backward = -np.array(b25) + np.average(cloud_speed_25pa_t13['velocities'][:trials])     #This converts to numpy
+# load VM2_AVI_230125_111238_25pa_t14 #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f25 = json.loads(obj_text_f) #This reads json to list
+b25 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_111238_25pa_t14_speedlist_forward = -np.array(f25) + np.average(cloud_speed_25pa_t14['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_111238_25pa_t14_speedlist_backward = np.array(b25) + np.average(cloud_speed_25pa_t14['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_111106_25pa_t16_speedlist_forward #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111106_25pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_111106_25pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t16['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_110948_25pa_t18_speedlist_forward #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110948_25pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_110948_25pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t18['velocities'][:trials])      #This converts to numpy
+
+# load VM2_AVI_230125_110058_30pa_t14 #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110058_30pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110058_30pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f30 = json.loads(obj_text_f) #This reads json to list
+b30 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_110058_30pa_t14_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_t14['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_110058_30pa_t14_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_t14['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_110133_30pa_t15 #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110133_30pa_t15_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110133_30pa_t15_speedlist_backward.txt', 'r', encoding='utf-8').read()
+f30 = json.loads(obj_text_f) #This reads json to list
+b30 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_110133_30pa_t15_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_t15['velocities'][:trials])      #This converts to numpy
+VM2_AVI_230125_110133_30pa_t15_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_t15['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_110007_30pa_t16_speedlist_forward #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110007_30pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_110007_30pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_30pa_t16['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_105926_30pa_t18_speedlist_forward #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_105926_30pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_105926_30pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_30pa_t18_2['velocities'][:trials])      #This converts to numpy
+# load VM2_AVI_230125_105845_30pa_t18_speedlist_forward #
+obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_105845_30pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+f20 = json.loads(obj_text_f) #This reads json to list
+VM2_AVI_230125_105845_30pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_30pa_t18['velocities'][:trials])      #This converts to numpy
+
+
+title_f = 't1 = 1.4ms, t3 = 2ms; I1 = 0.5mA, I3 = -0.5mA'
+title_b = 't1 = 0ms, t3 = 1.4ms; I1 = 0.5mA, I3 = -0.5mA'
+
+#bigplot_3(VM2_AVI_230125_104331_20pa_t14_speedlist_forward, VM2_AVI_230125_111238_25pa_t14_speedlist_forward, VM2_AVI_230125_110058_30pa_t14_speedlist_forward, title_f)
+#bigplot_3(VM2_AVI_230125_104331_20pa_t14_speedlist_backward, VM2_AVI_230125_111238_25pa_t14_speedlist_backward, VM2_AVI_230125_110058_30pa_t14_speedlist_backward, title_b)
+
+#plot_2025(VM2_AVI_230125_104901_20pa_t13_speedlist_backward, VM2_AVI_230125_111238_25pa_t13_speedlist_backward[:100], '20 Pa - 25Pa, t1 = 1.3ms')
+#plot_30(VM2_AVI_230125_110133_30pa_t15_speedlist_forward, VM2_AVI_230125_110133_30pa_t15_speedlist_backward[:200], '30Pa, t1 = 1.5ms')
+
+
+# Calculate and Compare Average DC t14 #
+# 20 t14 #
+speedlist_average_20pa_forward_t14 = np.average(VM2_AVI_230125_104331_20pa_t14_speedlist_forward)
+error_speedlist_average_20pa_forward_t14 = np.std(VM2_AVI_230125_104331_20pa_t14_speedlist_forward) + error20_t14
+speedlist_average_20pa_backward_t14 = np.average(VM2_AVI_230125_104331_20pa_t14_speedlist_backward[:150])
+error_speedlist_average_20pa_backward_t14 = np.std(VM2_AVI_230125_104331_20pa_t14_speedlist_backward[:150])
+# 20 t13 #
+speedlist_average_20pa_backward_t13 = np.average(VM2_AVI_230125_104901_20pa_t13_speedlist_backward)
+error_speedlist_average_20pa_backward_t13 = np.std(VM2_AVI_230125_104901_20pa_t13_speedlist_backward) + error20_t13
+# 20 t18 #
+speedlist_average_20pa_forward_t18 = np.average(VM2_AVI_230125_104101_20pa_t18_speedlist_forward)
+error_speedlist_average_20pa_forward_t18 = np.std(VM2_AVI_230125_104101_20pa_t18_speedlist_forward) + error20_t18
+# 20 t16 #
+speedlist_average_20pa_forward_t16 = np.average([np.average(VM2_AVI_230125_104227_20pa_t16_speedlist_forward),np.average(VM2_AVI_230125_104154_20pa_t16_speedlist_forward)])
+error_speedlist_average_20pa_forward_t16 = np.std(VM2_AVI_230125_104227_20pa_t16_speedlist_forward) + np.std(VM2_AVI_230125_104227_20pa_t16_speedlist_forward) + error20_t16
+
+# 25 t14 #
+speedlist_average_25pa_forward_t14 = np.average(VM2_AVI_230125_111238_25pa_t14_speedlist_forward[:50])
+error_speedlist_average_25pa_forward_t14 = np.std(VM2_AVI_230125_111238_25pa_t14_speedlist_forward[:50]) + error25_t14
+speedlist_average_25pa_backward_t14 = np.average(VM2_AVI_230125_111238_25pa_t14_speedlist_backward[:200])
+error_speedlist_average_25pa_backward_t14 = np.std(VM2_AVI_230125_111238_25pa_t14_speedlist_backward[:200])
+# 25 t16 #
+speedlist_average_25pa_forward_t16 = np.average(VM2_AVI_230125_111106_25pa_t16_speedlist_forward)
+error_speedlist_average_25pa_forward_t16 = np.std(VM2_AVI_230125_111106_25pa_t16_speedlist_forward) + error25_t16
+# 25 t18 #
+speedlist_average_25pa_forward_t18 = np.average(VM2_AVI_230125_110948_25pa_t18_speedlist_forward[:50])
+error_speedlist_average_25pa_forward_t18 = np.std(VM2_AVI_230125_110948_25pa_t18_speedlist_forward[:50]) + error25_t18
+
+# 30 t14 #
+speedlist_average_30pa_forward_t14 = np.average(VM2_AVI_230125_110058_30pa_t14_speedlist_forward)
+error_speedlist_average_30pa_forward_t14 = np.std(VM2_AVI_230125_110058_30pa_t14_speedlist_forward) + error30_t14
+speedlist_average_30pa_backward_t14 = np.average(VM2_AVI_230125_110058_30pa_t14_speedlist_backward[:200])
+error_speedlist_average_30pa_backward_t14 = np.std(VM2_AVI_230125_110058_30pa_t14_speedlist_backward[:200])
+# 30 t18 #
+speedlist_average_30pa_forward_t18 = np.average([np.average(VM2_AVI_230125_105845_30pa_t18_speedlist_forward), np.average(VM2_AVI_230125_105926_30pa_t18_speedlist_forward)])
+error_speedlist_average_30pa_forward_t18 = np.average([np.std(VM2_AVI_230125_105845_30pa_t18_speedlist_forward), np.std(VM2_AVI_230125_105926_30pa_t18_speedlist_forward)]) + error30_t18
+# 30 t16 #
+speedlist_average_30pa_forward_t16 = np.average(VM2_AVI_230125_110007_30pa_t16_speedlist_forward)
+error_speedlist_average_30pa_forward_t16 = np.std(VM2_AVI_230125_110007_30pa_t16_speedlist_forward) + error30_t16
+
+#bigploterror_6_3ov3(speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_20pa_backward_t14, error_speedlist_average_20pa_backward_t14, speedlist_average_25pa_forward_t14, error_speedlist_average_25pa_forward_t14, speedlist_average_25pa_backward_t14, error_speedlist_average_25pa_backward_t14, speedlist_average_30pa_forward_t14, error_speedlist_average_30pa_forward_t14, speedlist_average_30pa_backward_t14, error_speedlist_average_30pa_backward_t14, 'Reduced Duty Cycle t1 = 1.4ms',  ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
+#bigploterror_4_cdaw(speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_20pa_forward_t16, error_speedlist_average_20pa_forward_t16, speedlist_average_20pa_forward_t18, error_speedlist_average_20pa_forward_t18, speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, '20pa', ['E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+#allplot_noerror()
+
+# theory compare 20 pa e-field drop
+theory_physe_speed_20pa = np.array(json.load(open('theory/theo_c_daw_20pa_ef-reduce.txt')))
+c_daw_4(theory_physe_speed_20pa, speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_20pa_forward_t16, error_speedlist_average_20pa_forward_t16, speedlist_average_20pa_forward_t18, error_speedlist_average_20pa_forward_t18, speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, '20pa', ['Theory 20pa','E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+
+# theory compare 25 pa e-field drop
+theory_physe_speed_25pa = np.array(json.load(open('theory/theo_c_daw_25pa_ef-reduce.txt')))
+c_daw_4(theory_physe_speed_25pa, speedlist_average_25pa_forward_t14, error_speedlist_average_25pa_forward_t14, speedlist_average_25pa_forward_t16, error_speedlist_average_25pa_forward_t16, speedlist_average_25pa_forward_t18, error_speedlist_average_25pa_forward_t18, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, '25pa', ['Theory 25pa','E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+
+# theory compare 30 pa e-field drop
+theory_physe_speed_30pa = np.array(json.load(open('theory/theo_c_daw_30pa_ef-reduce.txt')))
+c_daw_4_30pa(theory_physe_speed_30pa, speedlist_average_30pa_forward_t14, error_speedlist_average_30pa_forward_t14, speedlist_average_30pa_forward_t16, error_speedlist_average_30pa_forward_t16, speedlist_average_30pa_forward_t18, error_speedlist_average_30pa_forward_t18, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, '30pa', ['Theory 30pa','E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+
+#%% Dispersion Relation
+
+###########################
+### Dispersion Relation ###
+###########################
+
+# Open and Read JSON file with system data
+f = open ('parameters/system-parameter-C15-230125.json', "r")
+data_read = json.loads(f.read())
+#
+# Wave Length Read In 20 #
+a = np.array(json.load(open('wavelength/VM2_AVI_230125_103901_20pa_wavelenlist_forward.txt')))
+b = np.array(json.load(open('wavelength/VM2_AVI_230125_103947_20pa_wavelenlist_forward.txt')))
+c = np.array(json.load(open('wavelength/VM2_AVI_230125_104625_20pa_wavelenlist_forward.txt')))
+d = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104101_20pa_t18_wavelenlist_forward.txt')))
+e = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104154_20pa_t16_wavelenlist_forward.txt')))
+f = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104227_20pa_t16_wavelenlist_forward.txt')))
+g = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104331_20pa_t14_wavelenlist_backward.txt')))
+h = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104331_20pa_t14_wavelenlist_forward.txt')))
+i = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104901_20pa_t13_wavelenlist_backward.txt')))
+# 20
+wavelen_20pa = np.average([np.average(a), np.average(b), np.average(c)]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
+wavelen_error_20pa = np.average([np.std(a)/np.sqrt(len(a)), np.std(b)/np.sqrt(len(b)), np.std(c)/np.sqrt(len(c))]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
+# 20t18
+wavelen_20pa_t18 = np.average(d[d != 0])
+wavelen_error_20pa_t18 = np.std(d[d != 0])/np.sqrt(len(d[d != 0]))
+# 20t16
+wavelen_20pa_t16 = np.average([np.average(e[e != 0]), np.average(f[f != 0])])
+wavelen_error_20pa_t16 = np.average([np.std(e[e != 0])/np.sqrt(len(e[e != 0])), np.std(f[f != 0])/np.sqrt(len(f[f != 0]))])
+# 20t14
+wavelen_20pa_t14 = np.average([np.average(g[g != 0]), np.average(h[h != 0])])
+wavelen_error_20pa_t14 = np.average([np.std(g[g != 0])/np.sqrt(len(g[g != 0])), np.std(h[h != 0])/np.sqrt(len(h[h != 0]))])
+# 20t13
+wavelen_20pa_t13 = np.average(i[i != 0])
+wavelen_error_20pa_t13 = np.std(i[i != 0])/np.sqrt(len(i[i != 0]))
+#
+# Wave Length Read In 25 #
+a = np.array(json.load(open('wavelength/VM2_AVI_230125_110808_25pa_wavelenlist_forward.txt')))
+b = np.array(json.load(open('wavelength/VM2_AVI_230125_111329_25pa_wavelenlist_forward.txt')))
+d = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110948_25pa_t18_wavelenlist_forward.txt')))
+e = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_111106_25pa_t16_wavelenlist_forward.txt')))
+f = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_111238_25pa_t14_wavelenlist_forward.txt')))
+g = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_111238_25pa_t13_wavelenlist_backward.txt'))) #backward
+# 25
+wavelen_25pa = np.average([np.average(a), np.average(b)])
+wavelen_error_25pa = np.average([np.std(a)/np.sqrt(len(a)), np.std(b)/np.sqrt(len(b))]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
+# 25t18
+wavelen_25pa_t18 = np.average(d[d != 0])
+wavelen_error_25pa_t18 = np.std(d[d != 0])/np.sqrt(len(d[d != 0]))
+# 25t16
+wavelen_25pa_t16 = np.average(e[e != 0])
+wavelen_error_25pa_t16 = np.std(e[e != 0])/np.sqrt(len(e[e != 0]))
+# 25t14
+wavelen_25pa_t14 = np.average(f[f != 0])
+wavelen_error_25pa_t14 = np.std(f[f != 0])/np.sqrt(len(f[f != 0]))
+# 25t13 Backward
+wavelen_25pa_t13_b = np.average(g[g != 0])
+wavelen_error_25pa_t13_b = np.std(g[g != 0])/np.sqrt(len(g[g != 0]))
+#
+# Wave Length Read In 30 #
+a = np.array(json.load(open('wavelength/VM2_AVI_230125_105732_30pa_wavelenlist_forward.txt')))
+b = np.array(json.load(open('wavelength/VM2_AVI_230125_110231_30pa_wavelenlist_forward.txt')))
+d = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_105845_30pa_t18_wavelenlist_forward.txt')))
+e = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_105926_30pa_t18_wavelenlist_forward.txt')))
+f = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110007_30pa_t16_wavelenlist_forward.txt')))
+g = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110058_30pa_t14_wavelenlist_forward.txt')))
+h = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110133_30pa_t15_wavelenlist_forward.txt')))
+# 30
+wavelen_30pa = np.average([np.average(a), np.average(b)])
+wavelen_error_30pa = np.average([np.std(a)/np.sqrt(len(a)), np.std(b)/np.sqrt(len(b))]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
+# 30t18
+wavelen_30pa_t18 = np.average([np.average(d[d != 0]), np.average(e[e != 0])])
+wavelen_error_30pa_t18 = np.average([np.std(d[d != 0])/np.sqrt(len(d[d != 0])), np.std(e[e != 0])/np.sqrt(len(e[e != 0]))])
+# 30t16
+wavelen_30pa_t16 = np.average(f[f != 0])
+wavelen_error_30pa_t16 = np.std(f[f != 0])/np.sqrt(len(f[f != 0]))
+# 30t14
+wavelen_30pa_t14 = np.average(g[g != 0])
+wavelen_error_30pa_t14 = np.std(g[g != 0])/np.sqrt(len(g[g != 0]))
+# 30t15
+wavelen_30pa_t15 = np.average(h[h != 0])
+wavelen_error_30pa_t15 = np.std(h[h != 0])/np.sqrt(len(h[h != 0]))
+
+# Plot Wavelength
+#All
+lambda_daw_4(wavelen_20pa, wavelen_error_20pa, wavelen_25pa, wavelen_error_25pa, wavelen_30pa, wavelen_error_30pa, '', [])
+#30
+lambda_daw_5_2(0, wavelen_30pa_t14, wavelen_error_30pa_t14, wavelen_30pa_t15, wavelen_error_30pa_t15, wavelen_30pa_t16, wavelen_error_30pa_t16, wavelen_30pa_t18,  wavelen_error_30pa_t18, wavelen_30pa, wavelen_error_30pa, '30 Pa', ['E-field 40%', 'E-field 50%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+#25
+lambda_daw_5(0, wavelen_25pa_t13_b, wavelen_error_25pa_t13_b, wavelen_25pa_t14, wavelen_error_25pa_t14, wavelen_25pa_t16, wavelen_error_25pa_t16, wavelen_25pa_t18,  wavelen_error_25pa_t18, wavelen_25pa, wavelen_error_25pa, '25 Pa', ['E-field 30% (b)', 'E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+#20
+lambda_daw_5(0, wavelen_20pa_t13, wavelen_error_20pa_t13, wavelen_20pa_t14, wavelen_error_20pa_t14, wavelen_20pa_t16, wavelen_error_20pa_t16, wavelen_20pa_t18,  wavelen_error_20pa_t18, wavelen_20pa, wavelen_error_20pa, '20 Pa', ['E-field 30%', 'E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
+
+
+# Calculate wave vector k #
+# 20
+k_20pa = (2*np.pi) / (wavelen_20pa*0.001) #in 1/m
+k_20pa_error = ((2*np.pi) / (wavelen_20pa*0.001)**2) * wavelen_error_20pa*0.001
+k_20pa_t18 = (2*np.pi) / (wavelen_20pa_t18*0.001)
+k_20pa_error_t18 = ((2*np.pi) / (wavelen_20pa_t18*0.001)**2) * wavelen_error_20pa_t18*0.001
+k_20pa_t16 = (2*np.pi) / (wavelen_20pa_t16*0.001)
+k_20pa_error_t16 = ((2*np.pi) / (wavelen_20pa_t16*0.001)**2) * wavelen_error_20pa_t16*0.001
+k_20pa_t14 = (2*np.pi) / (wavelen_20pa_t14*0.001)
+k_20pa_error_t14 = ((2*np.pi) / (wavelen_20pa_t14*0.001)**2) * wavelen_error_20pa_t14*0.001
+k_20pa_t13 = (2*np.pi) / (wavelen_20pa_t13*0.001) #backward!
+k_20pa_error_t13 = ((2*np.pi) / (wavelen_20pa_t13*0.001)**2) * wavelen_error_20pa_t13*0.001
+# 25
+k_25pa = (2*np.pi) / (wavelen_25pa*0.001)
+k_25pa_error = ((2*np.pi) / (wavelen_25pa*0.001)**2) * wavelen_error_25pa*0.001
+k_25pa_t18 = (2*np.pi) / (wavelen_25pa_t18*0.001)
+k_25pa_error_t18 = ((2*np.pi) / (wavelen_25pa_t18*0.001)**2) * wavelen_error_25pa_t18*0.001
+k_25pa_t16 = (2*np.pi) / (wavelen_25pa_t16*0.001)
+k_25pa_error_t16 = ((2*np.pi) / (wavelen_25pa_t16*0.001)**2) * wavelen_error_25pa_t16*0.001
+k_25pa_t14 = (2*np.pi) / (wavelen_25pa_t14*0.001)
+k_25pa_error_t14 = ((2*np.pi) / (wavelen_25pa_t14*0.001)**2) * wavelen_error_25pa_t14*0.001
+# 30
+k_30pa = (2*np.pi) / (wavelen_30pa*0.001)
+k_30pa_error = ((2*np.pi) / (wavelen_30pa*0.001)**2) * wavelen_error_30pa*0.001
+k_30pa_t18 = (2*np.pi) / (wavelen_30pa_t18*0.001)
+k_30pa_error_t18 = ((2*np.pi) / (wavelen_30pa_t18*0.001)**2) * wavelen_error_30pa_t18*0.001
+k_30pa_t16 = (2*np.pi) / (wavelen_30pa_t16*0.001)
+k_30pa_error_t16 = ((2*np.pi) / (wavelen_30pa_t16*0.001)**2) * wavelen_error_30pa_t16*0.001
+k_30pa_t14 = (2*np.pi) / (wavelen_30pa_t14*0.001)
+k_30pa_error_t14 = ((2*np.pi) / (wavelen_30pa_t14*0.001)**2) * wavelen_error_30pa_t14*0.001
+
+# Calculate Frequeny (omega) #
+# 20
+omega_20pa = (speedlist_average_20pa_forward*0.001) * k_20pa # w = C_daw * k 
+omega_20pa_t18 = (speedlist_average_20pa_forward_t18*0.001) * k_20pa_t18
+omega_20pa_t16 = (speedlist_average_20pa_forward_t16*0.001) * k_20pa_t16
+omega_20pa_t14 = (speedlist_average_20pa_forward_t14*0.001) * k_20pa_t14
+# 25
+omega_25pa = (speedlist_average_25pa_forward*0.001) * k_25pa
+omega_25pa_t18 = (speedlist_average_25pa_forward_t18*0.001) * k_25pa_t18
+omega_25pa_t16 = (speedlist_average_25pa_forward_t16*0.001) * k_25pa_t16
+omega_25pa_t14 = (speedlist_average_25pa_forward_t14*0.001) * k_25pa_t14
+# 30
+omega_30pa = (speedlist_average_30pa_forward*0.001) * k_30pa
+omega_30pa_t18 = (speedlist_average_30pa_forward_t18*0.001) * k_30pa_t18
+omega_30pa_t16 = (speedlist_average_30pa_forward_t16*0.001) * k_30pa_t16
+omega_30pa_t14 = (speedlist_average_30pa_forward_t14*0.001) * k_30pa_t14
+#
+bigploterror_12(k_20pa, k_20pa_t18, k_20pa_t16, k_20pa_t14, k_25pa, k_25pa_t18, k_25pa_t16, k_25pa_t14, k_30pa, k_30pa_t18, k_30pa_t16, k_30pa_t14, data_20_average, error_20_average, data20_t18, error20_t18, data20_t16, error20_t16, data20_t14, error20_t14, data_25_average, error_25_average, data25_t18, error25_t18, data25_t16, error25_t16, data25_t14, error25_t14, data_30_average, error_30_average, data30_t18, error30_t18, data30_t16, error30_t16, data30_t14, error30_t14, 'k [1/m]', [])
+bigploterror_12_3(k_20pa, k_20pa_error, k_20pa_t18, k_20pa_error_t18, k_20pa_t16, k_20pa_error_t16, k_20pa_t14, k_20pa_error_t14, k_25pa, k_25pa_error, k_25pa_t18, k_25pa_error_t18, k_25pa_t16, k_25pa_error_t16, k_25pa_t14, k_25pa_error_t14, k_30pa, k_30pa_error, k_30pa_t18, k_30pa_error_t18, k_30pa_t16, k_30pa_error_t16, k_30pa_t14, k_30pa_error_t14, speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_forward_t18, error_speedlist_average_20pa_forward_t18, speedlist_average_20pa_forward_t16, error_speedlist_average_20pa_forward_t16, speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_forward_t18, error_speedlist_average_25pa_forward_t18, speedlist_average_25pa_forward_t16, error_speedlist_average_25pa_forward_t16, speedlist_average_25pa_forward_t14, error_speedlist_average_25pa_forward_t14, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_forward_t18, error_speedlist_average_30pa_forward_t18, speedlist_average_30pa_forward_t16, error_speedlist_average_30pa_forward_t16, speedlist_average_30pa_forward_t14, error_speedlist_average_30pa_forward_t14, 'k [1/m]', [])
+#
+bigploterror_12(omega_20pa, omega_20pa_t18, omega_20pa_t16, omega_20pa_t14, omega_25pa, omega_25pa_t18, omega_25pa_t16, omega_25pa_t14, omega_30pa, omega_30pa_t18, omega_30pa_t16, omega_30pa_t14, data_20_average, error_20_average, data20_t18, error20_t18, data20_t16, error20_t16, data20_t14, error20_t14, data_25_average, error_25_average, data25_t18, error25_t18, data25_t16, error25_t16, data25_t14, error25_t14, data_30_average, error_30_average, data30_t18, error30_t18, data30_t16, error30_t16, data30_t14, error30_t14, 'omega', [])
+bigploterror_12_2(omega_20pa, omega_20pa_t18, omega_20pa_t16, omega_20pa_t14, omega_25pa, omega_25pa_t18, omega_25pa_t16, omega_25pa_t14, omega_30pa, omega_30pa_t18, omega_30pa_t16, omega_30pa_t14, speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_forward_t18, error_speedlist_average_20pa_forward_t18, speedlist_average_20pa_forward_t16, error_speedlist_average_20pa_forward_t16, speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_forward_t18, error_speedlist_average_25pa_forward_t18, speedlist_average_25pa_forward_t16, error_speedlist_average_25pa_forward_t16, speedlist_average_25pa_forward_t14, error_speedlist_average_25pa_forward_t14, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_forward_t18, error_speedlist_average_30pa_forward_t18, speedlist_average_30pa_forward_t16, error_speedlist_average_30pa_forward_t16, speedlist_average_30pa_forward_t14, error_speedlist_average_30pa_forward_t14, 'omega', [])
+#
+dispersion_relation(omega_20pa/data_read["20pa"]["w_pd"], omega_20pa_t18/data_read["20pa"]["w_pd"], omega_20pa_t16/data_read["20pa"]["w_pd"], omega_20pa_t14/data_read["20pa"]["w_pd"], 0, k_20pa*data_read["20pa"]["debye_Di"], k_20pa_t18*data_read["20pa"]["debye_Di"], k_20pa_t16*data_read["20pa"]["debye_Di"], k_20pa_t14*data_read["20pa"]["debye_Di"], 0)
+dispersion_relation(omega_30pa/data_read["30pa"]["w_pd"], omega_30pa_t18/data_read["30pa"]["w_pd"], omega_30pa_t16/data_read["30pa"]["w_pd"], omega_30pa_t14/data_read["30pa"]["w_pd"], 0, k_30pa*data_read["30pa"]["debye_Di"], k_30pa_t18*data_read["30pa"]["debye_Di"], k_30pa_t16*data_read["30pa"]["debye_Di"], k_30pa_t14*data_read["30pa"]["debye_Di"], 0)
+
+
+#%%
+
+### todo ###
+
+#theory compare 30% efield pressure drop
+#theory compare 40% efield pressure drop
+#theory compare 60% efield pressure drop
+#theory compare 80% efield pressure drop
+#theory compare 100% efield pressure drop
+
+#%% Save Data
+# Write System Parameters Json #
+data = {
+                "20pa" : {
+                    "v_group_100" : data_20_average,
+                    "v_group_100_error" : error_20_average,
+                    "v_group_30"  : data20_t13,
+                    "v_group_30_error"  : error20_t13,
+                    "v_group_40"  : data20_t14,
+                    "v_group_40_error"  : error20_t14,
+                    "v_group_60"  : data20_t16,
+                    "v_group_60_error"  : error20_t16,
+                    "v_group_80"  : data20_t18,
+                    "v_group_80_error"  : error20_t18,
+                    "c_daw_100" : speedlist_average_20pa_forward,
+                    "c_daw_100_error" : error_speedlist_average_20pa_forward,
+                    "c_daw_40"  : speedlist_average_20pa_forward_t14,
+                    "c_daw_40_error"  : error_speedlist_average_20pa_forward_t14,
+                    "c_daw_60"  : speedlist_average_20pa_forward_t16,
+                    "c_daw_60_error"  : error_speedlist_average_20pa_forward_t16,
+                    "c_daw_80"  : speedlist_average_20pa_forward_t18,
+                    "c_daw_80_error"  : error_speedlist_average_20pa_forward_t18,
+                    "k_100" : k_20pa,
+                    "k_100_error" : k_20pa_error,
+                    "k_80" : k_20pa_t18,
+                    "k_80_error" : k_20pa_error_t18,
+                    "k_60" : k_20pa_t16,
+                    "k_60_error" : k_20pa_error_t16,
+                    "k_40" : k_20pa_t14,
+                    "k_40_error" : k_20pa_error_t14,
+                    "k_30" : k_20pa_t13,
+                    "k_30_error" : k_20pa_error_t13
+                    
+            },
+                "25pa" : {
+                    "v_group_100" : data_25_average,
+                    "v_group_100_error" : error_25_average,
+                    "v_group_30"  : data25_t13,
+                    "v_group_30_error"  : error25_t13,
+                    "v_group_40"  : data25_t14,
+                    "v_group_40_error"  : error25_t14,
+                    "v_group_60"  : data25_t16,
+                    "v_group_60_error"  : error25_t16,
+                    "v_group_80"  : data25_t18,
+                    "v_group_80_error"  : error25_t18,
+                    "c_daw_100" : speedlist_average_25pa_forward,
+                    "c_daw_100_error" : error_speedlist_average_25pa_forward,
+                    "c_daw_40"  : speedlist_average_25pa_forward_t14,
+                    "c_daw_40_error"  : error_speedlist_average_25pa_forward_t14,
+                    "c_daw_60"  : speedlist_average_25pa_forward_t16,
+                    "c_daw_60_error"  : error_speedlist_average_25pa_forward_t16,
+                    "c_daw_80"  : speedlist_average_25pa_forward_t18,
+                    "c_daw_80_error"  : error_speedlist_average_25pa_forward_t18,
+                    "k_100" : k_25pa,
+                    "k_100_error" : k_25pa_error,
+                    "k_80" : k_25pa_t18,
+                    "k_80_error" : k_25pa_error_t18,
+                    "k_60" : k_25pa_t16,
+                    "k_60_error" : k_25pa_error_t16,
+                    "k_40" : k_25pa_t14,
+                    "k_40_error" : k_25pa_error_t14,
+            },
+                "30pa" : {
+                    "v_group_100" : data_30_average,
+                    "v_group_100_error" : error_30_average,
+                    "v_group_40"  : data30_t14,
+                    "v_group_40_error"  : error30_t14,
+                    "v_group_50"  : data30_t15,
+                    "v_group_50_error"  : error30_t15,
+                    "v_group_60"  : data30_t16,
+                    "v_group_60_error"  : error30_t16,
+                    "v_group_80"  : data30_t18,
+                    "v_group_80_error"  : error30_t18,
+                    "c_daw_100" : speedlist_average_30pa_forward,
+                    "c_daw_100_error" : error_speedlist_average_30pa_forward,
+                    "c_daw_40"  : speedlist_average_30pa_forward_t14,
+                    "c_daw_40_error"  : error_speedlist_average_30pa_forward_t14,
+                    "c_daw_60"  : speedlist_average_30pa_forward_t16,
+                    "c_daw_60_error"  : error_speedlist_average_30pa_forward_t16,
+                    "c_daw_80"  : speedlist_average_30pa_forward_t18,
+                    "c_daw_80_error"  : error_speedlist_average_30pa_forward_t18,
+                    "k_100" : k_30pa,
+                    "k_100_error" : k_30pa_error,
+                    "k_80" : k_30pa_t18,
+                    "k_80_error" : k_30pa_error_t18,
+                    "k_60" : k_30pa_t16,
+                    "k_60_error" : k_30pa_error_t16,
+                    "k_40" : k_30pa_t14,
+                    "k_40_error" : k_30pa_error_t14,
+            }
+        }
+with open('results/finaldatastack.json', 'w') as filehandle:
+    json.dump(data, filehandle)
+            
+
+
+
