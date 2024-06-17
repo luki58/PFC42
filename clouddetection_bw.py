@@ -42,7 +42,7 @@ import json
 
 # img read
 
-folder = '/Volumes/Elements/PFC42-D3/Parabola#8-30pa-50trial30'
+folder = 'D://PFC42-D3/Parabola#8-30pa-50trial30'
 
 
 #Parabola#10-25pa-100trial70
@@ -53,12 +53,12 @@ group_frames = pims.open(folder+'/30/head/*.bmp')
 
 background_frame = pims.open(folder+'/*.bmp')[0]
 #%%
-test = (group_frames[50] - (background_frame*.99))[800:1150,:]>3
+test = (group_frames[30] - (background_frame*.99))[850:850+250,:]>1.5
 #blurred_image = gaussian_filter(test, sigma=10)[850:1100,:]
 
 
 # Optionally, tweak styles.
-matplotlib.rc('figure',  figsize=(10, 5))
+matplotlib.rc('figure',  figsize=(10, 5),dpi=600)
 matplotlib.rc('image', cmap='gray')
 plt.imshow(test)
 
@@ -164,11 +164,14 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
 
     faktor = 1/(fps*pix_size)
 
+    
+
     items = range(len(group_frames))
     for item in tqdm(items, desc="Processing items", unit="item"):
         frame = group_frames[item]
         frame = frame - background_frame * 0.99
-        prog = gaussian_filter1d(grey_sum(frame[int(cut-(cut_width/2)):int(cut+(cut_width/2)),:] >threshold), sigma=gauss_sigma)
+        prog = gaussian_filter1d(grey_sum(frame[int(cut):int(cut+cut_width),:] >threshold), sigma=gauss_sigma)
+        #prog = gaussian_filter1d(grey_sum(frame[int(cut-(cut_width/2)):int(cut+(cut_width/2)),:] >threshold), sigma=gauss_sigma)
         #prog = grey_sum(gaussian_filter(frame[int(cut-(cut_width/2)):int(cut+(cut_width/2)),:],sigma=gauss_sigma))
         #
         u, l = envelope(prog, envelope_step)
@@ -191,17 +194,17 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
         #        check = i
         
         ### PLOT ###
-        fig = plt.figure(figsize = (10,10), dpi=50) # create a 5 x 5 figure
+        fig = plt.figure(figsize = (10,10), dpi=200) # create a 5 x 5 figure
         ax = fig.add_subplot(111)
         #ax limit
-        ax.set_ylim(ymin=0, ymax=100)
+        ax.set_ylim(ymin=0, ymax=30)
+        
         plt.plot(x, value, label="envelope")
         ax.plot(prog, linewidth=0.8, label="Flux")           #, color='#00429d'
         #
         if check != 0:
             ax.axvline(check, linestyle='dashed', color='r');
         #
-        plt.legend()
         plt.show()
 
     if reverse_data == True:    
@@ -233,10 +236,10 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
 def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
     try:    
         #----------Parameter Space----------
-        threshold = trial.suggest_float('threshold', 2, 4)
-        gate = trial.suggest_float('gate', 10, 25)
-        gauss_sigma = trial.suggest_float('gauss_sigma', 5, 30)
-        envelope_step = trial.suggest_int('envelope_step', 50, 200)
+        threshold = trial.suggest_float('threshold', 1, 4)
+        gate = trial.suggest_float('gate', 5, 15)
+        gauss_sigma = trial.suggest_float('gauss_sigma', 5, 50)
+        envelope_step = trial.suggest_int('envelope_step', 20, 100)
         #-----------------------------------
         error, velocity = cloudhead_pos_data(
             group_frames[:], threshold, gate, gauss_sigma,
@@ -255,10 +258,10 @@ def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
 # Adjustables
 fps = 60
 pix_size = 0.0118  # in mm #iss 0.0147
-cut = 950
-cut_width = 300
+cut = 850
+cut_width = 250
 reverse_data = True #True cloud coming from the left; False cloud coming from the right of the image
-trials = 10
+trials = 30
 
 # Create a partial function to pass additional fixed parameters to the objective function
 objective_partial = partial(
@@ -288,7 +291,9 @@ param_importance_plot.show()
 
 contour_plot = vis.plot_contour(study, params=["threshold", "gate"])
 contour_plot.show()
+
 #%%
+
 # Combine errors and velocities using zip
 data = list(zip(global_error, global_speed))
 
@@ -296,7 +301,7 @@ data = list(zip(global_error, global_speed))
 sorted_data = sorted(data, key=lambda x: x[0])
 
 # Extract the top 5 minimum errors and corresponding velocities
-top_5_errors_and_velocities = sorted_data[:10]
+top_5_errors_and_velocities = sorted_data[:20]
 
 # Separate errors and velocities into two lists
 top_5_errors, top_5_velocities = zip(*top_5_errors_and_velocities)
@@ -306,9 +311,9 @@ output_data = {
     "errors": list(top_5_errors),
     "velocities": list(top_5_velocities)
 }
-
+#%%
 #Save the data to a JSON file
-output_filename = folder+"_30_headspeed.json"
+output_filename = folder[13:28]+"_trial50_headspeed2.json"
 with open(output_filename, 'w') as json_file:
     json.dump(output_data, json_file)
 

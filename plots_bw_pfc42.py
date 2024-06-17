@@ -295,6 +295,46 @@ def bigplot_4(data, data2, data3, data4, title, legend):
     
     plt.show()    
 
+def vgroup_p40(data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
+    fig, ax = plt.subplots(dpi=600)
+    fig.set_size_inches(6, 3)
+    
+    ax.errorbar(30, data1, yerr=error1, fmt='^', color='#00429d', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(50,data2, yerr=error2, marker='s', color='#00cc00', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(70,data3, yerr=error3, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(90,data4, yerr=error4, marker='o', color='#ff8000', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(100,data5, yerr=error5, marker='x', color='#ff0000', linewidth=.9, markersize=3, capsize=1)
+    ax.legend(legend, loc='upper left', prop={'size': 9})
+    
+    #adds a title and axes labels
+    ax.set_title(title)
+    plt.xlabel('E-field [%]')
+    plt.ylabel('$C_{DAW}$ [mm]')
+ 
+    #removing top and right borders
+    #ax.spines['top'].set_visible(False)
+    #ax.spines['right'].set_visible(False) 
+    
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(10))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+
+    #add vertical lines
+    #ax.axvline(left, linestyle='dashed', color='b');
+    #ax.axvline(right, linestyle='dashed', color='b');
+
+    #adds major gridlines
+    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    
+    #ax limit
+    ax.set_xlim(xmin=0)
+    ax.set_ylim(ymin=0)
+    
+    #legend
+    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
+    
+    plt.show()    
+
 def v_group_5(theory, data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
   
     fig, ax = plt.subplots(dpi=600)
@@ -1239,14 +1279,18 @@ def dispersion_relation(k_20, k_25, k_30, k_35, k_40, w_20, w_25, w_30, w_35, w_
 
 trials = 15
 
-cloud_speed_20pa_103901 = json.load(open('group-vel/VM2_AVI_230125_103901_20pa_headspeed.json'))
-cloud_speed_20pa_103947 = json.load(open('group-vel/VM2_AVI_230125_103947_20pa_headspeed.json'))
-cloud_speed_20pa_104625 = json.load(open('group-vel/VM2_AVI_230125_104625_20pa_headspeed.json'))
-cloud_speed_20pa_104809 = json.load(open('group-vel/VM2_AVI_230125_104809_20pa_headspeed.json'))
-cloud_speed_25pa_110808 = json.load(open('group-vel/VM2_AVI_230125_110808_25pa_headspeed.json'))
-cloud_speed_25pa_111329 = json.load(open('group-vel/VM2_AVI_230125_111329_25pa_headspeed.json'))
-cloud_speed_30pa_105732 = json.load(open('group-vel/VM2_AVI_230125_105732_30pa_headspeed.json'))
-cloud_speed_30pa_110231 = json.load(open('group-vel/VM2_AVI_230125_110231_30pa_headspeed.json'))
+cloud_speed_20pa_103901 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_103901_20pa_headspeed.json'))
+cloud_speed_20pa_103947 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_103947_20pa_headspeed.json'))
+cloud_speed_20pa_104625 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104625_20pa_headspeed.json'))
+cloud_speed_20pa_104809 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104809_20pa_headspeed.json'))
+cloud_speed_25pa_110808 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110808_25pa_headspeed.json'))
+cloud_speed_25pa_111329 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_111329_25pa_headspeed.json'))
+cloud_speed_30pa_105732 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_105732_30pa_headspeed.json'))
+cloud_speed_30pa_110231 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110231_30pa_headspeed.json'))
+
+#PFC42 Data:  
+cloud_speed_40pa = json.load(open('resultspfc42/Parabola#0-40pa_trial100_headspeed.json')) 
+cloud_speed_40pa_2 = json.load(open('resultspfc42/Parabola#0-40pa_trial100_headspeed2.json')) 
 
 # compare group velocities #
 
@@ -1270,6 +1314,11 @@ error_30 = np.average(cloud_speed_30pa_105732['errors'][:trials]) + np.std(cloud
 data_30_2 = np.average(cloud_speed_30pa_110231['velocities'][:trials])     #This converts to numpy
 error_30_2 = np.average(cloud_speed_30pa_110231['errors'][:trials]) + np.std(cloud_speed_30pa_110231['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
 
+data_40 = np.average(cloud_speed_40pa['velocities'][:10])     #This converts to numpy
+error_40 = np.average(cloud_speed_40pa['errors'][:10]) + np.std(cloud_speed_40pa['velocities'][:10])/np.sqrt(10)      #This converts to numpy
+data_40_2 = np.average(cloud_speed_40pa_2['velocities'][:10])     #This converts to numpy
+error_40_2 = np.average(cloud_speed_40pa_2['errors'][:10]) + np.std(cloud_speed_40pa_2['velocities'][:10])/np.sqrt(10)      #This converts to numpy
+
 bigploterror_4(data_25, error_25, data_25_2, error_25_2, data_30, error_30, data_30_2, error_30_2, 'Compare group velocities 25-30pa', ['25 Pa 11:08:08', '25 Pa 11:13:29', '30 Pa 10:57:32', '30 Pa 11:02:31'])
 
 data_20_average = np.average([data_20, data_20_2, data_20_4])
@@ -1281,10 +1330,13 @@ error_25_average = np.std([error_25, error_25_2]) + np.average([error_25, error_
 data_30_average = np.average([data_30, data_30_2])
 error_30_average = np.std([error_30, error_30_2]) + np.average([error_30, error_30_2]/np.sqrt(len([error_30, error_30_2])))
 
+data_40_average = np.average([data_40, data_40_2])
+error_40_average = np.std([error_40, error_40_2]) + np.average([error_40, error_40_2]/np.sqrt(len([error_40, error_40_2])))
+
 bigploterror_3(data_20_average, error_20_average, data_25_average, error_25_average, data_30_average, error_30_average, ' ',['20Pa', '25Pa', '30Pa'])
 
 # Import Math #
-obj_text_f = codecs.open('theory/theo_ dustspeed_neutralandiondrag_dc100_z_depleted.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_ dustspeed_neutralandiondrag_dc100_z_depleted.txt', 'r', encoding='utf-8').read()
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
@@ -1300,8 +1352,8 @@ group_bigploterror_6_3ov3_theory(data_20_average, error_20_average, theo_plot[1]
 
 # load VM2_AVI_230125_103901_20pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_103901_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_103901_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_103901_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_103901_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 b20 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_103901_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_103901['velocities'][:trials])     #This converts to numpy
@@ -1309,8 +1361,8 @@ VM2_AVI_230125_103901_20pa_speedlist_backward = -np.array(b20) + np.average(clou
 
 # load VM2_AVI_230125_103947_20pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_103947_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_103947_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_103947_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_103947_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 b20 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_103947_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_103947['velocities'][:trials])     #This converts to numpy
@@ -1318,8 +1370,8 @@ VM2_AVI_230125_103947_20pa_speedlist_backward = -np.array(b20) + np.average(clou
 
 # load VM2_AVI_230125_104625_20pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_104625_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_104625_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_104625_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_104625_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 b20 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_104625_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_104625['velocities'][:trials])     #This converts to numpy
@@ -1327,8 +1379,8 @@ VM2_AVI_230125_104625_20pa_speedlist_backward = -np.array(b20) + np.average(clou
 
 # load VM2_AVI_230125_104625_20pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_104809_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_104809_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_104809_20pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_104809_20pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 b20 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_104809_20pa_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_104809['velocities'][:trials])     #This converts to numpy
@@ -1336,8 +1388,8 @@ VM2_AVI_230125_104809_20pa_speedlist_backward = -np.array(b20) + np.average(clou
 
 # load VM2_AVI_230125_110808_25pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_110808_25pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_110808_25pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_110808_25pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_110808_25pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f25 = json.loads(obj_text_f) #This reads json to list
 b25 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_110808_25pa_speedlist_forward = -np.array(f25) + np.average(cloud_speed_25pa_110808['velocities'][:trials])      #This converts to numpy
@@ -1345,8 +1397,8 @@ VM2_AVI_230125_110808_25pa_speedlist_backward = np.array(b25) + np.average(cloud
 
 # load VM2_AVI_230125_111329_25pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_111329_25pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_111329_25pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_111329_25pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_111329_25pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f25 = json.loads(obj_text_f) #This reads json to list
 b25 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_111329_25pa_speedlist_forward = -np.array(f25) + np.average(cloud_speed_25pa_111329['velocities'][:trials])      #This converts to numpy
@@ -1354,8 +1406,8 @@ VM2_AVI_230125_111329_25pa_speedlist_backward = np.array(b25) + np.average(cloud
 
 # load VM2_AVI_230125_105732_30pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_105732_30pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_105732_30pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_105732_30pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_105732_30pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f30 = json.loads(obj_text_f) #This reads json to list
 b30 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_105732_30pa_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_105732['velocities'][:trials])      #This converts to numpy
@@ -1363,8 +1415,8 @@ VM2_AVI_230125_105732_30pa_speedlist_backward = np.array(b30) + np.average(cloud
 
 # load VM2_AVI_230125_110231_30pa #
 
-obj_text_f = codecs.open('phase-speeds/VM2_AVI_230125_110231_30pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/VM2_AVI_230125_110231_30pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_110231_30pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/VM2_AVI_230125_110231_30pa_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f30 = json.loads(obj_text_f) #This reads json to list
 b30 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_110231_30pa_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_110231['velocities'][:trials])      #This converts to numpy
@@ -1408,7 +1460,7 @@ error_speedlist_average_30pa_backward = np.std(a)/np.sqrt(len(a))
 bigploterror_6_3ov3(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_backward, error_speedlist_average_20pa_backward, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_backward, error_speedlist_average_25pa_backward, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_backward, error_speedlist_average_25pa_backward, ' ', ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
 
 # Import Math #
-obj_text_f = codecs.open('theory/theo_cdaw_dc100_z0.345.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.345.txt', 'r', encoding='utf-8').read()
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
@@ -1422,23 +1474,34 @@ trials = 20
 ### Group speeds DCXXX ###
 ##########################
 
-cloud_speed_20pa_t13 = json.load(open('group-vel/VM2_AVI_230125_104518_20pa_t13_headspeed.json'))   #No wave appearing
-cloud_speed_20pa_t13_2 = json.load(open('group-vel/VM2_AVI_230125_104901_20pa_t13_headspeed.json'))
-cloud_speed_20pa_t14 = json.load(open('group-vel/VM2_AVI_230125_104331_20pa_t14_headspeed.json'))
-cloud_speed_20pa_t16 = json.load(open('group-vel/VM2_AVI_230125_104154_20pa_t16_headspeed.json'))
-cloud_speed_20pa_t16_2 = json.load(open('group-vel/VM2_AVI_230125_104227_20pa_t16_headspeed.json'))
-cloud_speed_20pa_t18 = json.load(open('group-vel/VM2_AVI_230125_104101_20pa_t18_headspeed.json'))
-cloud_speed_25pa_t13 = json.load(open('group-vel/VM2_AVI_230125_111238_25pa_t13_headspeed.json'))
-cloud_speed_25pa_t14 = json.load(open('group-vel/VM2_AVI_230125_111238_25pa_t14_headspeed.json'))
-cloud_speed_25pa_t16 = json.load(open('group-vel/VM2_AVI_230125_111037_25pa_t16_headspeed.json'))
-cloud_speed_25pa_t16_2 = json.load(open('group-vel/VM2_AVI_230125_111106_25pa_t16_headspeed.json'))
-cloud_speed_25pa_t18 = json.load(open('group-vel/VM2_AVI_230125_110918_25pa_t18_headspeed.json'))
-cloud_speed_25pa_t18_2 = json.load(open('group-vel/VM2_AVI_230125_110948_25pa_t18_headspeed.json'))
-cloud_speed_30pa_t14 = json.load(open('group-vel/VM2_AVI_230125_110058_30pa_t14_headspeed.json'))
-cloud_speed_30pa_t15 = json.load(open('group-vel/VM2_AVI_230125_110133_30pa_t15_headspeed.json'))
-cloud_speed_30pa_t16 = json.load(open('group-vel/VM2_AVI_230125_110007_30pa_t16_headspeed.json'))
-cloud_speed_30pa_t18 = json.load(open('group-vel/VM2_AVI_230125_105845_30pa_t18_headspeed.json'))
-cloud_speed_30pa_t18_2 = json.load(open('group-vel/VM2_AVI_230125_105926_30pa_t18_headspeed.json'))
+cloud_speed_20pa_t13 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104518_20pa_t13_headspeed.json'))   #No wave appearing
+cloud_speed_20pa_t13_2 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104901_20pa_t13_headspeed.json'))
+cloud_speed_20pa_t14 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104331_20pa_t14_headspeed.json'))
+cloud_speed_20pa_t16 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104154_20pa_t16_headspeed.json'))
+cloud_speed_20pa_t16_2 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104227_20pa_t16_headspeed.json'))
+cloud_speed_20pa_t18 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_104101_20pa_t18_headspeed.json'))
+cloud_speed_25pa_t13 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_111238_25pa_t13_headspeed.json'))
+cloud_speed_25pa_t14 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_111238_25pa_t14_headspeed.json'))
+cloud_speed_25pa_t16 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_111037_25pa_t16_headspeed.json'))
+cloud_speed_25pa_t16_2 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_111106_25pa_t16_headspeed.json'))
+cloud_speed_25pa_t18 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110918_25pa_t18_headspeed.json'))
+cloud_speed_25pa_t18_2 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110948_25pa_t18_headspeed.json'))
+cloud_speed_30pa_t14 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110058_30pa_t14_headspeed.json'))
+cloud_speed_30pa_t15 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110133_30pa_t15_headspeed.json'))
+cloud_speed_30pa_t16 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_110007_30pa_t16_headspeed.json'))
+cloud_speed_30pa_t18 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_105845_30pa_t18_headspeed.json'))
+cloud_speed_30pa_t18_2 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_105926_30pa_t18_headspeed.json'))
+
+#PFC42 Data:
+cloud_speed_40pa_t13 = json.load(open('resultspfc42/Parabola#2-40pa_trial30_headspeed3.json'))
+cloud_speed_40pa_t13_2 = json.load(open('resultspfc42/Parabola#4-40pa_trial30_headspeed.json'))
+cloud_speed_40pa_t15 = json.load(open('resultspfc42/Parabola#2-40pa_trial50_headspeed.json'))
+cloud_speed_40pa_t15_2 = json.load(open('resultspfc42/Parabola#2-40pa_trial50_headspeed2.json'))
+cloud_speed_40pa_t17 = json.load(open('resultspfc42/Parabola#0-40pa_trial70_headspeed.json'))  
+cloud_speed_40pa_t17_2 = json.load(open('resultspfc42/Parabola#0-40pa_trial70_headspeed2.json')) 
+cloud_speed_40pa_t19 = json.load(open('resultspfc42/Parabola#0-40pa_trial90_headspeed.json'))  
+cloud_speed_40pa_t19_2 = json.load(open('resultspfc42/Parabola#0-40pa_trial90_headspeed2.json'))   
+    
 
 # PLOT Cloud speeds #
 data20_t13 = np.average(cloud_speed_20pa_t13_2['velocities'][:trials])#np.average([np.average(cloud_speed_20pa_t13['velocities'][:trials]), np.average(cloud_speed_20pa_t13_2['velocities'][:trials])])     #This converts to numpy
@@ -1467,18 +1530,30 @@ data30_t16 = np.average(cloud_speed_30pa_t16['velocities'][:trials])     #This c
 error30_t16 = np.average(cloud_speed_30pa_t16['errors'][:trials]) + np.std(cloud_speed_30pa_t16['velocities'][:trials])     #This converts to numpy
 data30_t18 = np.average([np.average(cloud_speed_30pa_t18['velocities'][:trials]), np.average(cloud_speed_30pa_t18_2['velocities'][:trials])])     #This converts to numpy
 error30_t18 = np.average([np.average(cloud_speed_30pa_t18['errors'][:trials]) + np.std(cloud_speed_30pa_t18['velocities'][:trials]), np.average(cloud_speed_30pa_t18_2['errors'][:trials]) + np.std(cloud_speed_30pa_t18_2['velocities'][:trials])])    #This converts to numpy
+#
+trials=10
+data40_t13 = np.average([np.average(cloud_speed_40pa_t13['velocities'][:trials]), np.average(cloud_speed_40pa_t13_2['velocities'][:trials])])     #This converts to numpy
+error40_t13 = np.average([np.average(cloud_speed_40pa_t13['errors'][:trials]) + np.std(cloud_speed_40pa_t13['velocities'][:trials]), np.average(cloud_speed_40pa_t13_2['errors'][:trials]) + np.std(cloud_speed_40pa_t13_2['velocities'][:trials])])    #This converts to numpy
+data40_t15 = np.average([abs(np.average(cloud_speed_40pa_t15['velocities'][:trials])), abs(np.average(cloud_speed_40pa_t15_2['velocities'][:trials]))])     #This converts to numpy
+error40_t15 = np.average([abs(np.average(cloud_speed_40pa_t15['errors'][:trials])) + abs(np.std(cloud_speed_40pa_t15['velocities'][:trials])), abs(np.average(cloud_speed_40pa_t15_2['errors'][:trials])) + abs(np.std(cloud_speed_40pa_t15_2['velocities'][:trials]))])    #This converts to numpy
+data40_t17 = np.average([abs(np.average(cloud_speed_40pa_t17['velocities'][:trials])), abs(np.average(cloud_speed_40pa_t17_2['velocities'][:trials]))])     #This converts to numpy
+error40_t17 = np.average([abs(np.average(cloud_speed_40pa_t17['errors'][:trials])) + abs(np.std(cloud_speed_40pa_t17['velocities'][:trials])), abs(np.average(cloud_speed_40pa_t17_2['errors'][:trials])) + abs(np.std(cloud_speed_40pa_t17_2['velocities'][:trials]))])    #This converts to numpy
+data40_t19 = np.average([abs(np.average(cloud_speed_40pa_t19['velocities'][:trials])), abs(np.average(cloud_speed_40pa_t19_2['velocities'][:trials]))])     #This converts to numpy
+error40_t19 = np.average([abs(np.average(cloud_speed_40pa_t19['errors'][:trials])) + abs(np.std(cloud_speed_40pa_t19['velocities'][:trials])), abs(np.average(cloud_speed_40pa_t19_2['errors'][:trials])) + abs(np.std(cloud_speed_40pa_t19_2['velocities'][:trials]))])    #This converts to numpy
 
 #bigploterror_6(data20_t13, error20_t13, data20_t14, error20_t14, data25_t13, error25_t13, data25_t14, error25_t14, data30_t14, error30_t14, data30_t15, error30_t15, 'Compare group velocities 25-30pa RDC', ['20 Pa t13', '20 Pa t14', '25 Pa t13', '25 Pa t14', '30 Pa t14', '30 Pa t15'])
 #bigploterror_6_3ov3(data20_t14, error20_t14, data_20_average, error_20_average, data25_t14, error25_t14, data_25_average, error_25_average, data30_t14, error30_t14, data_30_average, error_30_average, 't_1 = 1.4 ms', ['20 Pa', '20 Pa 100DC', '25 Pa', '25 Pa 100DC', '30 Pa', '30 Pa 100DC'])
 allplot_noerror(data20_t13, data20_t14, data20_t16, data20_t18, data_20_average, data25_t13, data25_t14, data25_t16, data25_t18, data_25_average, data30_t14, data30_t15, data30_t16, data30_t18, data_30_average, '', [''])#data_20_average
 
 # Import Math #
-theory_cloud_speed_20pa = np.array(json.load(open('theory/theo_v_group_20pa_ef-reduce.txt')))
+theory_cloud_speed_20pa = np.array(json.load(open('resultsC17/theory/theo_v_group_20pa_ef-reduce.txt')))
 v_group_5(theory_cloud_speed_20pa, data20_t13, error20_t13, data20_t14, error20_t14, data20_t16, error20_t16, data20_t18, error20_t18, data_20_average, error_20_average , '', ['Theory 20pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
-theory_cloud_speed_25pa = np.array(json.load(open('theory/theo_v_group_25pa_ef-reduce.txt')))
+theory_cloud_speed_25pa = np.array(json.load(open('resultsC17/theory/theo_v_group_25pa_ef-reduce.txt')))
 v_group_5(theory_cloud_speed_25pa, data25_t13, error25_t13, data25_t14, error25_t14, data25_t16, error20_t16, data25_t18, error25_t18, data_25_average, error_25_average, '', ['Theory 25pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
-theory_cloud_speed_30pa = np.array(json.load(open('theory/theo_v_group_30pa_ef-reduce.txt')))
+theory_cloud_speed_30pa = np.array(json.load(open('resultsC17/theory/theo_v_group_30pa_ef-reduce.txt')))
 v_group_5_30pa(theory_cloud_speed_30pa, data30_t14, error30_t14, data30_t15, error30_t15, data30_t16, error30_t16, data30_t18, error30_t18, data_30_average, error_30_average, '', ['Theory 30pa', 'E40%', 'E50%', 'E60%', 'E80%', 'E100%'])
+
+vgroup_p40(data40_t13, error40_t13, data40_t15, error40_t15, data40_t17, error40_t17, data40_t19, error40_t19, data_40_average, error_40_average, '', ['E30%', 'E50%', 'E70%', 'E90%', 'E100%'])
 
 cs_deviation_20 = 100.0 -(100.0/data_20_average)*data20_t14
 cs_deviation_25 = 100.0 -(100.0/data_25_average)*data25_t14
@@ -1489,21 +1564,21 @@ cs_deviation_30 = 100.0 -(100.0/data_30_average)*data30_t14
 ### PIV Cloud speeds ###
 ########################
 
-obj_text = codecs.open('PIV/20pa_t13_frame_0472_0473.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/20pa_t13_frame_0472_0473.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/20pa_t13_frame_0472_0473_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/20pa_t13_frame_0472_0473_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa20_t13_frame_0472_0473_weights = np.average(a, weights = b)      #This converts to numpy
 
-obj_text = codecs.open('PIV/20pa_t13_frame_0473_0474.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/20pa_t13_frame_0473_0474.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/20pa_t13_frame_0473_0474_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/20pa_t13_frame_0473_0474_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa20_t13_frame_0473_0474_weights = np.average(a, weights = b)      #This converts to numpy
 
-obj_text = codecs.open('PIV/20pa_t13_head_frame_0316_0317.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/20pa_t13_head_frame_0316_0317.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/20pa_t13_head_frame_0316_0317_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/20pa_t13_head_frame_0316_0317_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa20_t13_head_frame_0316_317_weights = np.average(a, weights = b)      #This converts to numpy
 
@@ -1511,27 +1586,27 @@ p20_t13_backward = (pa20_t13_frame_0472_0473_weights + pa20_t13_frame_0473_0474_
 
 p20_t13_deviation = 100.0 - (100.0/p20_t13_backward)*pa20_t13_head_frame_0316_317_weights
 
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0949_0950.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0949_0950.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0949_0950_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0949_0950_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa25_t13_frame_0949_0950_weights = np.average(a, weights = b)      #This converts to numpy
 
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0950_0951.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0950_0951.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0950_0951_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0950_0951_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa25_t13_frame_0950_0951_weights = np.average(a, weights = b)      #This converts to numpy
 
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0775_0776.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0775_0776.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0775_0776_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0775_0776_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa25_t13_frame_0775_0776_weights = np.average(a, weights = b)      #This converts to numpy
 
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0776_0777.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0776_0777.txt', 'r', encoding='utf-8').read()
 a = np.array(json.loads(obj_text)) #This reads json to list
-obj_text = codecs.open('PIV/VM2_AVI_230125_111238_25pa_t13_frame_0776_0777_R.txt', 'r', encoding='utf-8').read()
+obj_text = codecs.open('resultsC17/PIV/VM2_AVI_230125_111238_25pa_t13_frame_0776_0777_R.txt', 'r', encoding='utf-8').read()
 b = np.array(json.loads(obj_text)) #This reads json to list
 pa25_t13_frame_0776_0777_weights = np.average(a, weights = b)      #This converts to numpy
 
@@ -1548,74 +1623,74 @@ p25_t13_deviation = 100.0 - (100.0/pa25_t13_backward)*pa25_t13_forward
 ##########################
 
 # load VM2_AVI_230125_104901_20pa_t13 #
-obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104901_20pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104901_20pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
 b20 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_104901_20pa_t13_speedlist_backward = np.array(b20) + np.average(cloud_speed_20pa_t13['velocities'][:trials])    #This converts to numpy
 # load VM2_AVI_230125_104331_20pa_t14 #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 b20 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_104331_20pa_t14_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t14['velocities'][:trials])      #This converts to numpy
 VM2_AVI_230125_104331_20pa_t14_speedlist_backward = np.array(b20) + np.average(cloud_speed_20pa_t14['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_104101_20pa_t18_speedlist_forward #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104101_20pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104101_20pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_104101_20pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t18['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_104331_20pa_t16 #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104154_20pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104154_20pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_104154_20pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t16['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_104227_20pa_t16 #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_104227_20pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104227_20pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_104227_20pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t16_2['velocities'][:trials])      #This converts to numpy
 
 
 # load VM2_AVI_230125_111238_25pa_t13 #
-obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
 b25 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_111238_25pa_t13_speedlist_backward = -np.array(b25) + np.average(cloud_speed_25pa_t13['velocities'][:trials])     #This converts to numpy
 # load VM2_AVI_230125_111238_25pa_t14 #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_111238_25pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f25 = json.loads(obj_text_f) #This reads json to list
 b25 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_111238_25pa_t14_speedlist_forward = -np.array(f25) + np.average(cloud_speed_25pa_t14['velocities'][:trials])      #This converts to numpy
 VM2_AVI_230125_111238_25pa_t14_speedlist_backward = np.array(b25) + np.average(cloud_speed_25pa_t14['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_111106_25pa_t16_speedlist_forward #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_111106_25pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_111106_25pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_111106_25pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t16['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_110948_25pa_t18_speedlist_forward #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110948_25pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_110948_25pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_110948_25pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_20pa_t18['velocities'][:trials])      #This converts to numpy
 
 # load VM2_AVI_230125_110058_30pa_t14 #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110058_30pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110058_30pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_110058_30pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_110058_30pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f30 = json.loads(obj_text_f) #This reads json to list
 b30 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_110058_30pa_t14_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_t14['velocities'][:trials])      #This converts to numpy
 VM2_AVI_230125_110058_30pa_t14_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_t14['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_110133_30pa_t15 #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110133_30pa_t15_speedlist_forward.txt', 'r', encoding='utf-8').read()
-obj_text_b = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110133_30pa_t15_speedlist_backward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_110133_30pa_t15_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_110133_30pa_t15_speedlist_backward.txt', 'r', encoding='utf-8').read()
 f30 = json.loads(obj_text_f) #This reads json to list
 b30 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_110133_30pa_t15_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_t15['velocities'][:trials])      #This converts to numpy
 VM2_AVI_230125_110133_30pa_t15_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_t15['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_110007_30pa_t16_speedlist_forward #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_110007_30pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_110007_30pa_t16_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_110007_30pa_t16_speedlist_forward = -np.array(f20) + np.average(cloud_speed_30pa_t16['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_105926_30pa_t18_speedlist_forward #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_105926_30pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_105926_30pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_105926_30pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_30pa_t18_2['velocities'][:trials])      #This converts to numpy
 # load VM2_AVI_230125_105845_30pa_t18_speedlist_forward #
-obj_text_f = codecs.open('phase-speeds/RDC/VM2_AVI_230125_105845_30pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_105845_30pa_t18_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f20 = json.loads(obj_text_f) #This reads json to list
 VM2_AVI_230125_105845_30pa_t18_speedlist_forward = -np.array(f20) + np.average(cloud_speed_30pa_t18['velocities'][:trials])      #This converts to numpy
 
@@ -1675,15 +1750,15 @@ error_speedlist_average_30pa_forward_t16 = np.std(VM2_AVI_230125_110007_30pa_t16
 #allplot_noerror()
 
 # theory compare 20 pa e-field drop
-theory_physe_speed_20pa = np.array(json.load(open('theory/theo_c_daw_20pa_ef-reduce.txt')))
+theory_physe_speed_20pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_20pa_ef-reduce.txt')))
 c_daw_4(theory_physe_speed_20pa, speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_20pa_forward_t16, error_speedlist_average_20pa_forward_t16, speedlist_average_20pa_forward_t18, error_speedlist_average_20pa_forward_t18, speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, '20pa', ['Theory 20pa','E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
 
 # theory compare 25 pa e-field drop
-theory_physe_speed_25pa = np.array(json.load(open('theory/theo_c_daw_25pa_ef-reduce.txt')))
+theory_physe_speed_25pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_25pa_ef-reduce.txt')))
 c_daw_4(theory_physe_speed_25pa, speedlist_average_25pa_forward_t14, error_speedlist_average_25pa_forward_t14, speedlist_average_25pa_forward_t16, error_speedlist_average_25pa_forward_t16, speedlist_average_25pa_forward_t18, error_speedlist_average_25pa_forward_t18, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, '25pa', ['Theory 25pa','E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
 
 # theory compare 30 pa e-field drop
-theory_physe_speed_30pa = np.array(json.load(open('theory/theo_c_daw_30pa_ef-reduce.txt')))
+theory_physe_speed_30pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_30pa_ef-reduce.txt')))
 c_daw_4_30pa(theory_physe_speed_30pa, speedlist_average_30pa_forward_t14, error_speedlist_average_30pa_forward_t14, speedlist_average_30pa_forward_t16, error_speedlist_average_30pa_forward_t16, speedlist_average_30pa_forward_t18, error_speedlist_average_30pa_forward_t18, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, '30pa', ['Theory 30pa','E-field 40%', 'E-field 60%', 'E-field 80%', 'E-field 100%'])
 
 #%% Dispersion Relation
@@ -1693,19 +1768,19 @@ c_daw_4_30pa(theory_physe_speed_30pa, speedlist_average_30pa_forward_t14, error_
 ###########################
 
 # Open and Read JSON file with system data
-f = open ('parameters/system-parameter-C15-230125.json', "r")
+f = open ('resultsC17/parameters/system-parameter-C15-230125.json', "r")
 data_read = json.loads(f.read())
 #
 # Wave Length Read In 20 #
-a = np.array(json.load(open('wavelength/VM2_AVI_230125_103901_20pa_wavelenlist_forward.txt')))
-b = np.array(json.load(open('wavelength/VM2_AVI_230125_103947_20pa_wavelenlist_forward.txt')))
-c = np.array(json.load(open('wavelength/VM2_AVI_230125_104625_20pa_wavelenlist_forward.txt')))
-d = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104101_20pa_t18_wavelenlist_forward.txt')))
-e = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104154_20pa_t16_wavelenlist_forward.txt')))
-f = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104227_20pa_t16_wavelenlist_forward.txt')))
-g = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104331_20pa_t14_wavelenlist_backward.txt')))
-h = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104331_20pa_t14_wavelenlist_forward.txt')))
-i = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_104901_20pa_t13_wavelenlist_backward.txt')))
+a = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_103901_20pa_wavelenlist_forward.txt')))
+b = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_103947_20pa_wavelenlist_forward.txt')))
+c = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_104625_20pa_wavelenlist_forward.txt')))
+d = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_104101_20pa_t18_wavelenlist_forward.txt')))
+e = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_104154_20pa_t16_wavelenlist_forward.txt')))
+f = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_104227_20pa_t16_wavelenlist_forward.txt')))
+g = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_104331_20pa_t14_wavelenlist_backward.txt')))
+h = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_104331_20pa_t14_wavelenlist_forward.txt')))
+i = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_104901_20pa_t13_wavelenlist_backward.txt')))
 # 20
 wavelen_20pa = np.average([np.average(a), np.average(b), np.average(c)]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
 wavelen_error_20pa = np.average([np.std(a)/np.sqrt(len(a)), np.std(b)/np.sqrt(len(b)), np.std(c)/np.sqrt(len(c))]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
@@ -1723,12 +1798,12 @@ wavelen_20pa_t13 = np.average(i[i != 0])
 wavelen_error_20pa_t13 = np.std(i[i != 0])/np.sqrt(len(i[i != 0]))
 #
 # Wave Length Read In 25 #
-a = np.array(json.load(open('wavelength/VM2_AVI_230125_110808_25pa_wavelenlist_forward.txt')))
-b = np.array(json.load(open('wavelength/VM2_AVI_230125_111329_25pa_wavelenlist_forward.txt')))
-d = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110948_25pa_t18_wavelenlist_forward.txt')))
-e = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_111106_25pa_t16_wavelenlist_forward.txt')))
-f = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_111238_25pa_t14_wavelenlist_forward.txt')))
-g = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_111238_25pa_t13_wavelenlist_backward.txt'))) #backward
+a = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_110808_25pa_wavelenlist_forward.txt')))
+b = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_111329_25pa_wavelenlist_forward.txt')))
+d = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_110948_25pa_t18_wavelenlist_forward.txt')))
+e = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_111106_25pa_t16_wavelenlist_forward.txt')))
+f = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_111238_25pa_t14_wavelenlist_forward.txt')))
+g = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_111238_25pa_t13_wavelenlist_backward.txt'))) #backward
 # 25
 wavelen_25pa = np.average([np.average(a), np.average(b)])
 wavelen_error_25pa = np.average([np.std(a)/np.sqrt(len(a)), np.std(b)/np.sqrt(len(b))]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
@@ -1746,13 +1821,13 @@ wavelen_25pa_t13_b = np.average(g[g != 0])
 wavelen_error_25pa_t13_b = np.std(g[g != 0])/np.sqrt(len(g[g != 0]))
 #
 # Wave Length Read In 30 #
-a = np.array(json.load(open('wavelength/VM2_AVI_230125_105732_30pa_wavelenlist_forward.txt')))
-b = np.array(json.load(open('wavelength/VM2_AVI_230125_110231_30pa_wavelenlist_forward.txt')))
-d = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_105845_30pa_t18_wavelenlist_forward.txt')))
-e = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_105926_30pa_t18_wavelenlist_forward.txt')))
-f = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110007_30pa_t16_wavelenlist_forward.txt')))
-g = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110058_30pa_t14_wavelenlist_forward.txt')))
-h = np.array(json.load(open('wavelength/RDC/VM2_AVI_230125_110133_30pa_t15_wavelenlist_forward.txt')))
+a = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_105732_30pa_wavelenlist_forward.txt')))
+b = np.array(json.load(open('resultsC17/wavelength/VM2_AVI_230125_110231_30pa_wavelenlist_forward.txt')))
+d = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_105845_30pa_t18_wavelenlist_forward.txt')))
+e = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_105926_30pa_t18_wavelenlist_forward.txt')))
+f = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_110007_30pa_t16_wavelenlist_forward.txt')))
+g = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_110058_30pa_t14_wavelenlist_forward.txt')))
+h = np.array(json.load(open('resultsC17/wavelength/RDC/VM2_AVI_230125_110133_30pa_t15_wavelenlist_forward.txt')))
 # 30
 wavelen_30pa = np.average([np.average(a), np.average(b)])
 wavelen_error_30pa = np.average([np.std(a)/np.sqrt(len(a)), np.std(b)/np.sqrt(len(b))]) #, np.average(np.array(json.load(open('wavelength/VM2_AVI_230125_104809_20pa_wavelenlist_forward.txt'))))]
@@ -1939,7 +2014,7 @@ data = {
                     "k_40_error" : k_30pa_error_t14,
             }
         }
-with open('results/finaldatastack.json', 'w') as filehandle:
+with open('resultsC17/finaldatastack.json', 'w') as filehandle:
     json.dump(data, filehandle)
             
 
