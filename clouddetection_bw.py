@@ -42,18 +42,20 @@ import json
 
 # img read
 
-folder = 'D://PFC42-D3/Parabola#8-30pa-50trial30'
+folder = 'data/VM2-AVI-240606-085944_40pa_0p5mA_tr50'
+#data/VM2-AVI-240606-090245_30pa_0p5mA_tr100
+#data/VM2-AVI-240606-085645_40pa_0p5mA_tr90
 
-
+#D://PFC42-D3/Parabola#0-40pa-100trial70
 #Parabola#10-25pa-100trial70
 #Parabola#16-20pa-100trial70
 #Parabola#19-15pa-100trial70
-#%%
-group_frames = pims.open(folder+'/30/head/*.bmp')
+
+group_frames = pims.open(folder+'/head/*.bmp')
 
 background_frame = pims.open(folder+'/*.bmp')[0]
 #%%
-test = (group_frames[30] - (background_frame*.99))[850:850+250,:]>1.5
+test = (group_frames[10] - (background_frame*.99))[400:800,:]>5 #5-8
 #blurred_image = gaussian_filter(test, sigma=10)[850:1100,:]
 
 
@@ -77,39 +79,23 @@ def grey_sum(frame):
 
 ### --- Sience Grayscale Plot --- ###
 
-def plot_fit_group(data, pix_size, fps):
+def plot_fit_group(limit, pix_size, fps):
+    positions = np.array(limit) * pix_size  # Convert pixel indices to millimeters
+    times = np.arange(len(limit)) / fps     # Convert frame indices to seconds
     
-    arr_referenc =  np.arange(len(data))
-    fig, ax = plt.subplots(dpi=600)
-    fig.set_size_inches(6, 6)
+    poly_coeffs = np.polyfit(times, positions, 1)  # Linear fit
+    poly_result = np.poly1d(poly_coeffs)
     
-    #fig.savefig('test2png.png', dpi=100)
-    #color pattern: '#00429d' blue, '#b03a2e' red, '#1e8449' green
-    ax.scatter(arr_referenc,data, color='#00429d', marker='^')
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, positions, 'o', label='Data Points')
+    plt.plot(times, poly_result(times), '-', label='Polynomial Fit')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (mm)')
+    plt.legend()
+    plt.title('Polynomial Fit of Cloud Head Positions')
+    plt.show()
     
-    #adds a title and axes labels
-    #ax.set_title('')
-    plt.xlabel('Time [frames]')
-    plt.ylabel('Wave position [mm]')
-
-    #adds major gridlines
-    ax.grid(color='grey', linestyle='-', linewidth=0.25, alpha=0.5)
-    
-    #ax limit
-    ax.set_xlim(xmin=0)
-    #ax.set_ylim(ymax=20)
-    
-    #legend
-    #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
-    
-    coef = np.polyfit(arr_referenc,data,1)
-    poly1d_fn = np.poly1d(coef)             # poly1d_fn is now a function which takes in x and returns an estimate for y
-    
-    ax.plot(arr_referenc, poly1d_fn(arr_referenc), '--k') #'--k'=black dashed line, 'yo' = yellow circle marker
-    
-    plt.show()    
-
-    return poly1d_fn
+    return poly_result #in mm/s
 
 
 
@@ -162,9 +148,18 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
 
     #cut = 1250 #int(group_frames[0].shape[0] - cut_width)  #cut out the bottom
 
-    faktor = 1/(fps*pix_size)
+    ### PLOT ###
+    fig = plt.figure(figsize = (10,10), dpi=200) # create a 5 x 5 figure
+    ax = fig.add_subplot(111)
+    #ax limit
+    ax.set_ylim(ymin=0, ymax=30)
 
-    
+    ### PLOT ###
+    fig = plt.figure(figsize = (10,10), dpi=200) # create a 5 x 5 figure
+    ax = fig.add_subplot(111)
+    #ax limit
+    ax.set_ylim(ymin=0, ymax=30)
+     
 
     items = range(len(group_frames))
     for item in tqdm(items, desc="Processing items", unit="item"):
@@ -193,39 +188,33 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
         #        limit.append(i)
         #        check = i
         
-        ### PLOT ###
-        fig = plt.figure(figsize = (10,10), dpi=200) # create a 5 x 5 figure
-        ax = fig.add_subplot(111)
-        #ax limit
-        ax.set_ylim(ymin=0, ymax=30)
-        
         plt.plot(x, value, label="envelope")
         ax.plot(prog, linewidth=0.8, label="Flux")           #, color='#00429d'
         #
         if check != 0:
             ax.axvline(check, linestyle='dashed', color='r');
         #
-        plt.show()
+    plt.show()
 
     if reverse_data == True:    
         limit = limit[::-1]
     
     poly_result2 = plot_fit_group(limit, pix_size, fps)
     result2 = np.polyder(poly_result2).coeffs[0]    #first coefficient -> slope
-    #print('wert von result2: '+str(result2))
+    
+    print('df: ' + str(result2) + 'function: ' + str(poly_result2))
     
 
-    s2 = 0   ## standard deviation of x ##
-    for i in range(len(limit)):
-        s2 += (limit[i] - poly_result2(i))**2
-    s2 = np.sqrt((1/(len(limit)-1))*s2)
-    dx2 = s2/np.sqrt(len(limit))
+    # Calculate the standard deviation of the residuals
+    s2 = np.sqrt(np.sum((np.array(limit) - poly_result2(np.arange(len(limit)) / fps) / pix_size) ** 2) / (len(limit) - 1))
+    # Calculate the error of the slope
+    dx2 = s2 / np.sqrt(len(limit))
     
     ### error of v ###
     
-    dx2_in_mm = dx2 * pix_size
-    v_in_mms = result2 * faktor
-    s_in_mm = (limit[-1]-limit[0]) * pix_size
+    dx2_in_mm = dx2
+    v_in_mms = result2
+    s_in_mm = (limit[-1]-limit[0])
     dv_in_mms = v_in_mms*dx2_in_mm/s_in_mm
     
     print("Group speed v = " + str(v_in_mms) + " /pm " + str(dv_in_mms) + " /frac(mm)(s)")
@@ -236,8 +225,8 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
 def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
     try:    
         #----------Parameter Space----------
-        threshold = trial.suggest_float('threshold', 1, 4)
-        gate = trial.suggest_float('gate', 5, 15)
+        threshold = trial.suggest_float('threshold', 5.3, 7) #1-4 ss #5-7 vm2-pk4gi
+        gate = trial.suggest_float('gate', 15, 25)   #15-25 pk4gi
         gauss_sigma = trial.suggest_float('gauss_sigma', 5, 50)
         envelope_step = trial.suggest_int('envelope_step', 20, 100)
         #-----------------------------------
@@ -256,11 +245,11 @@ def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
         return float('inf')
 
 # Adjustables
-fps = 60
-pix_size = 0.0118  # in mm #iss 0.0147
-cut = 850
-cut_width = 250
-reverse_data = True #True cloud coming from the left; False cloud coming from the right of the image
+fps = 30    #vm2-pk-4gi 30
+pix_size = 0.0143  # in mm #iss 0.0143 #ixQ 0.0118
+cut = 400
+cut_width = 400
+reverse_data = False #True cloud coming from the left; False cloud coming from the right of the image
 trials = 30
 
 # Create a partial function to pass additional fixed parameters to the objective function
@@ -291,9 +280,7 @@ param_importance_plot.show()
 
 contour_plot = vis.plot_contour(study, params=["threshold", "gate"])
 contour_plot.show()
-
 #%%
-
 # Combine errors and velocities using zip
 data = list(zip(global_error, global_speed))
 
@@ -313,7 +300,8 @@ output_data = {
 }
 #%%
 #Save the data to a JSON file
-output_filename = folder[13:28]+"_trial50_headspeed2.json"
+output_filename = folder[5:]+"_headspeed.json"
+#output_filename = folder[13:28]+"-t70_headspeed.json"
 with open(output_filename, 'w') as json_file:
     json.dump(output_data, json_file)
 
