@@ -42,20 +42,22 @@ import json
 
 # img read
 
-folder = 'data/VM2-AVI-240606-085944_40pa_0p5mA_tr50'
+folder = 'D://PFC42-D3/Parabola#16-20pa-100trial70'
+
 #data/VM2-AVI-240606-090245_30pa_0p5mA_tr100
 #data/VM2-AVI-240606-085645_40pa_0p5mA_tr90
 
+#D://PFC42-D3/Parabola#16-20pa-100trial70
 #D://PFC42-D3/Parabola#0-40pa-100trial70
 #Parabola#10-25pa-100trial70
 #Parabola#16-20pa-100trial70
 #Parabola#19-15pa-100trial70
 
-group_frames = pims.open(folder+'/head/*.bmp')
+group_frames = pims.open(folder+'/100/head/*.bmp')
 
 background_frame = pims.open(folder+'/*.bmp')[0]
 #%%
-test = (group_frames[10] - (background_frame*.99))[400:800,:]>5 #5-8
+test = gaussian_filter((group_frames[1] - (background_frame*.99))[1100:1300,:],sigma=15)>.2 #5-8
 #blurred_image = gaussian_filter(test, sigma=10)[850:1100,:]
 
 
@@ -158,14 +160,14 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
     fig = plt.figure(figsize = (10,10), dpi=200) # create a 5 x 5 figure
     ax = fig.add_subplot(111)
     #ax limit
-    ax.set_ylim(ymin=0, ymax=30)
+    #ax.set_ylim(ymin=0, ymax=210)
      
 
     items = range(len(group_frames))
     for item in tqdm(items, desc="Processing items", unit="item"):
         frame = group_frames[item]
         frame = frame - background_frame * 0.99
-        prog = gaussian_filter1d(grey_sum(frame[int(cut):int(cut+cut_width),:] >threshold), sigma=gauss_sigma)
+        prog = gaussian_filter1d(grey_sum(frame[int(cut):int(cut+cut_width),200:] > threshold), sigma=gauss_sigma)
         #prog = gaussian_filter1d(grey_sum(frame[int(cut-(cut_width/2)):int(cut+(cut_width/2)),:] >threshold), sigma=gauss_sigma)
         #prog = grey_sum(gaussian_filter(frame[int(cut-(cut_width/2)):int(cut+(cut_width/2)),:],sigma=gauss_sigma))
         #
@@ -225,13 +227,13 @@ def cloudhead_pos_data(group_frames,threshold, gate, gauss_sigma, envelope_step,
 def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
     try:    
         #----------Parameter Space----------
-        threshold = trial.suggest_float('threshold', 5.3, 7) #1-4 ss #5-7 vm2-pk4gi
-        gate = trial.suggest_float('gate', 15, 25)   #15-25 pk4gi
-        gauss_sigma = trial.suggest_float('gauss_sigma', 5, 50)
+        threshold = trial.suggest_float('threshold',1.2, 2.4) #1.2, 2.5(1-4) xiq #5-7 vm2-pk4gi
+        gate = trial.suggest_float('gate', 4,20)   #15-25 pk4gi # 5, 15 iss
+        gauss_sigma = trial.suggest_float('gauss_sigma', 5, 25)
         envelope_step = trial.suggest_int('envelope_step', 20, 100)
         #-----------------------------------
         error, velocity = cloudhead_pos_data(
-            group_frames[:], threshold, gate, gauss_sigma,
+            group_frames[2:12], threshold, gate, gauss_sigma,
             envelope_step, cut_width, cut, reverse_data, fps, pix_size
         )
 
@@ -245,10 +247,10 @@ def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
         return float('inf')
 
 # Adjustables
-fps = 30    #vm2-pk-4gi 30
-pix_size = 0.0143  # in mm #iss 0.0143 #ixQ 0.0118
-cut = 400
-cut_width = 400
+fps = 60    #vm2-pk-4gi 30
+pix_size = 0.0118  # in mm #iss 0.0143 #ixQ 0.0118
+cut = 1100
+cut_width = 200
 reverse_data = False #True cloud coming from the left; False cloud coming from the right of the image
 trials = 30
 
@@ -300,8 +302,8 @@ output_data = {
 }
 #%%
 #Save the data to a JSON file
-output_filename = folder[5:]+"_headspeed.json"
-#output_filename = folder[13:28]+"-t70_headspeed.json"
+output_filename = folder[17:]+"_headspeed.json"
+#output_filename = folder[13:28]+"-t30_headspeed.json"
 with open(output_filename, 'w') as json_file:
     json.dump(output_data, json_file)
 
