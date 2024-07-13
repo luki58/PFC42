@@ -1395,17 +1395,17 @@ def charge_plot(Z_d, Z_d_0, k):
     ax.scatter(k[3], Z_d[3], marker='d', color='#004D40', linewidth=1.5, s=30, facecolors='none')
     ax.scatter(k[4], Z_d[4], marker='d', color='#9A0CCA', linewidth=1.5, s=30, facecolors='none')
     #
-    #ax.scatter(k[0], Z_d_0[0], marker='^', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
-    #ax.scatter(k[1], Z_d_0[1], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    #ax.scatter(k[2], Z_d_0[2], marker='^', color='#FFC107', linewidth=1.5, s=30, facecolors='none')
-    #ax.scatter(k[3], Z_d_0[3], marker='^', color='#004D40', linewidth=1.5, s=30, facecolors='none')
-    #ax.scatter(k[4], Z_d_0[4], marker='^', color='#9A0CCA', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[0], Z_d_0[0], marker='^', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[1], Z_d_0[1], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[2], Z_d_0[2], marker='^', color='#FFC107', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[3], Z_d_0[3], marker='^', color='#004D40', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[4], Z_d_0[4], marker='^', color='#9A0CCA', linewidth=1.5, s=30, facecolors='none')
     ax.legend(['15pa','20 Pa','25 Pa', '30 Pa','40 pa'], loc='upper right', prop={'size': 9})
 
     #adds a title and axes labels
     ax.set_title('Charge evolution')
-    plt.ylabel('$Z_{d}$ [e]')
-    plt.xlabel('k$\lambda_{D}$')
+    plt.ylabel('$z$')
+    plt.xlabel('$\lambda / l_i$')
  
     #removing top and right borders
     #ax.spines['top'].set_visible(False)
@@ -2158,11 +2158,12 @@ k_30 = [k_30pa*data_read["30pa"]["debye_Di"], k_30pa_t18*data_read["30pa"]["deby
 #
 dispersion_relation_all(w_20, w_25, w_30, 0, 0, k_20, k_25, k_30, 0, 0)
 #prep
-Z_d = [parameters["15pa"]["Z_d"], parameters["20pa"]["Z_d"], parameters["25pa"]["Z_d"], parameters["30pa"]["Z_d"], parameters["40pa"]["Z_d"]]
-Z_d_0 = [parameters["15pa"]["Z_d_0"], parameters["20pa"]["Z_d_0"], parameters["25pa"]["Z_d_0"], parameters["30pa"]["Z_d_0"], parameters["40pa"]["Z_d_0"]]
-k = [k_15pa*data_read["15pa"]["debye_Di"], k_20pa*data_read["20pa"]["debye_Di"], k_25pa*data_read["25pa"]["debye_Di"], k_30pa*data_read["30pa"]["debye_Di"], k_40pa*data_read["40pa"]["debye_Di"]]
+Z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
+Z_d_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
+ion_mean = [1/(parameters["15pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["20pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["25pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["30pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["40pa"]["n_0"]*parameters["neon"]["cross-section"])]
+collisionality = [parameters["15pa"]["debye_D"]/ion_mean[0], parameters["20pa"]["debye_D"]/ion_mean[1], parameters["25pa"]["debye_D"]/ion_mean[2], parameters["30pa"]["debye_D"]/ion_mean[3], parameters["40pa"]["debye_D"]/ion_mean[4]]
 #
-charge_plot(Z_d, Z_d_0, k)
+charge_plot(Z_d, Z_d_0, collisionality)
 
 #%%
 
