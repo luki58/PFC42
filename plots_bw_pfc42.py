@@ -11,7 +11,7 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import codecs, json
-
+import pandas
 #%% PLOTS
 ### --- Sience Grayscale Plot --- ###
 
@@ -1043,23 +1043,28 @@ def cdaw_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, theo
     
     plt.show() 
     
-def group_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, theory20, data2, error2, theory25, data3, error3, theory30, data4, error4, theory40, havnes, title, legend):
+def group_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, data_pfc, error_pfc, theory20, data2, error2, data2_pfc, error2_pfc, theory25, data3, error3, data3_pfc, error3_pfc, theory30, data4, error4, theory40, havnes, title, legend):
     
     fig, ax = plt.subplots(dpi=600)
     fig.set_size_inches(6, 3)
     #
-    ax.errorbar(15, data15, yerr=error15, fmt='x', color='#ff8000', markersize=2, linewidth=1, capsize=2)
-    ax.errorbar(20, data, yerr=error, fmt='x', color='#ff8000', markersize=2, linewidth=1, capsize=2)        
-    ax.errorbar(25, data2, yerr=error2, fmt='x', color='#ff8000', markersize=2, linewidth=1, capsize=2)    
-    ax.errorbar(30, data3, yerr=error3, fmt='x',color='#ff8000', markersize=2, linewidth=1, capsize=2)
-    ax.errorbar(40, data4, yerr=error4, fmt='x',color='#ff8000', markersize=2, linewidth=1, capsize=2)
+    ax.errorbar(15, data15, yerr=error15, fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)
+    ax.errorbar(20, data, yerr=error, fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2) 
+    ax.errorbar(20, data_pfc, yerr=error_pfc, fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)        
+    ax.errorbar(25, data2, yerr=error2, fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2)
+    ax.errorbar(25, data2_pfc, yerr=error2_pfc, fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)    
+    ax.errorbar(30, data3, yerr=error3, fmt='x',color='#48A2F1', markersize=2, linewidth=1, capsize=2)
+    ax.errorbar(30, data3_pfc, yerr=error3_pfc, fmt='^',color='#D81B1B', markersize=2, linewidth=1, capsize=2)
+    ax.errorbar(40, data4, yerr=error4, fmt='^',color='#D81B1B', markersize=2, linewidth=1, capsize=2)
     #
+    #ax.legend(['Pfc Data','ISS Data'])
     ax.scatter(15,theory15, marker='o' , color='#000000', linewidth=1, s=30, facecolors='none')#, facecolors='none'
     ax.scatter(20,theory20, marker='o' , color='#000000', linewidth=1, s=30, facecolors='none')
     ax.scatter(25,theory25, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
     ax.scatter(30,theory30, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
     ax.scatter(40,theory40, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
     #
+    #ax.legend(['Theory  '], bbox_to_anchor=(0.15, 0.8, .85, 0))
     #ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.85, .85, .102))
     #adds a title and axes labels
     #
@@ -1070,10 +1075,10 @@ def group_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, the
     # Create a second y-axis sharing the same x-axis
     ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     arr_referenc =  [15, 20, 25, 30, 40]
-    ax2.plot(arr_referenc, havnes, color='#00429d', linewidth=.5, linestyle='dashed')
+    ax2.plot(arr_referenc, havnes, color='#9A0CCA', linewidth=.5, linestyle='dashed')
     #
-    #ax.legend(['Data','Theory'])
-    ax2.legend(["Harvnes-Parameter"])#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    
+    ax2.legend(["Harvnes-Parameter"], bbox_to_anchor=(0.15, 0.7, .85, 0))#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
     #
     plt.ylabel('P')
     
@@ -1344,17 +1349,17 @@ def dispersion_relation(k_20, k_25, k_30, k_35, k_40, w_20, w_25, w_30, w_35, w_
     
     plt.show()    
 
-def dispersion_relation_all(k_20, k_25, k_30, k_35, k_40, w_20, w_25, w_30, w_35, w_40):
+def dispersion_relation_all(w_20, w_25, w_30, w_15, w_40, k_20, k_25, k_30, k_15, k_40):
 
     fig, ax = plt.subplots(dpi=600)
     fig.set_size_inches(6, 3)
     
-    ax.scatter(w_20, k_20, marker='^', color='#00429d', linewidth=2, s=20, facecolors='none')
-    ax.scatter(w_25, k_25, marker='o', color='#8f8f8f', linewidth=2, s=20, facecolors='none')
-    ax.scatter(w_30, k_30, marker='x', color='#ff8000', linewidth=2, s=20)
-    #ax.scatter(w_35, k_35, marker='s', color='#000000', linewidth=2, s=20)
-    #ax.scatter(w_40, k_40, marker='s', color='#000000', linewidth=2, s=20)
-    ax.legend(['20 Pa','25 Pa', '30 Pa'], loc='lower right', prop={'size': 9})
+    ax.scatter(w_15, k_15, marker='s', color='#D81B1B', linewidth=2, s=20, facecolors='none')
+    ax.scatter(w_20, k_20, marker='^', color='#48A2F1', linewidth=2, s=20, facecolors='none')
+    ax.scatter(w_25, k_25, marker='o', color='#FFC107', linewidth=2, s=20, facecolors='none')
+    ax.scatter(w_30, k_30, marker='x', color='#004D40', linewidth=2, s=20)
+    ax.scatter(w_40, k_40, marker='d', color='#9A0CCA', linewidth=2, s=20, facecolors='none')
+    ax.legend(['15 Pa', '20 Pa','25 Pa', '30 Pa', '40 Pa'], loc='lower right', prop={'size': 9})
 
     #adds a title and axes labels
     ax.set_title('Dispersion Relation')
@@ -1451,6 +1456,10 @@ cloud_speed_30pa_110231 = json.load(open('resultsC17/group-vel/VM2_AVI_230125_11
 
 #PFC42 Data:  VM2-AVI-240606-090245_30pa_0p5mA_tr100_headspeed
 cloud_speed_15pa = json.load(open('resultspfc42/Parabola#19-15p-t100_headspeed.json'))
+excel_data_df = pandas.read_excel('resultspfc42/Book-20pa-trial100-head.xlsx')
+cloud_speed_20pa = excel_data_df['headspeed'].tolist()
+excel_data_df = pandas.read_excel('resultspfc42/Book-25pa-trial100-head.xlsx')
+cloud_speed_25pa = excel_data_df['headspeed'].tolist()
 cloud_speed_30pa = json.load(open('resultspfc42/VM2-AVI-240606-090245_30pa_0p5mA_tr100_headspeed.json'))
 cloud_speed_40pa = json.load(open('resultspfc42/Parabola#0-40pa-t100_headspeed.json'))
 
@@ -1478,10 +1487,14 @@ data_30 = np.average(cloud_speed_30pa_105732['velocities'][:trials])     #This c
 error_30 = np.average(cloud_speed_30pa_105732['errors'][:trials]) + np.std(cloud_speed_30pa_105732['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
 data_30_2 = np.average(cloud_speed_30pa_110231['velocities'][:trials])     #This converts to numpy
 error_30_2 = np.average(cloud_speed_30pa_110231['errors'][:trials]) + np.std(cloud_speed_30pa_110231['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
+
 #pfc42
+data_20_pfc = np.average(cloud_speed_20pa)     #This converts to numpy
+error_20_pfc = np.std(cloud_speed_20pa)/np.sqrt(len(cloud_speed_20pa))
+data_25_pfc = np.average(cloud_speed_25pa)     #This converts to numpy
+error_25_pfc = np.std(cloud_speed_25pa)/np.sqrt(len(cloud_speed_25pa))
 data_30_pfc = np.average(cloud_speed_30pa['velocities'][:trials])     #This converts to numpy
 error_30_pfc = np.average(cloud_speed_30pa['errors'][:trials]) + np.std(cloud_speed_30pa['velocities'][:trials])/np.sqrt(trials)
-
 data_40 = np.average(cloud_speed_40pa['velocities'][:trials])     #This converts to numpy
 error_40 = np.average(cloud_speed_40pa['errors'][:trials]) + np.std(cloud_speed_40pa['velocities'][:trials])/np.sqrt(trials)      #This converts to numpy
 
@@ -1517,7 +1530,7 @@ havnes = [parameters["15pa"]["havnes"], parameters["20pa"]["havnes"], parameters
 ef = [parameters["15pa"]["e-field-vm"], parameters["20pa"]["e-field-vm"], parameters["25pa"]["e-field-vm"], parameters["30pa"]["e-field-vm"], parameters["40pa"]["e-field-vm"]]
 Zd_a = [parameters["15pa"]["Z_d"], parameters["20pa"]["Z_d"], parameters["25pa"]["Z_d"], parameters["30pa"]["Z_d"], parameters["40pa"]["Z_d"]]
 
-group_bigploterror_6_3ov3_theory(data_15_average, error_15_average, theo_plot[0]*1000, data_20_average, error_20_average, theo_plot[1]*1000, data_25_average, error_25_average, theo_plot[2]*1000, data_30_average, error_30_average, theo_plot[3]*1000, data_40_average, error_40_average, theo_plot[4]*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
+group_bigploterror_6_3ov3_theory(data_15_average, error_15_average, theo_plot[0]*1000, data_20_average, error_20_average, data_20_pfc, error_20_pfc, theo_plot[1]*1000, data_25_average, error_25_average, data_25_pfc, error_25_pfc, theo_plot[2]*1000, data_30_average, error_30_average, data_30_pfc, error_30_pfc, theo_plot[3]*1000, data_40_average, error_40_average, theo_plot[4]*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
 group_efieldploterror_6_3ov3_theory(ef[0], data_15_average, error_15_average, theo_plot[0]*1000, ef[1], data_20_average, error_20_average, theo_plot[1]*1000, ef[2], data_25_average, error_25_average, theo_plot[2]*1000, ef[3], data_30_average, error_30_average, theo_plot[3]*1000, ef[4], data_40_average, error_40_average, theo_plot[4]*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
 
 
@@ -2149,14 +2162,19 @@ bigploterror_12_2(omega_20pa, omega_20pa_t18, omega_20pa_t16, omega_20pa_t14, om
 #dispersion_relation(omega_30pa/data_read["30pa"]["w_pd"], omega_30pa_t18/data_read["30pa"]["w_pd"], omega_30pa_t16/data_read["30pa"]["w_pd"], omega_30pa_t14/data_read["30pa"]["w_pd"], 0, k_30pa*data_read["30pa"]["debye_Di"], k_30pa_t18*data_read["30pa"]["debye_Di"], k_30pa_t16*data_read["30pa"]["debye_Di"], k_30pa_t14*data_read["30pa"]["debye_Di"], 0)
 #%% PLOT
 #prep
+w_15 = [omega_15pa/data_read["15pa"]["w_pd"]]
 w_20 = [omega_20pa/data_read["20pa"]["w_pd"], omega_20pa_t18/data_read["20pa"]["w_pd"], omega_20pa_t16/data_read["20pa"]["w_pd"], omega_20pa_t14/data_read["20pa"]["w_pd"]]
 w_25 = [omega_25pa/data_read["25pa"]["w_pd"], omega_25pa_t18/data_read["25pa"]["w_pd"], omega_25pa_t16/data_read["25pa"]["w_pd"], omega_25pa_t14/data_read["25pa"]["w_pd"]]
 w_30 = [omega_30pa/data_read["30pa"]["w_pd"], omega_30pa_t18/data_read["30pa"]["w_pd"], omega_30pa_t16/data_read["30pa"]["w_pd"], omega_30pa_t14/data_read["30pa"]["w_pd"]]
+w_40 = [omega_40pa/data_read["40pa"]["w_pd"]]
+#
+k_15 = [k_15pa*data_read["15pa"]["debye_Di"]]
 k_20 = [k_20pa*data_read["20pa"]["debye_Di"], k_20pa_t18*data_read["20pa"]["debye_Di"], k_20pa_t16*data_read["20pa"]["debye_Di"], k_20pa_t14*data_read["20pa"]["debye_Di"]]
 k_25 = [k_25pa*data_read["25pa"]["debye_Di"], k_25pa_t18*data_read["25pa"]["debye_Di"], k_25pa_t16*data_read["25pa"]["debye_Di"], k_25pa_t14*data_read["25pa"]["debye_Di"]]
 k_30 = [k_30pa*data_read["30pa"]["debye_Di"], k_30pa_t18*data_read["30pa"]["debye_Di"], k_30pa_t16*data_read["30pa"]["debye_Di"], k_30pa_t14*data_read["30pa"]["debye_Di"]]
+k_40 = [k_40pa*data_read["40pa"]["debye_Di"]]
 #
-dispersion_relation_all(w_20, w_25, w_30, 0, 0, k_20, k_25, k_30, 0, 0)
+#dispersion_relation_all(w_20, w_25, w_30, w_15, w_40, k_20, k_25, k_30, k_15, k_40)
 #prep
 Z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
 Z_d_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
@@ -2281,6 +2299,15 @@ data = {
 with open('resultsC17/finaldatastack.json', 'w') as filehandle:
     json.dump(data, filehandle)
             
-
+external_data = {
+                "title": "Dimensionless particle charge z as a function of the ion collisionality parameter",
+                
+                "10.1103/PhysRevE.72.016406" : {
+                    "z" : 1,
+                    "lamb/li": 1
+                }
+        }
+with open('resultsC17/external_data.json', 'w') as filehandle:
+    json.dump(external_data, filehandle)
 
 

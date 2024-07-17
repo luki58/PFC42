@@ -42,7 +42,7 @@ import json
 
 # img read
 
-folder = 'D://PFC42-D3/Parabola#16-20pa-100trial70'
+folder = 'D:/PFC42-D3/Parabola#10-25pa-100trial70'
 
 #data/VM2-AVI-240606-090245_30pa_0p5mA_tr100
 #data/VM2-AVI-240606-085645_40pa_0p5mA_tr90
@@ -57,12 +57,13 @@ group_frames = pims.open(folder+'/100/head/*.bmp')
 
 background_frame = pims.open(folder+'/*.bmp')[0]
 #%%
-test = gaussian_filter((group_frames[1] - (background_frame*.99))[1100:1300,:],sigma=15)>.2 #5-8
+test = (group_frames[15] - (background_frame*.99))[900:1300,:] > 2 #5-8
+#test = gaussian_filter((group_frames[1] - (background_frame*.99))[1100:1300,:],sigma=15)>.2 #5-8
 #blurred_image = gaussian_filter(test, sigma=10)[850:1100,:]
 
 
 # Optionally, tweak styles.
-matplotlib.rc('figure',  figsize=(10, 5),dpi=600)
+matplotlib.rc('figure',  figsize=(10, 5),dpi=500)
 matplotlib.rc('image', cmap='gray')
 plt.imshow(test)
 
@@ -249,10 +250,10 @@ def objective(trial, group_frames, cut, cut_width, reverse_data, fps, pix_size):
 # Adjustables
 fps = 60    #vm2-pk-4gi 30
 pix_size = 0.0118  # in mm #iss 0.0143 #ixQ 0.0118
-cut = 1100
-cut_width = 200
+cut = 900
+cut_width = 300
 reverse_data = False #True cloud coming from the left; False cloud coming from the right of the image
-trials = 30
+trials = 20
 
 # Create a partial function to pass additional fixed parameters to the objective function
 objective_partial = partial(

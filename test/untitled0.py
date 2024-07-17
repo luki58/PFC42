@@ -12,11 +12,11 @@ from scipy.optimize import root
 import json
 
 # Load system parameters
-with open('/Users/Luki/Documents/GitHub/PFC42/resultsC17/parameters/system-parameter-C15-230125.json', 'r') as file:
+with open('C://Users/Lukas/Documents/GitHub/PFC42/resultsC17/parameters/system-parameter-C15-230125.json', 'r') as file:
     system_params = json.load(file)
 
 # Load final data stack
-with open('/Users/Luki/Documents/GitHub/PFC42/Final-Results/finaldatastack.json', 'r') as file:
+with open('C://Users/Lukas/Documents/GitHub/PFC42/Final-Results/finaldatastack.json', 'r') as file:
     final_data = json.load(file)
 
 # Constants
