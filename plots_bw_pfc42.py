@@ -1409,7 +1409,7 @@ def charge_plot(Z_d, Z_d_0, k):
 
     #adds a title and axes labels
     ax.set_title('Charge evolution')
-    plt.ylabel('$z$')
+    plt.ylabel('$z = Ze^2/aT_e$')
     plt.xlabel('$\lambda / l_i$')
  
     #removing top and right borders
@@ -2179,6 +2179,7 @@ k_40 = [k_40pa*data_read["40pa"]["debye_Di"]]
 Z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
 Z_d_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
 ion_mean = [1/(parameters["15pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["20pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["25pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["30pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["40pa"]["n_0"]*parameters["neon"]["cross-section"])]
+dx_ion_mean = [4.99514846e+20/(parameters["15pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["20pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["25pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["30pa"]["n_0"]**2*parameters["neon"]["cross-section"]),4.99514846e+20/(parameters["40pa"]["n_0"]**2*parameters["neon"]["cross-section"])]
 collisionality = [parameters["15pa"]["debye_D"]/ion_mean[0], parameters["20pa"]["debye_D"]/ion_mean[1], parameters["25pa"]["debye_D"]/ion_mean[2], parameters["30pa"]["debye_D"]/ion_mean[3], parameters["40pa"]["debye_D"]/ion_mean[4]]
 #
 charge_plot(Z_d, Z_d_0, collisionality)
@@ -2298,16 +2299,5 @@ data = {
         }
 with open('resultsC17/finaldatastack.json', 'w') as filehandle:
     json.dump(data, filehandle)
-            
-external_data = {
-                "title": "Dimensionless particle charge z as a function of the ion collisionality parameter",
-                
-                "10.1103/PhysRevE.72.016406" : {
-                    "z" : 1,
-                    "lamb/li": 1
-                }
-        }
-with open('resultsC17/external_data.json', 'w') as filehandle:
-    json.dump(external_data, filehandle)
 
 
