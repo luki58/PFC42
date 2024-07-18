@@ -1389,23 +1389,32 @@ def dispersion_relation_all(w_20, w_25, w_30, w_15, w_40, k_20, k_25, k_30, k_15
     
     plt.show()    
 
-def charge_plot(Z_d, Z_d_0, k):
+def charge_plot(Z_d, Z_d_0, z_external, k):
 
     fig, ax = plt.subplots(dpi=600)
     fig.set_size_inches(6, 3)
     
+    #D81B1B, 48A2F1, FFC107, 004D40, 9A0CCA
+    
     ax.scatter(k[0], Z_d[0], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[1], Z_d[1], marker='d', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[2], Z_d[2], marker='d', color='#FFC107', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[3], Z_d[3], marker='d', color='#004D40', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[4], Z_d[4], marker='d', color='#9A0CCA', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[1], Z_d[1], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[2], Z_d[2], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[3], Z_d[3], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[4], Z_d[4], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
     #
-    ax.scatter(k[0], Z_d_0[0], marker='^', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[0], Z_d_0[0], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
     ax.scatter(k[1], Z_d_0[1], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[2], Z_d_0[2], marker='^', color='#FFC107', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[3], Z_d_0[3], marker='^', color='#004D40', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[4], Z_d_0[4], marker='^', color='#9A0CCA', linewidth=1.5, s=30, facecolors='none')
-    ax.legend(['15pa','20 Pa','25 Pa', '30 Pa','40 pa'], loc='upper right', prop={'size': 9})
+    ax.scatter(k[2], Z_d_0[2], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[3], Z_d_0[3], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(k[4], Z_d_0[4], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
+    #ax.legend(['15pa','20 Pa','25 Pa', '30 Pa','40 pa'], loc='upper right', prop={'size': 9})
+    #
+    #external data
+    #
+    ax.scatter(z_external[0][0], z_external[0][1], marker='o', color='#FFC107', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(z_external[1][0], z_external[1][1], marker='s', color='#004D40', linewidth=1.5, s=30, facecolors='none')
+    ax.scatter(z_external[2][0][:6], z_external[2][1][:6], marker='x', color='#9A0CCA', linewidth=1.5, s=30)
+    ax.scatter(z_external[3][0], z_external[3][1], marker='h', color='#000000', linewidth=1.5, s=30, facecolors='none')
 
     #adds a title and axes labels
     ax.set_title('Charge evolution')
@@ -1429,6 +1438,7 @@ def charge_plot(Z_d, Z_d_0, k):
     
     #ax limit
     #ax.set_xlim(xmin=0)
+    ax.set_ylim(ymin = 0, ymax = 1.1)
     
     #legend
     #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
@@ -1640,6 +1650,9 @@ speedlist_40pa_forward = -np.array(f40[10:]) + np.average(cloud_speed_40pa['velo
 
 
 # Calculate Avergae and Error, Compare Plot 1DC #
+a = speedlist_15pa_forward
+speedlist_average_15pa_forward = np.average(a)
+error_speedlist_average_15pa_forward = np.std(a)/np.sqrt(len(a)) + error_15
 a = [np.average(VM2_AVI_230125_103901_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)]), np.average(VM2_AVI_230125_103947_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)]), np.average(VM2_AVI_230125_104625_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)]), np.average(VM2_AVI_230125_104809_20pa_speedlist_forward[:len(VM2_AVI_230125_103901_20pa_speedlist_forward)])]
 speedlist_average_20pa_forward = np.average(a)
 error_speedlist_average_20pa_forward = np.std(a)/np.sqrt(len(a))
@@ -2189,7 +2202,7 @@ ion_mean = [1/(parameters["15pa"]["n_0"]*parameters["neon"]["cross-section"]),1/
 dx_ion_mean = [4.99514846e+20/(parameters["15pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["20pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["25pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["30pa"]["n_0"]**2*parameters["neon"]["cross-section"]),4.99514846e+20/(parameters["40pa"]["n_0"]**2*parameters["neon"]["cross-section"])]
 collisionality = [parameters["15pa"]["debye_D"]/ion_mean[0], parameters["20pa"]["debye_D"]/ion_mean[1], parameters["25pa"]["debye_D"]/ion_mean[2], parameters["30pa"]["debye_D"]/ion_mean[3], parameters["40pa"]["debye_D"]/ion_mean[4]]
 #
-charge_plot(Z_d, Z_d_0, collisionality)
+charge_plot(Z_d, Z_d_0, z_external, collisionality)
 
 #%%
 
@@ -2208,7 +2221,9 @@ data = {
                     "v_group_100" : data_15_average,
                     "v_group_100_error" : error_15_average,
                     "k_100" : k_15pa,
-                    "k_100_error" : k_15pa_error
+                    "k_100_error" : k_15pa_error,
+                    "c_daw_100" : speedlist_average_15pa_forward,
+                    "c_daw_100_error" : error_speedlist_average_15pa_forward,
             },
                 "20pa" : {
                     "v_group_100" : data_20_average,
@@ -2301,7 +2316,9 @@ data = {
                     "v_group_100" : data_40_average,
                     "v_group_100_error" : error_40_average,
                     "k_100" : k_40pa,
-                    "k_100_error" : k_40pa_error
+                    "k_100_error" : k_40pa_error,
+                    "c_daw_100" : speedlist_average_40pa_forward,
+                    "c_daw_100_error" : error_speedlist_average_40pa_forward,
             }
         }
 with open('resultsC17/finaldatastack.json', 'w') as filehandle:
