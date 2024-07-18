@@ -2175,7 +2175,14 @@ k_30 = [k_30pa*data_read["30pa"]["debye_Di"], k_30pa_t18*data_read["30pa"]["deby
 k_40 = [k_40pa*data_read["40pa"]["debye_Di"]]
 #
 #dispersion_relation_all(w_20, w_25, w_30, w_15, w_40, k_20, k_25, k_30, k_15, k_40)
-#prep
+#
+# Charge
+#
+a = json.load(open('ext-data/Fortov2004.json'))
+b = json.load(open('ext-data/Khrapak2003.json'))
+c = json.load(open('ext-data/Khrapak2005.json'))
+d = json.load(open('ext-data/Yaroshenko2004.json'))
+z_external = [[a['x'],a['y']], [b['x'],b['y']], [c['x'],c['y']], [d['x'],d['y']]]
 Z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
 Z_d_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
 ion_mean = [1/(parameters["15pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["20pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["25pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["30pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["40pa"]["n_0"]*parameters["neon"]["cross-section"])]
