@@ -110,8 +110,8 @@ I = .5 #mA
 p = np.array([15, 20, 25, 30, 40]) #pa
 
 '''    Charge Potential    '''
-z = [0.51, 0.35, 0.338, 0.348, 0.296]#0.35 #=0.3 +-0.1 for neon
-z_inkl_error = [[0.51, 0.068],[0.35, 0.012],[0.338, 0.023],[0.348, 0.029],[0.296, 0.035]]
+z = [0.462, 0.355, 0.35, 0.35, 0.313]#0.35 #=0.3 +-0.1 for neon
+z_inkl_error = [[0.462, 0.12],[0.35, 0.012],[0.338, 0.023],[0.348, 0.029],[0.296, 0.035]]
 
 '''    Duty-Cycle    '''
 dc_value = 1
@@ -352,18 +352,18 @@ c_100_error = [data_v['15pa']['c_daw_100_error'], data_v['20pa']['c_daw_100_erro
 #
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(4, 3)
-ax.errorbar([15, 20, 25, 30, 40], v_group_100, yerr=v_group_100_error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+ax.errorbar([15, 20, 25, 30, 40], v_group_100, yerr=v_group_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.75, capsize=1)
 ax.scatter(p[:], v_dust_ink_iondrag[:]*1000, marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
-ax.legend(['E100','Theory'])
+ax.legend(['E100','Theory $v_{group}$'])
 #adds major gridlines
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()
 #
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(4, 3)
-ax.errorbar([15, 20, 25, 30, 40], c_100, yerr=c_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.5, capsize=1)
+ax.errorbar([15, 20, 25, 30, 40], c_100, yerr=c_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.75, capsize=1)
 ax.scatter(p, C_daw, linestyle='solid', marker='x', color='#00cc00', linewidth=.5)
-ax.legend(['E100', 'Theory'])
+ax.legend(['E100', 'Theory $C_{DAW}$'])
 #adds major gridlines
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()

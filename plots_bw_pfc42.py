@@ -1043,30 +1043,19 @@ def cdaw_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, theo
     
     plt.show() 
     
-def group_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, data_pfc, error_pfc, theory20, data2, error2, data2_pfc, error2_pfc, theory25, data3, error3, data3_pfc, error3_pfc, theory30, data4, error4, theory40, havnes, title, legend):
+def group_bigploterror_6_3ov3_theory(v_group, v_group_pfc, theory, havnes, title, legend):
     
-    fig, ax = plt.subplots(dpi=600)
+    fig, ax = plt.subplots(dpi=500)
     fig.set_size_inches(6, 3)
     #
-    ax.errorbar(15, data15, yerr=error15, fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)
-    ax.errorbar(20, data, yerr=error, fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2) 
-    ax.errorbar(20, data_pfc, yerr=error_pfc, fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)        
-    ax.errorbar(25, data2, yerr=error2, fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2)
-    ax.errorbar(25, data2_pfc, yerr=error2_pfc, fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)    
-    ax.errorbar(30, data3, yerr=error3, fmt='x',color='#48A2F1', markersize=2, linewidth=1, capsize=2)
-    ax.errorbar(30, data3_pfc, yerr=error3_pfc, fmt='^',color='#D81B1B', markersize=2, linewidth=1, capsize=2)
-    ax.errorbar(40, data4, yerr=error4, fmt='^',color='#D81B1B', markersize=2, linewidth=1, capsize=2)
+    p = [15, 20, 25, 30, 40]
+    p2 = [20, 25, 30]
     #
-    #ax.legend(['Pfc Data','ISS Data'])
-    ax.scatter(15,theory15, marker='o' , color='#000000', linewidth=1, s=30, facecolors='none')#, facecolors='none'
-    ax.scatter(20,theory20, marker='o' , color='#000000', linewidth=1, s=30, facecolors='none')
-    ax.scatter(25,theory25, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
-    ax.scatter(30,theory30, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
-    ax.scatter(40,theory40, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
+    ax.errorbar(p2, v_group[0], yerr=v_group[1], fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2) 
+    ax.errorbar(p, v_group_pfc[0], yerr=v_group_pfc[1], fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)        
+    ax.scatter(p, theory, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')#, facecolors='none'
     #
-    #ax.legend(['Theory  '], bbox_to_anchor=(0.15, 0.8, .85, 0))
-    #ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.85, .85, .102))
-    #adds a title and axes labels
+    ax.legend(['Theory','ISS Data','Pfc Data'])
     #
     plt.ylabel('$v_{group}$ [mm/s]')
     #
@@ -1074,14 +1063,11 @@ def group_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, dat
     #
     # Create a second y-axis sharing the same x-axis
     ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-    arr_referenc =  [15, 20, 25, 30, 40]
-    ax2.plot(arr_referenc, havnes, color='#9A0CCA', linewidth=.5, linestyle='dashed')
+    ax2.plot(p, havnes, color='#9A0CCA', linewidth=.5, linestyle='dashed')
     #
-    
-    ax2.legend(["Harvnes-Parameter"], bbox_to_anchor=(0.15, 0.7, .85, 0))#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    ax2.legend(["Havnes-Parameter"], bbox_to_anchor=(0.15, 0.6, .85, 0.1))#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
     #
     plt.ylabel('P')
-    
     #
     #Edit tick 
     ax.xaxis.set_minor_locator(MultipleLocator(2.5))
@@ -1532,9 +1518,12 @@ z = theory[:,1]
 havnes = [parameters["15pa"]["havnes"], parameters["20pa"]["havnes"], parameters["25pa"]["havnes"], parameters["30pa"]["havnes"], parameters["40pa"]["havnes"]]
 ef = [parameters["15pa"]["e-field-vm"], parameters["20pa"]["e-field-vm"], parameters["25pa"]["e-field-vm"], parameters["30pa"]["e-field-vm"], parameters["40pa"]["e-field-vm"]]
 Zd_a = [parameters["15pa"]["Z_d"], parameters["20pa"]["Z_d"], parameters["25pa"]["Z_d"], parameters["30pa"]["Z_d"], parameters["40pa"]["Z_d"]]
-
-group_bigploterror_6_3ov3_theory(data_15_average, error_15_average, theo_plot[0]*1000, data_20_average, error_20_average, data_20_pfc, error_20_pfc, theo_plot[1]*1000, data_25_average, error_25_average, data_25_pfc, error_25_pfc, theo_plot[2]*1000, data_30_average, error_30_average, data_30_pfc, error_30_pfc, theo_plot[3]*1000, data_40_average, error_40_average, theo_plot[4]*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
-group_efieldploterror_6_3ov3_theory(ef[0], data_15_average, error_15_average, theo_plot[0]*1000, ef[1], data_20_average, error_20_average, theo_plot[1]*1000, ef[2], data_25_average, error_25_average, theo_plot[2]*1000, ef[3], data_30_average, error_30_average, theo_plot[3]*1000, ef[4], data_40_average, error_40_average, theo_plot[4]*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
+#
+v_g_100_pfc = [[data_15_average, data_20_pfc, data_25_pfc, data_30_pfc, data_40_average],[error_15_average, error_20_pfc, error_25_pfc, error_30_pfc, error_40_average]]
+v_g_100 = [[data_20_average, data_25_average, data_30_average], [error_20_average, error_25_average, error_30_average]]
+#
+group_bigploterror_6_3ov3_theory(v_g_100, v_g_100_pfc, theo_plot*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
+#group_efieldploterror_6_3ov3_theory(ef[0], data_15_average, error_15_average, theo_plot[0]*1000, ef[1], data_20_average, error_20_average, theo_plot[1]*1000, ef[2], data_25_average, error_25_average, theo_plot[2]*1000, ef[3], data_30_average, error_30_average, theo_plot[3]*1000, ef[4], data_40_average, error_40_average, theo_plot[4]*1000, havnes,' ', ['20pa theory z='+str(.225), '25pa theory z='+str(.226), '30pa theory z=' +str(.229),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
 
 
 #%% Phase speeds DC100 - LOAD
@@ -1674,7 +1663,7 @@ error_speedlist_average_40pa_forward = np.std(a)/np.sqrt(len(a)) + error_40
 #bigploterror_6_3ov3(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_backward, error_speedlist_average_20pa_backward, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_backward, error_speedlist_average_25pa_backward, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_backward, error_speedlist_average_25pa_backward, ' ', ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
 
 # Import Math #
-obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.223_depl.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.236_depl.txt', 'r', encoding='utf-8').read()
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
