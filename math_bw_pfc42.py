@@ -110,7 +110,8 @@ I = .5 #mA
 p = np.array([15, 20, 25, 30, 40]) #pa
 
 '''    Charge Potential    '''
-z = [0.44, 0.355, 0.348, 0.348, 0.33]#0.35 #=0.3 +-0.1 for neon
+z = [0.51, 0.35, 0.338, 0.348, 0.296]#0.35 #=0.3 +-0.1 for neon
+z_inkl_error = [[0.51, 0.068],[0.35, 0.012],[0.338, 0.023],[0.348, 0.029],[0.296, 0.035]]
 
 '''    Duty-Cycle    '''
 dc_value = 1
@@ -341,61 +342,31 @@ c_s = np.sqrt(c_y**2 + c_d**2)
 #
 S = np.exp(-kappa) * (1 + kappa + (kappa**2/2)) - 258 * (M * M_correction)**2 / (50 * kappa**2)
 
-#%%
-i = 3
-# Define the function to calculate a and b
-def calculate_a_b(q):
-    gamma_d = 1
-    a = gamma_d * k_b() * T_d / m_d
-    b = (epsilon * Z_d[i]**2 * k_b() * T_i[i] / m_d) * 1 / (1 + tau[i] * (1 - epsilon * Z_d[i]) + q**2 * debye_Di[i]**2)
-    return a, b
+# PLOT
 
-# Define the dispersion relation function to solve for w
-def dispersion_relation_eq(w, q, a, b):
-    return w**2 + 1j * beta[i] * w - q**2 * (a + b)
-
-# Define a range of q values
-q_values = np.linspace(0.1, 10, 400)
-
-# Calculate the dispersion relation for each q value
-w_solutions = np.zeros_like(q_values, dtype=complex)
-
-for i, q in enumerate(q_values):
-    a, b = calculate_a_b(q)
-    initial_guess = 1.0 + 1j  # Initial guess for w
-    sol = root(lambda w: dispersion_relation_eq(w[0] + 1j * w[1], q, a, b), [initial_guess.real, initial_guess.imag], tol=1e-9)
-    w_solutions[i] = sol.x[0] + 1j * sol.x[1]
-
-# Plot the results
-plt.figure(figsize=(10, 6))
-plt.plot(q_values, w_solutions.real, label='Real part of w')
-plt.plot(q_values, w_solutions.imag, label='Imaginary part of w')
-plt.xlabel('q')
-plt.ylabel('w')
-plt.title('Dispersion Relation: w vs q')
-plt.legend()
-plt.grid(True)
-plt.show()
-
-
-#%%
-
+v_group_100 = [data_v['15pa']['v_group_100'], data_v['20pa']['v_group_100'], data_v['25pa']['v_group_100'], data_v['30pa']['v_group_100'], data_v['40pa']['v_group_100']]
+v_group_100_error = [data_v['15pa']['v_group_100_error'], data_v['20pa']['v_group_100_error'], data_v['25pa']['v_group_100_error'], data_v['30pa']['v_group_100_error'], data_v['40pa']['v_group_100_error']]
+#
+c_100 = [data_v['15pa']['c_daw_100'], data_v['20pa']['c_daw_100'], data_v['25pa']['c_daw_100'], data_v['30pa']['c_daw_100'], data_v['40pa']['c_daw_100']]
+c_100_error = [data_v['15pa']['c_daw_100_error'], data_v['20pa']['c_daw_100_error'], data_v['25pa']['c_daw_100_error'], data_v['30pa']['c_daw_100_error'], data_v['40pa']['c_daw_100_error']]
+#
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(4, 3)
-#ax.scatter(p, -E_crit2, linestyle='solid', color='#ff0000', linewidth=.7)
-#ax.scatter(p, E_crit3, linestyle='solid', color='#000000', linewidth=.7)
-#ax.scatter(p, E_0, linestyle='solid', color='#00cc00', linewidth=.7)
-ax.scatter([15, 20, 25, 30, 40], [.085, .059, .055, .0514, .04], linestyle='solid', color='#ff0000', linewidth=.7)
-#ax.scatter([20, 25, 30], [.0745-.0482, .073-.0299, .0659-.0281], linestyle='solid', color='#000000', linewidth=.7) #30% E-field
-#ax.scatter([20, 25, 30], [.049, .051, .051], linestyle='solid', color='#ff8000', linewidth=.7) #60% E-field
-#ax.scatter(p[1:], v_dust[1:], linestyle='solid', color='#ff0000', linewidth=.7)
-ax.scatter(p[:], v_dust_ink_iondrag[:], linestyle='solid', color='#00cc00', linewidth=.7)
-
-#ax.scatter([20, 25], [.0745-.0552, .073-.0349], linestyle='solid', marker='^', color='#000000', linewidth=.7)
-#ax.scatter(p[1:], v_dust_ink_iondrag2[1:], linestyle='solid', color='#ff0000', linewidth=.7)
-#ax.scatter(p[1:], v_dust_ink_iondrag3[1:], linestyle='solid', color='#ff8000', linewidth=.7)
-#ax.scatter([30], [.0659-.0212], linestyle='solid', marker='x', color='#000000', linewidth=.7)
+ax.errorbar([15, 20, 25, 30, 40], v_group_100, yerr=v_group_100_error, fmt='^', color='#00429d', markersize=2, linewidth=1, capsize=1)
+ax.scatter(p[:], v_dust_ink_iondrag[:]*1000, marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
 ax.legend(['E100','Theory'])
+#adds major gridlines
+ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+plt.show()
+#
+fig, ax = plt.subplots(dpi=600)
+fig.set_size_inches(4, 3)
+ax.errorbar([15, 20, 25, 30, 40], c_100, yerr=c_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.5, capsize=1)
+ax.scatter(p, C_daw, linestyle='solid', marker='x', color='#00cc00', linewidth=.5)
+ax.legend(['E100', 'Theory'])
+#adds major gridlines
+ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+plt.show()
 #%%
 #############
 # Save Data #
@@ -455,7 +426,8 @@ data = {
             "e-field-vm" : E_0[0],
             "Z_d_0" : Z_d_0[0],
             "Z_d" : Z_d[0],
-            "z" : z[0],
+            "z" : z_inkl_error[0][0],
+            "z_error" : z_inkl_error[0][1],
             "z_depl" : z_depl[0],
             "l_i" : l_i[0],
             "n_d" : n_d[0],
@@ -477,7 +449,8 @@ data = {
             "e-field-vm" : E_0[1],
             "Z_d_0" : Z_d_0[1],
             "Z_d" : Z_d[1],
-            "z" : z[1],
+            "z" : z_inkl_error[1][0],
+            "z_error" : z_inkl_error[1][1],
             "z_depl" : z_depl[1],
             "l_i" : l_i[1],
             "n_d" : n_d[1],
@@ -498,7 +471,8 @@ data = {
             "e-field-vm" : E_0[2],
             "Z_d_0" : Z_d_0[2],
             "Z_d" : Z_d[2],
-            "z" : z[2],
+            "z" : z_inkl_error[2][0],
+            "z_error" : z_inkl_error[2][1],
             "z_depl" : z_depl[2],
             "l_i" : l_i[2],
             "n_d" : n_d[2],
@@ -519,7 +493,8 @@ data = {
             "e-field-vm" : E_0[3],
             "Z_d_0" : Z_d_0[3],
             "Z_d" : Z_d[3],
-            "z" : z[3],
+            "z" : z_inkl_error[3][0],
+            "z_error" : z_inkl_error[3][1],
             "z_depl" : z_depl[3],
             "l_i" : l_i[3],
             "n_d" : n_d[3],
@@ -540,7 +515,8 @@ data = {
             "e-field-vm" : E_0[4],
             "Z_d_0" : Z_d_0[4],
             "Z_d" : Z_d[4],
-            "z" : z[4],
+            "z" : z_inkl_error[4][0],
+            "z_error" : z_inkl_error[4][1],
             "z_depl" : z_depl[4],
             "l_i" : l_i[4],
             "n_d" : n_d[4],
@@ -551,7 +527,42 @@ data = {
             "n_0" : n_0_m[4]
     }
 }
-with open('parameters/system-parameter-C15-230125.json', 'w') as filehandle:
+with open('resultsC17/parameters/system-parameter-C15-230125.json', 'w') as filehandle:
     json.dump(data, filehandle)
-    
+
+#%%
+i = 3
+# Define the function to calculate a and b
+def calculate_a_b(q):
+    gamma_d = 1
+    a = gamma_d * k_b() * T_d / m_d
+    b = (epsilon * Z_d[i]**2 * k_b() * T_i[i] / m_d) * 1 / (1 + tau[i] * (1 - epsilon * Z_d[i]) + q**2 * debye_Di[i]**2)
+    return a, b
+
+# Define the dispersion relation function to solve for w
+def dispersion_relation_eq(w, q, a, b):
+    return w**2 + 1j * beta[i] * w - q**2 * (a + b)
+
+# Define a range of q values
+q_values = np.linspace(0.1, 10, 400)
+
+# Calculate the dispersion relation for each q value
+w_solutions = np.zeros_like(q_values, dtype=complex)
+
+for i, q in enumerate(q_values):
+    a, b = calculate_a_b(q)
+    initial_guess = 1.0 + 1j  # Initial guess for w
+    sol = root(lambda w: dispersion_relation_eq(w[0] + 1j * w[1], q, a, b), [initial_guess.real, initial_guess.imag], tol=1e-9)
+    w_solutions[i] = sol.x[0] + 1j * sol.x[1]
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.plot(q_values, w_solutions.real, label='Real part of w')
+plt.plot(q_values, w_solutions.imag, label='Imaginary part of w')
+plt.xlabel('q')
+plt.ylabel('w')
+plt.title('Dispersion Relation: w vs q')
+plt.legend()
+plt.grid(True)
+plt.show()
 #end

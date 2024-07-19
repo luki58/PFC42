@@ -1389,25 +1389,16 @@ def dispersion_relation_all(w_20, w_25, w_30, w_15, w_40, k_20, k_25, k_30, k_15
     
     plt.show()    
 
-def charge_plot(Z_d, Z_d_0, z_external, k):
+def charge_plot(Z_d, Z_d_0, z_error, z_external, k):
 
-    fig, ax = plt.subplots(dpi=600)
+    fig, ax = plt.subplots(dpi=800)
     fig.set_size_inches(6, 3)
     
     #D81B1B, 48A2F1, FFC107, 004D40, 9A0CCA
-    
-    ax.scatter(k[0], Z_d[0], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[1], Z_d[1], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[2], Z_d[2], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[3], Z_d[3], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[4], Z_d[4], marker='d', color='#D81B1B', linewidth=1.5, s=30, facecolors='none')
     #
-    ax.scatter(k[0], Z_d_0[0], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[1], Z_d_0[1], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[2], Z_d_0[2], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[3], Z_d_0[3], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    ax.scatter(k[4], Z_d_0[4], marker='^', color='#48A2F1', linewidth=1.5, s=30, facecolors='none')
-    #ax.legend(['15pa','20 Pa','25 Pa', '30 Pa','40 pa'], loc='upper right', prop={'size': 9})
+    ax.errorbar(k, Z_d , yerr=z_error, fmt='d',color='#D81B1B', markersize=3, linewidth=1, capsize=3)
+    #
+    ax.errorbar(k, Z_d_0 , yerr=z_error, fmt='^',color='#48A2F1', markersize=3, linewidth=1, capsize=3)
     #
     #external data
     #
@@ -1415,7 +1406,9 @@ def charge_plot(Z_d, Z_d_0, z_external, k):
     ax.scatter(z_external[1][0], z_external[1][1], marker='s', color='#004D40', linewidth=1.5, s=30, facecolors='none')
     ax.scatter(z_external[2][0][:6], z_external[2][1][:6], marker='x', color='#9A0CCA', linewidth=1.5, s=30)
     ax.scatter(z_external[3][0], z_external[3][1], marker='h', color='#000000', linewidth=1.5, s=30, facecolors='none')
-
+    #
+    ax.legend(['Fortov2004', 'Khrapak2003', 'Khrapak2005', 'Yaroshenko2004', 'Exp. z depleted', 'Exp. z'], loc='upper right', prop={'size': 7.5})
+    #
     #adds a title and axes labels
     ax.set_title('Charge evolution')
     plt.ylabel('$z = Ze^2/aT_e$')
@@ -1438,7 +1431,7 @@ def charge_plot(Z_d, Z_d_0, z_external, k):
     
     #ax limit
     #ax.set_xlim(xmin=0)
-    ax.set_ylim(ymin = 0, ymax = 1.1)
+    ax.set_ylim(ymin = 0, ymax = 1.15)
     
     #legend
     #ax.legend(bbox_to_anchor=(1, 1), loc=1, frameon=False, fontsize=16)
@@ -2196,13 +2189,14 @@ b = json.load(open('ext-data/Khrapak2003.json'))
 c = json.load(open('ext-data/Khrapak2005.json'))
 d = json.load(open('ext-data/Yaroshenko2004.json'))
 z_external = [[a['x'],a['y']], [b['x'],b['y']], [c['x'],c['y']], [d['x'],d['y']]]
-Z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
-Z_d_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
+z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
+z_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
+z_error = [parameters["15pa"]["z_error"], parameters["20pa"]["z_error"], parameters["25pa"]["z_error"], parameters["30pa"]["z_error"], parameters["40pa"]["z_error"]]
 ion_mean = [1/(parameters["15pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["20pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["25pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["30pa"]["n_0"]*parameters["neon"]["cross-section"]),1/(parameters["40pa"]["n_0"]*parameters["neon"]["cross-section"])]
 dx_ion_mean = [4.99514846e+20/(parameters["15pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["20pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["25pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["30pa"]["n_0"]**2*parameters["neon"]["cross-section"]),4.99514846e+20/(parameters["40pa"]["n_0"]**2*parameters["neon"]["cross-section"])]
 collisionality = [parameters["15pa"]["debye_D"]/ion_mean[0], parameters["20pa"]["debye_D"]/ion_mean[1], parameters["25pa"]["debye_D"]/ion_mean[2], parameters["30pa"]["debye_D"]/ion_mean[3], parameters["40pa"]["debye_D"]/ion_mean[4]]
 #
-charge_plot(Z_d, Z_d_0, z_external, collisionality)
+charge_plot(z, z_0, z_error, z_external, collisionality)
 
 #%%
 
