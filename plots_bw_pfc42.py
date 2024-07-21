@@ -996,50 +996,44 @@ def bigploterror_12_3(x1, dx1, x2, dx2, x3, dx3, x4, dx4, x5, dx5, x6, dx6, x7, 
     
     plt.show()
 #%%  
-def cdaw_bigploterror_6_3ov3_theory(data15, error15, theory15, data, error, theory, data2, error2, theory2, data3, error3, theory3, data4, error4, theory4, title, legend):
+def cdaw_bigploterror_6_3ov3_theory(data, error, theory, z, title, legend):
     #arr_referenc =  np.arange(len(data))
     #arr_referenc2 =  np.arange(len(data2))
     #arr_referenc3 =  np.arange(len(data3))
     #arr_referenc4 =  np.arange(len(data4))
     fig, ax = plt.subplots(dpi=600)
     fig.set_size_inches(6, 3)
-    
-    ax.errorbar(15, data15, yerr=error15, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)
-    ax.errorbar(20, data, yerr=error, fmt='^', color='#00429d', markersize=3, linewidth=1, capsize=1)        
-    ax.errorbar(25, data2, yerr=error2, fmt='x', color='#00cc00', markersize=3, linewidth=1, capsize=1)    
-    ax.errorbar(30, data3, yerr=error3, fmt='o',color='#ff8000', markersize=3, linewidth=1, capsize=1)
-    ax.errorbar(40, data4, yerr=error4, fmt='o',color='#ff8000', markersize=3, linewidth=1, capsize=1)
-
-    ax.scatter(15,theory15, marker='^' , color='#000000', linewidth=1, s=30, facecolors='none')
-    ax.scatter(20,theory, marker='^' , color='#000000', linewidth=1, s=30, facecolors='none')
-    ax.scatter(25,theory2, marker='x', color='#000000', linewidth=1, s=30)
-    ax.scatter(30,theory3, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
-    ax.scatter(40,theory4, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')
-    
-    ax.legend(legend, loc='upper right', prop={'size': 9}, bbox_to_anchor=(0.08, 0.85, .85, .102))
-    
+    #
+    p = [15, 20, 25, 30, 40]
+    #
+    ax.errorbar(p, data, yerr=error, fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2)   
+    ax.scatter(p, theory, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')#, facecolors='none'
+    #
+    ax.legend(legend, loc='upper right')
+    #
     #adds a title and axes labels
-    ax.set_title(title)
-    plt.xlabel('Run')
+    #ax.set_title(title)
+    plt.xlabel('Pressure [Pa]')
     plt.ylabel('$C_{Daw}$ [mm/s]')
- 
-    #removing top and right borders
-    #ax.spines['top'].set_visible(False)
-    #ax.spines['right'].set_visible(False) 
-    
+    # Create a second y-axis sharing the same x-axis
+    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+    ax2.plot(p, z, color='#9A0CCA', linewidth=.5, linestyle='dashed')
+    #
+    ax2.legend(["Charge potential"], bbox_to_anchor=(0.15, 0.65, .85, 0.1))#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    #
+    plt.ylabel('z')
+    #
     #Edit tick 
-    #ax.xaxis.set_minor_locator(MultipleLocator(10))
-    #ax.yaxis.set_minor_locator(MultipleLocator(1))
-
-    #add vertical lines
-    #ax.axvline(left, linestyle='dashed', color='b');
-    #ax.axvline(right, linestyle='dashed', color='b');
+    ax.xaxis.set_minor_locator(MultipleLocator(2.5))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
 
     #adds major gridlines
-    ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+    #ax.minorticks_on()
+    ax.grid(which='major', linestyle='--', linewidth='0.2', color='gray')
+    ax.grid(which='minor', linestyle='--', linewidth='0.1', color='gray')
     
-    #ax limit
-    #ax.set_xlim(xmin=0)
+    #ax2.set_ylim(ymax=.4)
+    ax.set_ylim(ymax=80)
     
     plt.show() 
     
@@ -1532,7 +1526,7 @@ group_bigploterror_6_3ov3_theory(v_g_100, v_g_100_pfc, theo_plot*1000, havnes,' 
 ### Phase speeds DC100 ###
 ##########################
 
-# load Parabola#19-15pa_speedlist_forward #
+# load Parabola#19-15pa_speedlist_forward PFC #
 
 obj_text_f = codecs.open('resultspfc42/phase-speeds/Parabola#19-15pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f15 = json.loads(obj_text_f) #This reads json to list
@@ -1610,7 +1604,7 @@ b30 = json.loads(obj_text_b) #This reads json to list
 VM2_AVI_230125_110231_30pa_speedlist_forward = -np.array(f30) + np.average(cloud_speed_30pa_110231['velocities'][:trials])      #This converts to numpy
 VM2_AVI_230125_110231_30pa_speedlist_backward = np.array(b30) + np.average(cloud_speed_30pa_110231['velocities'][:trials])      #This converts to numpy
 
-# load Parabola#0-40pa_speedlist_forward #
+# load Parabola#0-40pa_speedlist_forward PFC #
 
 obj_text_f = codecs.open('resultspfc42/phase-speeds/Parabola#0-40pa_speedlist_forward.txt', 'r', encoding='utf-8').read()
 f40 = json.loads(obj_text_f) #This reads json to list
@@ -1667,8 +1661,11 @@ obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.236_depl.txt', 'r
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
+#
+data = [speedlist_average_15pa_forward, speedlist_average_20pa_forward, speedlist_average_25pa_forward, speedlist_average_30pa_forward, speedlist_average_40pa_forward]
+error = [error_speedlist_average_15pa_forward, error_speedlist_average_20pa_forward, error_speedlist_average_25pa_forward, error_speedlist_average_30pa_forward, error_speedlist_average_40pa_forward]
 
-cdaw_bigploterror_6_3ov3_theory(speedlist_average_15pa_forward, error_speedlist_average_15pa_forward, theo_plot[0], speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, theo_plot[1], speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, theo_plot[2], speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, theo_plot[3], speedlist_average_40pa_forward, error_speedlist_average_40pa_forward, theo_plot[4], ' ', ['20pa theory z='+str("{:.3f}".format(z[1])), '25pa theory z='+str("{:.3f}".format(z[2])), '30pa theory z=' +str("{:.3f}".format(z[3])),'20pa exp-F', '25pa exp-F', '30pa exp-F'])
+cdaw_bigploterror_6_3ov3_theory(data, error, theo_plot, z, ' ', ['from Equation (x)', 'Exp. data'])
 
 #%% Group speeds DCXXX - LOAD
 
@@ -1770,14 +1767,15 @@ bigploterror_6(data30_t12_pfc, error30_t12_pfc, abs(data30_t13_pfc), error30_t13
 #%% PLOT
 # Import Math #
 theory_cloud_speed_20pa = np.array(json.load(open('resultsC17/theory/theo_v_group_20pa_ef-reduce.txt')))
-v_group_5(theory_cloud_speed_20pa, data20_t13, error20_t13, data20_t14, error20_t14, data20_t16, error20_t16, data20_t18, error20_t18, data_20_average, error_20_average , '', ['Theory 20pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
 theory_cloud_speed_25pa = np.array(json.load(open('resultsC17/theory/theo_v_group_25pa_ef-reduce.txt')))
-v_group_5(theory_cloud_speed_25pa, data25_t13, error25_t13, data25_t14, error25_t14, data25_t16, error20_t16, data25_t18, error25_t18, data_25_average, error_25_average, '', ['Theory 25pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
 theory_cloud_speed_30pa = np.array(json.load(open('resultsC17/theory/theo_v_group_30pa_ef-reduce.txt')))
-v_group_5_30pa(theory_cloud_speed_30pa, data30_t14, error30_t14, data30_t15, error30_t15, data30_t16, error30_t16, data30_t18, error30_t18, data_30_average, error_30_average, '', ['Theory 30pa', 'E40%', 'E50%', 'E60%', 'E80%', 'E100%'])
 theory_cloud_speed_40pa = np.array(json.load(open('resultsC17/theory/theo_v_group_30pa_ef-reduce.txt')))
+# PLOT
+v_group_5(theory_cloud_speed_20pa, data20_t13, error20_t13, data20_t14, error20_t14, data20_t16, error20_t16, data20_t18, error20_t18, data_20_average, error_20_average , '', ['Theory 20pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
+v_group_5(theory_cloud_speed_25pa, data25_t13, error25_t13, data25_t14, error25_t14, data25_t16, error20_t16, data25_t18, error25_t18, data_25_average, error_25_average, '', ['Theory 25pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
+v_group_5_30pa(theory_cloud_speed_30pa, data30_t14, error30_t14, data30_t15, error30_t15, data30_t16, error30_t16, data30_t18, error30_t18, data_30_average, error_30_average, '', ['Theory 30pa', 'E40%', 'E50%', 'E60%', 'E80%', 'E100%'])
 vgroup_p40(data40_t13, error40_t13, abs(data40_t15), error40_t15, data40_t17, error40_t17, data40_t19, error40_t19, data_40_average, error_40_average, '', ['E30%', 'E50%', 'E70%', 'E90%', 'E100%'])
-
+#
 cs_deviation_20 = 100.0 -(100.0/data_20_average)*data20_t14
 cs_deviation_25 = 100.0 -(100.0/data_25_average)*data25_t14
 cs_deviation_30 = 100.0 -(100.0/data_30_average)*data30_t14
@@ -2155,7 +2153,7 @@ bigploterror_12_2(omega_20pa, omega_20pa_t18, omega_20pa_t16, omega_20pa_t14, om
 #dispersion_relation(omega_20pa/data_read["20pa"]["w_pd"], omega_20pa_t18/data_read["20pa"]["w_pd"], omega_20pa_t16/data_read["20pa"]["w_pd"], omega_20pa_t14/data_read["20pa"]["w_pd"], 0, k_20pa*data_read["20pa"]["debye_Di"], k_20pa_t18*data_read["20pa"]["debye_Di"], k_20pa_t16*data_read["20pa"]["debye_Di"], k_20pa_t14*data_read["20pa"]["debye_Di"], 0)
 #dispersion_relation(omega_25pa/data_read["25pa"]["w_pd"], omega_25pa_t18/data_read["25pa"]["w_pd"], omega_25pa_t16/data_read["25pa"]["w_pd"], omega_25pa_t14/data_read["25pa"]["w_pd"], 0, k_25pa*data_read["25pa"]["debye_Di"], k_25pa_t18*data_read["25pa"]["debye_Di"], k_25pa_t16*data_read["25pa"]["debye_Di"], k_25pa_t14*data_read["25pa"]["debye_Di"], 0)
 #dispersion_relation(omega_30pa/data_read["30pa"]["w_pd"], omega_30pa_t18/data_read["30pa"]["w_pd"], omega_30pa_t16/data_read["30pa"]["w_pd"], omega_30pa_t14/data_read["30pa"]["w_pd"], 0, k_30pa*data_read["30pa"]["debye_Di"], k_30pa_t18*data_read["30pa"]["debye_Di"], k_30pa_t16*data_read["30pa"]["debye_Di"], k_30pa_t14*data_read["30pa"]["debye_Di"], 0)
-#%% PLOT
+#%% Charge PLOT
 #prep
 w_15 = [omega_15pa/data_read["15pa"]["w_pd"]]
 w_20 = [omega_20pa/data_read["20pa"]["w_pd"], omega_20pa_t18/data_read["20pa"]["w_pd"], omega_20pa_t16/data_read["20pa"]["w_pd"], omega_20pa_t14/data_read["20pa"]["w_pd"]]
