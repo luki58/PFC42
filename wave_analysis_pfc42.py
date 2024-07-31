@@ -40,15 +40,15 @@ import libs_bw as lbw
 
 # img read incoming
 
-folder = 'D://PFC42-D3/Parabola#0-40pa-100trial70'
+folder = 'D://PFC42-D3-raw/Parabola#16-20pa-100trial70'
 
 background = pims.open(folder+'/*.bmp')[0]
 
-forward_frames = pims.open(folder+'/90/wave/*.bmp')
+forward_frames = pims.open(folder+'/100/wave/*.bmp')
 
 # %%
 # First look
-test2 = forward_frames[30]>4
+test2 = forward_frames[30]>5
 matplotlib.rc('figure',  figsize=(10, 5), dpi = 300)
 matplotlib.rc('image', cmap='gray')
 plt.imshow(test2)
@@ -360,7 +360,7 @@ def gsc_wave_analysis(data, stepsize, peak_distance, peak_height, threshold, pix
 
     for i in data:
         #frame_croped = np.subtract(i[y1_cut:y1_cut+cutwidth,x1_cut:],(bg*.8)) > threshold            # >4 noise reduction! Adjustable &&& cutsize 400 pixel!
-        frame_croped = i[y1_cut:y1_cut+cutwidth,x1_cut:] > threshold
+        frame_croped = i[y1_cut:y1_cut+cutwidth,x1_cut:1900] > threshold
         data = lbw.smooth(lbw.smooth(lbw.grayscale_h2(frame_croped),2),2)
         peaks, _ = find_peaks(data, distance=peak_distance, height=peak_height)
         #
@@ -473,18 +473,18 @@ def gsc_wave_analysis(data, stepsize, peak_distance, peak_height, threshold, pix
 #Pahse speed in mm/s
 #Wave length in mm
 
-start = 0
-stop = 20
+start = 45
+stop = 80
 print('start: ' + str(start) + ' stop: '+str(stop))
 
 stepsize = 5
 peak_distance_max = 200
-peak_height_min = 0.05
+peak_height_min = 0.01
 threshold = 5
 pixelsize = 0.0118 #mm
 exptime = 1/60 #s = 1/frames per second
 
-sl, wl = gsc_wave_analysis(forward_frames[start:], stepsize, peak_distance_max, peak_height_min, threshold, pixelsize, exptime, background[0], 800, 400, 0)
+sl, wl = gsc_wave_analysis(forward_frames[start:stop], stepsize, peak_distance_max, peak_height_min, threshold, pixelsize, exptime, background[0], 750, 400, 0)
 #sl2, wl2 = gsc_wave_analysis(backward_frames[start:stop], stepsize, peak_distance_max, peak_height_min, threshold, pixelsize, exptime, background[0], 300, 300, 0)
 
 #%%
@@ -492,19 +492,16 @@ sl, wl = gsc_wave_analysis(forward_frames[start:], stepsize, peak_distance_max, 
 speed_list20 = sl
 wavelen_list20 = wl
 #%%
-speed_list20[46] = speed_list20[46]+2
-speed_list20[4] = speed_list20[4]+1
-#%%
 speed_list20 = np.append(speed_list20,sl)
 wavelen_list20 = np.append(wavelen_list20,wl)
 #%%
 #grayscaleplot(slf15)
 #grayscaleplot(wavelen_list15)
 #
-with open(folder[13:28] + '_speedlist_forward.txt', 'w') as filehandle:
+with open(folder+ '_speedlist_forward.txt', 'w') as filehandle:
     json.dump(speed_list20.tolist(), filehandle)
 
-with open(folder[13:28] + '_wavelenlist_forward.txt', 'w') as filehandle:
+with open(folder+ '_wavelenlist_forward.txt', 'w') as filehandle:
     json.dump(wavelen_list20.tolist(), filehandle)   #.tolist()
 #%% Gaussian Filter to smooth the data, adjust sigma!
 slf15_gauss = gaussian_filter1d(speed_list15_new, sigma=3)

@@ -237,10 +237,10 @@ else:
 A = 0.0321
 B = 0.012
 C = 1.181
-EN = (-E_0_vcm/n_0) *10**(17)
-M = A * np.real((1 + np.real((B*EN)**C))**(-1/(2*C))) * EN
+EN = (-E_0_vcm/n_0) #????????????????????????????????????????????????????
+M = A * np.abs((1 + np.abs((B*EN)**C))**(-1/(2*C))) * EN
 v_ti2 = np.sqrt(k_b()*T_i*11600/m_neon)
-u_i = (e()/(m_neon*v_ti2*1.2*10**(-14)))*EN
+u_i = (e()/(m_neon*v_ti2*1.2*(10**-12)))*EN #??????????????????????????????
 
 '''    Force Equations    '''
 #
@@ -266,7 +266,7 @@ integrated_f = np.array([integration_temp, integration_temp1, integration_temp2,
 
 dc_value2 = [.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.]
             #0     1   2    3   4    5   6    7   8   9   10   11  12   13  14   15  16   17  18 
-i = 4
+i = 4   
 dc_value = 1
 reduction_F_e = dc_value
 reduction_F_i = dc_value
@@ -296,13 +296,14 @@ w_pd = np.sqrt(np.divide((np.multiply(Z_d**2,n_d*e()**2)),(m_d*eps_0())))
 beta_damp = np.multiply(p,epstein)*(8/(np.pi*a*roh*v_tn))    # with v_{th,n} = 320 m/s
 
 '''    DAW - phase velocity    '''
+v_0 = np.sqrt(2*(e()*(Z_d))**2/(m_d*a))
 aplha =(np.multiply(k_b()*11600,T_i)/m_d)
 epsilon = np.divide((n_d),(n_i0))
 C_daw = np.sqrt(aplha * epsilon * Z_d**2) * 10**(3) #mm/s
 C_daw_2 = w_pd * debye_Di * 10**(3) #mm/s
 aplha =(np.multiply(k_b()*11600,T_i[i])/m_d)
 epsilon = np.divide((n_d[i]),(n_i0[i]))
-C_daw_red = np.sqrt(np.multiply(correction_cdaw, aplha * epsilon * Z_d[i]**2)) * 10**(3) #mm/s 
+C_daw_red = np.multiply(correction_cdaw, np.sqrt(aplha * epsilon * Z_d[i]**2) * 10**(3)) #mm/s 
 
 '''    Plasma-Ion interaction frequency    '''
 w_pi = np.sqrt(4*np.pi*e()**2*np.divide(n_i0,m_neon))
@@ -329,7 +330,7 @@ epst_temp = np.divide((Z_d*e()*E_0),np.multiply(m_d,C_daw*10**(-3)))
 E_crit3 = np.divide(epst_temp,C_daw*10**(-3)) * (k_b()*T_i*11600)/e()
 
 '''    ID Lattice c_s calculations    '''
-M_correction = .3
+M_correction = 1
 #
 interparticle_distance = 1/(
    n_d)**(1/3)
@@ -406,7 +407,7 @@ path = 'theo_v_group_ef30_pa-reduce.txt'
 with open(path, 'w') as filehandle:
     json.dump(v_dust_ink_iondrag.tolist(), filehandle)
 #%%
-path = 'theo_c_daw_40pa_ef-reduce.txt'
+path = 'theo_c_daw_40pa_ef-reduce_linear.txt'
 with open(path, 'w') as filehandle:
     json.dump(C_daw_red.tolist(), filehandle)
 #%%
@@ -435,7 +436,8 @@ data = {
             "n_e" : n_e0[0],
             "T_i" : T_i[0],
             "T_e" : T_e[0],
-            "n_0" : n_0_m[0]
+            "n_0" : n_0_m[0],
+            "u_i" : 3900 * E_0_vcm[0]/p[0]
             
     },
         "20pa" : {
@@ -458,7 +460,8 @@ data = {
             "n_e" : n_e0[1],
             "T_i" : T_i[1],
             "T_e" : T_e[1],
-            "n_0" : n_0_m[1]     
+            "n_0" : n_0_m[1],
+            "u_i" : 3900 * E_0_vcm[1]/p[1]     
     },
         "25pa" : {
             "w_pd" : w_pd[2],
@@ -480,7 +483,8 @@ data = {
             "n_e" : n_e0[2],
             "T_i" : T_i[2],
             "T_e" : T_e[2],
-            "n_0" : n_0_m[2]
+            "n_0" : n_0_m[2],
+            "u_i" : 3900 * E_0_vcm[2]/p[2]
     },
         "30pa" : {
             "w_pd" : w_pd[3],
@@ -502,7 +506,8 @@ data = {
             "n_e" : n_e0[3],
             "T_i" : T_i[3],
             "T_e" : T_e[3],
-            "n_0" : n_0_m[3]
+            "n_0" : n_0_m[3],
+            "u_i" : 3900 * E_0_vcm[3]/p[3]
     },
         "40pa" : {
             "w_pd" : w_pd[4],
@@ -524,7 +529,8 @@ data = {
             "n_e" : n_e0[4],
             "T_i" : T_i[4],
             "T_e" : T_e[4],
-            "n_0" : n_0_m[4]
+            "n_0" : n_0_m[4],
+            "u_i" : 3900 * E_0_vcm[4]/p[4]
     }
 }
 with open('resultsC17/parameters/system-parameter-C15-230125.json', 'w') as filehandle:
