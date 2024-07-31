@@ -1524,9 +1524,9 @@ def charge_plot(Z_d, Z_d_0, z_error, z_external, k):
     ax.scatter(z_external[0][0], z_external[0][1], marker='o', color='#FFC107', linewidth=1.5, s=30, facecolors='none')
     ax.scatter(z_external[1][0], z_external[1][1], marker='s', color='#004D40', linewidth=1.5, s=30, facecolors='none')
     ax.scatter(z_external[2][0][:6], z_external[2][1][:6], marker='x', color='#9A0CCA', linewidth=1.5, s=30)
-    ax.scatter(z_external[3][0], z_external[3][1], marker='h', color='#000000', linewidth=1.5, s=30, facecolors='none')
-    #
-    ax.legend(['Fortov2004', 'Khrapak2003', 'Khrapak2005', 'Yaroshenko2004', 'Exp. z depleted', 'Exp. z'], loc='upper right', prop={'size': 7.5})
+    ax.scatter(z_external[4][0], z_external[4][1], marker='h', color='#000000', linewidth=1.5, s=30, facecolors='none')
+    #, 'Yaroshenko2004'
+    ax.legend(['Fortov2004', 'Khrapak2003', 'Khrapak2005', 'Antonoiva2019', 'Exp. z depleted', 'Exp. z'], loc='upper right')#, prop={'size': 8})
     #
     #adds a title and axes labels
     ax.set_title('Charge evolution')
@@ -2456,7 +2456,8 @@ a = json.load(open('ext-data/Fortov2004.json'))
 b = json.load(open('ext-data/Khrapak2003.json'))
 c = json.load(open('ext-data/Khrapak2005.json'))
 d = json.load(open('ext-data/Yaroshenko2004.json'))
-z_external = [[a['x'],a['y']], [b['x'],b['y']], [c['x'],c['y']], [d['x'],d['y']]]
+e = json.load(open('ext-data/Antonova2019.json'))
+z_external = [[a['x'],a['y']], [b['x'],b['y']], [c['x'],c['y']], [d['x'],d['y']], [e['x'],e['y']]]
 z_d = [parameters["15pa"]["z_depl"], parameters["20pa"]["z_depl"], parameters["25pa"]["z_depl"], parameters["30pa"]["z_depl"], parameters["40pa"]["z_depl"]]
 z_0 = [parameters["15pa"]["z"], parameters["20pa"]["z"], parameters["25pa"]["z"], parameters["30pa"]["z"], parameters["40pa"]["z"]]
 z_error = [parameters["15pa"]["z_error"], parameters["20pa"]["z_error"], parameters["25pa"]["z_error"], parameters["30pa"]["z_error"], parameters["40pa"]["z_error"]]
@@ -2464,7 +2465,7 @@ ion_mean = [1/(parameters["15pa"]["n_0"]*parameters["neon"]["cross-section"]),1/
 dx_ion_mean = [4.99514846e+20/(parameters["15pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["20pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["25pa"]["n_0"]**2*parameters["neon"]["cross-section"]), 4.99514846e+20/(parameters["30pa"]["n_0"]**2*parameters["neon"]["cross-section"]),4.99514846e+20/(parameters["40pa"]["n_0"]**2*parameters["neon"]["cross-section"])]
 collisionality = [parameters["15pa"]["debye_D"]/ion_mean[0], parameters["20pa"]["debye_D"]/ion_mean[1], parameters["25pa"]["debye_D"]/ion_mean[2], parameters["30pa"]["debye_D"]/ion_mean[3], parameters["40pa"]["debye_D"]/ion_mean[4]]
 #
-#charge_plot(z, z_0, z_error, z_external, collisionality)
+charge_plot(z, z_0, z_error, z_external, collisionality)
 
 #%%
 
@@ -2579,8 +2580,8 @@ data = {
                     "v_group_100_error" : error_40_average,
                     "k_100" : k_40pa,
                     "k_100_error" : k_40pa_error,
-                    "c_daw_100" : speedlist_average_40pa_forward,
-                    "c_daw_100_error" : error_speedlist_average_40pa_forward,
+                    "c_daw_100" : speedlist_average_40pa_forward_pfc,
+                    "c_daw_100_error" : error_speedlist_average_40pa_forward_pfc,
             }
         }
 with open('resultsC17/finaldatastack.json', 'w') as filehandle:
