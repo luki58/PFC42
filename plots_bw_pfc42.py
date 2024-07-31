@@ -1526,7 +1526,7 @@ def charge_plot(Z_d, Z_d_0, z_error, z_external, k):
     ax.scatter(z_external[2][0][:6], z_external[2][1][:6], marker='x', color='#9A0CCA', linewidth=1.5, s=30)
     ax.scatter(z_external[4][0], z_external[4][1], marker='h', color='#000000', linewidth=1.5, s=30, facecolors='none')
     #, 'Yaroshenko2004'
-    ax.legend(['Fortov2004', 'Khrapak2003', 'Khrapak2005', 'Antonoiva2019', 'Exp. z depleted', 'Exp. z'], loc='upper right')#, prop={'size': 8})
+    ax.legend(['Fortov2004', 'Khrapak2003', 'Khrapak2005', 'Antonova2019', 'Exp. z depleted', 'Exp. z'], loc='upper right')#, prop={'size': 8})
     #
     #adds a title and axes labels
     ax.set_title('Charge evolution')
