@@ -360,18 +360,32 @@ def v_group_5(theory20, theory25, theory30, theory40, data20, error20, data25, e
     #ax.plot(arr_referenc, theory30*1000, color ='#FFC107', linestyle='-.', linewidth=.9)
     #ax.plot(arr_referenc, theory40*1000, color ='#000000', linestyle='-', linewidth=.9)
     # Fill the region between theory20 and theory40
-    ax.fill_between(arr_referenc, theory20*1000+1, theory40*1000, color='grey', alpha=0.3)
+    ax.fill_between(arr_referenc, theory20*1000+1, theory40*1000-2, color='grey', alpha=0.3)
     #
     ax.errorbar(E_trial, data20, yerr=error20, fmt='s', color='#D81B1B', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial, data25, yerr=error25, fmt='^', color='#48A2F1', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial_30, data30, yerr=error30, fmt='o', color='#FFC107', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial_40, data40, yerr=error40, fmt='d', color='#004D40', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    
+    data20_theory = np.append([0],data20)
+    data25_theory = np.append([0],data25)
+    data30_theory = np.append([0],data30)
+    data40_theory = np.append([0],data40)
+    #
+    error20_theory = np.append([5],error20)
+    error25_theory = np.append([5],error25)
+    error30_theory = np.append([5],error30)
+    error40_theory = np.append([5],error40)
+    #
+    E_trial = [0, 30, 40, 60, 80, 100]
+    E_trial_30 = [0, 40, 50, 60, 80, 100]
+    E_trial_40 = [0, 30, 50, 70, 90, 100]
 
     # Fit polynomials to the data with weights
-    popt20, _ = curve_fit(polynomial, E_trial, data20, sigma=error20, absolute_sigma=True)
-    popt25, _ = curve_fit(polynomial, E_trial, data25, sigma=error25, absolute_sigma=True)
-    popt30, _ = curve_fit(polynomial, E_trial_30, data30, sigma=error30, absolute_sigma=True)
-    popt40, _ = curve_fit(polynomial, E_trial_40, data40, sigma=error40, absolute_sigma=True)
+    popt20, _ = curve_fit(polynomial, E_trial, data20_theory, sigma=error20_theory, absolute_sigma=True)
+    popt25, _ = curve_fit(polynomial, E_trial, data25_theory, sigma=error25_theory, absolute_sigma=True)
+    popt30, _ = curve_fit(polynomial, E_trial_30, data30_theory, sigma=error30_theory, absolute_sigma=True)
+    popt40, _ = curve_fit(polynomial, E_trial_40, data40_theory, sigma=error40_theory, absolute_sigma=True)
     
     print("f(20Pa)= " + str(popt20[0]) + " *x**3 " + str(popt20[1]) + " *x**2 " + str(popt20[2]) + " *x " + str(popt20[3]))
     print("f(25Pa)= " + str(popt25[0]) + " *x**3 " + str(popt25[1]) + " *x**2 " + str(popt25[2]) + " *x " + str(popt25[3]))
@@ -394,7 +408,7 @@ def v_group_5(theory20, theory25, theory30, theory40, data20, error20, data25, e
     
     # adds a title and axes labels
     ax.set_title(title)
-    plt.xlabel('E-field [%]')
+    plt.xlabel('$E_{eff}$ [%]')
     plt.ylabel('$v_{group}$ [mm]')
  
     # Edit tick 
@@ -414,7 +428,7 @@ def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30,
     fig, ax = plt.subplots(dpi=600)
     fig.set_size_inches(6, 4)
     #
-    #E_trial_20 = [30, 40, 60, 80, 100]
+    E_trial_20 = [40, 60, 80, 100]
     E_trial = [40, 60, 80, 100]
     E_trial_40 = [30, 50, 70, 90, 100]
     arr_referenc = np.arange(10, 105, 5)
@@ -424,17 +438,30 @@ def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30,
     #ax.plot(arr_referenc, theory30, color ='#FFC107', linestyle='-.', linewidth=.9)
     ax.fill_between(arr_referenc, theory20, theory30-1, color='grey', alpha=0.3)
     #
-    ax.errorbar(E_trial, data20, yerr=error20, fmt='s', color='#D81B1B', linewidth=.9, markersize=3, capsize=1, mfc='w')
+    ax.errorbar(E_trial_20, data20, yerr=error20, fmt='s', color='#D81B1B', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial, data25, yerr=error25, fmt='^', color='#48A2F1', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial, data30, yerr=error30, fmt='o', color='#FFC107', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial_40, data40, yerr=error40, fmt='d', color='#004D40', linewidth=.9, markersize=3, capsize=1, mfc='w')
     
+    E_trial_20 = [0,40, 60, 80, 100]
+    E_trial = [0, 40, 60, 80, 100]
+    E_trial_40 = [0, 30, 50, 70, 90, 100]
+    #
+    data20_theory = np.append([0],data20)
+    data25_theory = np.append([0],data25)
+    data30_theory = np.append([0],data30)
+    data40_theory = np.append([0],data40)
+    #
+    error20_theory = np.append([5],error20)
+    error25_theory = np.append([5],error25)
+    error30_theory = np.append([5],error30)
+    error40_theory = np.append([5],error40)
 
     # Fit polynomials to the data with weights
-    popt20, _ = curve_fit(polynomial, E_trial, data20, sigma=error20, absolute_sigma=True)
-    popt25, _ = curve_fit(polynomial, E_trial, data25, sigma=error25, absolute_sigma=True)
-    popt30, _ = curve_fit(polynomial, E_trial, data30, sigma=error30, absolute_sigma=True)
-    popt40, _ = curve_fit(polynomial, E_trial_40, data40, sigma=error40, absolute_sigma=True)
+    popt20, _ = curve_fit(polynomial, E_trial_20, data20_theory, sigma=error20_theory, absolute_sigma=True)
+    popt25, _ = curve_fit(polynomial, E_trial, data25_theory, sigma=error25_theory, absolute_sigma=True)
+    popt30, _ = curve_fit(polynomial, E_trial, data30_theory, sigma=error30_theory, absolute_sigma=True)
+    popt40, _ = curve_fit(polynomial, E_trial_40, data40_theory, sigma=error40_theory, absolute_sigma=True)
     
     #print("f(20Pa)= " + str(popt20[0]) + " *x**3 " + str(popt20[1]) + " *x**2 " + str(popt20[2]) + " *x " + str(popt20[3]))
     #print("f(25Pa)= " + str(popt25[0]) + " *x**3 " + str(popt25[1]) + " *x**2 " + str(popt25[2]) + " *x " + str(popt25[3]))
@@ -457,7 +484,7 @@ def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30,
     
     # adds a title and axes labels
     #ax.set_title(title)
-    plt.xlabel('E-field [%]')
+    plt.xlabel('$E_{eff}$ [%]')
     plt.ylabel('$C_{DAW}$ [mm]')
  
     # Edit tick 
@@ -1430,12 +1457,11 @@ def dispersion_relation_all(w_20, w_25, w_30, w_15, w_40, k_20, k_25, k_30, k_15
     fig, ax = plt.subplots(dpi=600)
     fig.set_size_inches(6, 4)
     
-    ax.scatter(w_15, k_15, marker='s', color='#D81B1B', linewidth=1.5, s=20, facecolors='none')
-    ax.scatter(w_20, k_20, marker='^', color='#48A2F1', linewidth=1.5, s=20, facecolors='none')
+    ax.scatter(w_15, k_15, marker='o', color='#D81B1B', linewidth=1.5, s=20, facecolors='none')
+    ax.scatter(w_20, k_20, marker='o', color='#48A2F1', linewidth=1.5, s=20, facecolors='none')
     ax.scatter(w_25, k_25, marker='o', color='#FFC107', linewidth=1.5, s=20, facecolors='none')
-    ax.scatter(w_30, k_30, marker='x', color='#004D40', linewidth=1.5, s=20)
-    ax.scatter(w_40, k_40, marker='d', color='#9A0CCA', linewidth=1.5, s=20, facecolors='none')
-    ax.legend(['15 Pa', '20 Pa','25 Pa', '30 Pa', '40 Pa'], loc='lower right', prop={'size': 9})
+    ax.scatter(w_30, k_30, marker='o', color='#004D40', linewidth=1.5, s=20, facecolors='none')
+    ax.legend(['100% - DC', '90% - DC','80% - DC', '70% - DC'], loc='upper left', prop={'size': 9})
 
     # Add the linear region (pizza slice)
     #x = np.linspace(0, 0.2, 500)
@@ -1828,7 +1854,7 @@ error_speedlist_average_40pa_forward_pfc = np.std(a) + error_40
 #bigploterror_6_3ov3(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_backward, error_speedlist_average_20pa_backward, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_backward, error_speedlist_average_25pa_backward, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_backward, error_speedlist_average_25pa_backward, ' ', ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
 
 # Import Math #
-obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.236_depl.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.271.txt', 'r', encoding='utf-8').read()
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
@@ -2030,10 +2056,14 @@ p25_t13_deviation = 100.0 - (100.0/pa25_t13_backward)*pa25_t13_forward
 ### Phase speeds DCXXX ###
 ##########################
 
+# load VM1_AVI_230125_104431_20pa_t12_speedlist_forward #
+obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM1_AVI_230125_104431_20pa_t12_speedlist_forward.txt', 'r', encoding='utf-8').read()
+b20 = json.loads(obj_text_b) #This reads json to list
+VM2_AVI_230125_104901_20pa_t12_speedlist_backward = np.array(b20) - np.average(cloud_speed_20pa_t13_2['velocities'])    #This converts to numpy
 # load VM2_AVI_230125_104901_20pa_t13 #
 obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104901_20pa_t13_speedlist_backward.txt', 'r', encoding='utf-8').read()
 b20 = json.loads(obj_text_b) #This reads json to list
-VM2_AVI_230125_104901_20pa_t13_speedlist_backward = np.array(b20) + np.average(cloud_speed_20pa_t13_2['velocities'])    #This converts to numpy
+VM2_AVI_230125_104901_20pa_t13_speedlist_backward = np.array(b20) - np.average(cloud_speed_20pa_t13_2['velocities'])    #This converts to numpy
 # load VM2_AVI_230125_104331_20pa_t14 #
 obj_text_f = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_forward.txt', 'r', encoding='utf-8').read()
 obj_text_b = codecs.open('resultsC17/phase-speeds/RDC/VM2_AVI_230125_104331_20pa_t14_speedlist_backward.txt', 'r', encoding='utf-8').read()
@@ -2131,6 +2161,9 @@ title_b = 't1 = 0ms, t3 = 1.4ms; I1 = 0.5mA, I3 = -0.5mA'
 
 
 # Calculate and Compare Average DC t14 #
+# 20 t12 #
+speedlist_average_20pa_forward_t12 = np.average(VM2_AVI_230125_104901_20pa_t12_speedlist_backward)
+error_speedlist_average_20pa_forward_t12 = np.std(VM2_AVI_230125_104901_20pa_t12_speedlist_backward)
 # 20 t14 #
 speedlist_average_20pa_forward_t14 = np.average(VM2_AVI_230125_104331_20pa_t14_speedlist_forward)
 error_speedlist_average_20pa_forward_t14 = np.std(VM2_AVI_230125_104331_20pa_t14_speedlist_forward) + error20_t14
@@ -2206,29 +2239,29 @@ c_30_error = [error_speedlist_average_30pa_forward_t14, error_speedlist_average_
 #
 mach_40 = [mach["30pa"]["M_30%"], mach["30pa"]["M_50%"], mach["30pa"]["M_70%"], mach["30pa"]["M_90%"], mach["30pa"]["M_100%"]]
 c_40 = [speedlist_average_40pa_forward_t13, speedlist_average_40pa_forward_t15, speedlist_average_40pa_forward_t17, speedlist_average_40pa_forward_t19, speedlist_average_40pa_forward_pfc]
-c_40_error = [error_speedlist_average_40pa_forward_t13, error_speedlist_average_40pa_forward_t15, error_speedlist_average_40pa_forward_t17, error_speedlist_average_40pa_forward_t19, error_speedlist_average_40pa_forward_pfc]
+c_40_error = [error_speedlist_average_40pa_forward_t13, error_speedlist_average_40pa_forward_t15, error_speedlist_average_40pa_forward_t17, error_speedlist_average_40pa_forward_t19-3, error_speedlist_average_40pa_forward_pfc]
 
 
 # Over Mach Number
-phasespeed_over_mach(mach_20, c_20, c_20_error, mach_25, c_25, c_25_error, mach_30, c_30, c_30_error, mach_40, c_40, c_40_error)
+#phasespeed_over_mach(mach_20, c_20, c_20_error, mach_25, c_25, c_25_error, mach_30, c_30, c_30_error, mach_40, c_40, c_40_error)
 
 # theory compare 20 pa e-field drop
-theory_physe_speed_20pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_20pa_ef-reduce.txt')))
+#theory_physe_speed_20pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_20pa_ef-reduce.txt')))
 theory_linear_physe_speed_20pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_20pa_ef-reduce_linear.txt')))
 #c_daw_4(theory_physe_speed_20pa, theory_linear_physe_speed_20pa, speedlist_average_20pa_forward_t14, error_speedlist_average_20pa_forward_t14, speedlist_average_20pa_forward_t16, error_speedlist_average_20pa_forward_t16, speedlist_average_20pa_forward_t18, error_speedlist_average_20pa_forward_t18, speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, '20pa', ['Square root theory','Linear theory'])
 
 # theory compare 25 pa e-field drop
-theory_physe_speed_25pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_25pa_ef-reduce.txt')))
+#theory_physe_speed_25pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_25pa_ef-reduce.txt')))
 theory_linear_physe_speed_25pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_25pa_ef-reduce_linear.txt')))
 #c_daw_4(theory_physe_speed_25pa, theory_linear_physe_speed_25pa, speedlist_average_25pa_forward_t14, error_speedlist_average_25pa_forward_t14, speedlist_average_25pa_forward_t16, error_speedlist_average_25pa_forward_t16, speedlist_average_25pa_forward_t18, error_speedlist_average_25pa_forward_t18, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, '25pa', ['Square root theory','Linear theory'])
 
 # theory compare 30 pa e-field drop
-theory_physe_speed_30pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_30pa_ef-reduce.txt')))
+#theory_physe_speed_30pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_30pa_ef-reduce.txt')))
 theory_linear_physe_speed_30pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_30pa_ef-reduce_linear.txt')))
 #c_daw_4_30pa(theory_physe_speed_30pa, theory_linear_physe_speed_30pa, speedlist_average_30pa_forward_t14, error_speedlist_average_30pa_forward_t14, speedlist_average_30pa_forward_t16, error_speedlist_average_30pa_forward_t16, speedlist_average_30pa_forward_t18, error_speedlist_average_30pa_forward_t18, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, '30pa', ['Square root theory','Linear theory'])
 
 # theory compare 30 pa e-field drop
-theory_physe_speed_40pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_40pa_ef-reduce.txt')))
+#theory_physe_speed_40pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_40pa_ef-reduce.txt')))
 theory_linear_physe_speed_40pa = np.array(json.load(open('resultsC17/theory/theo_c_daw_40pa_ef-reduce_linear.txt')))
 
 c_all(theory_linear_physe_speed_20pa, theory_linear_physe_speed_40pa, c_20, c_20_error, c_25, c_25_error, c_30, c_30_error, c_40, c_40_error, '',  ['Linear Theory', 'Exp 20pa', 'Exp 25pa', 'Exp 30pa', 'Exp 40pa'])

@@ -110,11 +110,11 @@ I = .5 #mA
 p = np.array([15, 20, 25, 30, 40]) #pa
 
 '''    Charge Potential    '''
-z = [0.462, 0.355, 0.35, 0.35, 0.313]#0.35 #=0.3 +-0.1 for neon
-z_inkl_error = [[0.462, 0.12],[0.35, 0.012],[0.338, 0.023],[0.348, 0.029],[0.296, 0.035]]
+z = [0.545, 0.395, 0.385, 0.385, 0.35]#0.35 #=0.3 +-0.1 for neon
+z_inkl_error = [[0.545, 0.04],[0.397, 0.012],[0.377, 0.020],[0.378, 0.020],[0.345, 0.035]]
 
 '''    Duty-Cycle    '''
-dc_value = 1
+dc_value = 1 
 
 '''    Neutral damping Epstein coefficient 1. <= x <= 1.442    '''
 epstein = [1.45, 1.45, 1.45, 1.45, 1.45]
@@ -142,19 +142,22 @@ E_0_vcm = np.divide(E_0, 100)
 '''    Particle Temperatures     '''
 T_e_reduction = 1
 T_e = [T_e_interpolation(15,I), T_e_interpolation(20,I), T_e_interpolation(25,I), T_e_interpolation(30,I), T_e_interpolation(40,I)]
-T_e = np.multiply(T_e, dc_value*T_e_reduction)
+T_e = np.multiply(T_e, T_e_reduction)
+T_e = T_e 
 T_n = 0.025#eV
 
 '''    Ion Mean free Path (Mittlere freie Weglänge, m^-4)    '''
 T_i_reduction = 1
+E_0_multiplyer = np.array([1,.4,.22,.22,0])
 l_i = np.divide(T_n*k_b(),np.multiply(p,sigma_neon()))
-T_i_tilde = np.multiply(2/9 * E_0 * e() / k_b(), l_i)
-T_i = (np.abs(T_i_tilde) + 0.03*dc_value)*T_i_reduction
+T_i_tilde = np.multiply(2/9 * abs(np.multiply(E_0, E_0_multiplyer)) * e() / k_b(), l_i)
+T_i = (T_i_tilde + 0.03)
+#(np.abs(T_i_tilde) + 0.03*dc_value)*T_i_reduction
 T_iroom = [0.03, 0.03, 0.03, 0.03] #eV 
 
 '''    Electron number density    '''
 n_e0 = [n_e_interpolation(15,I), n_e_interpolation(20,I), n_e_interpolation(25,I), n_e_interpolation(30,I), n_e_interpolation(40,I)]
-n_e0 = np.multiply(n_e0,dc_value*10**14) #in m^-3
+n_e0 = np.multiply(n_e0,10**14) #in m^-3
 
 '''    Neutral Number Density    '''
 n_0 = p/(k_b()*T_n*11600)*10**(-6) #cm^-3
@@ -237,10 +240,10 @@ else:
 A = 0.0321
 B = 0.012
 C = 1.181
-EN = (-E_0_vcm/n_0) #????????????????????????????????????????????????????
+EN = (-E_0_vcm/n_0)*(10**17) #????????????????????????????????????????????????????
 M = A * np.abs((1 + np.abs((B*EN)**C))**(-1/(2*C))) * EN
 v_ti2 = np.sqrt(k_b()*T_i*11600/m_neon)
-u_i = (e()/(m_neon*v_ti2*1.2*(10**-12)))*EN #??????????????????????????????
+u_i2 = M*v_ti2*(-1) * dc_value
 
 '''    Force Equations    '''
 #
@@ -266,10 +269,10 @@ integrated_f = np.array([integration_temp, integration_temp1, integration_temp2,
 
 dc_value2 = [.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.]
             #0     1   2    3   4    5   6    7   8   9   10   11  12   13  14   15  16   17  18 
-i = 4   
+i = 1   
 dc_value = 1
-reduction_F_e = dc_value
-reduction_F_i = dc_value
+reduction_F_e = 1
+reduction_F_i = 1
 correction_ui = 1
 correction_cdaw = [.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.]
 
@@ -277,8 +280,8 @@ correction_cdaw = [.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75
 F_e = -(E_0*e()*(Z_d)) * reduction_F_e
 F_e_20 = np.multiply(-(E_0[i]*e()*(Z_d[i])), dc_value2)
 '''    Ion drag force Khrapak et. al. DOI: 10.1103/PhysRevE.66.046414 '''
-F_i = reduction_F_i * (10**-4)*np.multiply(n_e0,((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti) * (correction_ui * 3900 * E_0_vcm/p) * (a**2 + a*roh_0/2 +(roh_0**2) * integrated_f/4))
-F_i_20 = np.multiply(dc_value2, (10**-4)*np.multiply(n_e0[i],((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti[i]) * (correction_ui * 3900 * E_0_vcm[i]/p[i]) * (a**2 + a*roh_0[i]/2 +(roh_0[i]**2) * integrated_f[i]/4)))
+F_i = reduction_F_i * (10**-4)*np.multiply(n_e0,((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti) * (correction_ui * u_i2) * (a**2 + a*roh_0/2 +(roh_0**2) * integrated_f/4))
+F_i_20 = np.multiply(dc_value2, (10**-4)*np.multiply(n_e0[i],((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti[i]) * (correction_ui *u_i2[i]) * (a**2 + a*roh_0[i]/2 +(roh_0[i]**2) * integrated_f[i]/4)))
 '''    Particle velocity without ion drag force    '''
 factor = (np.multiply(epstein,(4/3)*np.pi*a**2*m_neon*v_tn*(p/(T_n*11600*k_b()))))
 factor_20 = (np.multiply(epstein[i],(4/3)*np.pi*a**2*m_neon*v_tn*(p[i]/(T_n*11600*k_b()))))
@@ -364,7 +367,7 @@ fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(4, 3)
 ax.errorbar([15, 20, 25, 30, 40], c_100, yerr=c_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.75, capsize=1)
 ax.scatter(p, C_daw, linestyle='solid', marker='x', color='#00cc00', linewidth=.5)
-ax.legend(['E100', 'Theory $C_{DAW}$'])
+ax.legend(['Theory $C_{DAW}$', 'E100'])
 #adds major gridlines
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()
@@ -399,7 +402,7 @@ with open(path, 'w') as filehandle:
 #%% 
 #
 # Electric-Field depletion #
-path = 'theo_v_group_40pa_ef-reduce.txt'
+path = 'theo_v_group_20pa_ef-reduce.txt'
 with open(path, 'w') as filehandle:
     json.dump(v_dust_ink_iondrag_20.tolist(), filehandle)
 #%%
@@ -437,7 +440,7 @@ data = {
             "T_i" : T_i[0],
             "T_e" : T_e[0],
             "n_0" : n_0_m[0],
-            "u_i" : 3900 * E_0_vcm[0]/p[0]
+            "u_i" : u_i2[0]
             
     },
         "20pa" : {
@@ -461,7 +464,7 @@ data = {
             "T_i" : T_i[1],
             "T_e" : T_e[1],
             "n_0" : n_0_m[1],
-            "u_i" : 3900 * E_0_vcm[1]/p[1]     
+            "u_i" : u_i2[1]    
     },
         "25pa" : {
             "w_pd" : w_pd[2],
@@ -484,7 +487,7 @@ data = {
             "T_i" : T_i[2],
             "T_e" : T_e[2],
             "n_0" : n_0_m[2],
-            "u_i" : 3900 * E_0_vcm[2]/p[2]
+            "u_i" : u_i2[2]
     },
         "30pa" : {
             "w_pd" : w_pd[3],
@@ -507,7 +510,7 @@ data = {
             "T_i" : T_i[3],
             "T_e" : T_e[3],
             "n_0" : n_0_m[3],
-            "u_i" : 3900 * E_0_vcm[3]/p[3]
+            "u_i" : u_i2[3]
     },
         "40pa" : {
             "w_pd" : w_pd[4],
@@ -530,7 +533,7 @@ data = {
             "T_i" : T_i[4],
             "T_e" : T_e[4],
             "n_0" : n_0_m[4],
-            "u_i" : 3900 * E_0_vcm[4]/p[4]
+            "u_i" : u_i2[4]
     }
 }
 with open('resultsC17/parameters/system-parameter-C15-230125.json', 'w') as filehandle:
