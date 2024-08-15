@@ -110,7 +110,7 @@ I = .5 #mA
 p = np.array([15, 20, 25, 30, 40]) #pa
 
 '''    Charge Potential    '''
-z = [0.545, 0.395, 0.385, 0.385, 0.35]#0.35 #=0.3 +-0.1 for neon
+z = [0.62, 0.4, 0.4, 0.40, 0.36]#0.35 #=0.3 +-0.1 for neon
 z_inkl_error = [[0.545, 0.04],[0.397, 0.012],[0.377, 0.020],[0.378, 0.020],[0.345, 0.035]]
 
 '''    Duty-Cycle    '''
@@ -126,7 +126,7 @@ charge_depletion = True
 a = (1.3/2) *10**(-6) #micrometer particle radius
 
 '''    Dust number density    '''
-n_d = [2., 2., 2., 2., 2.]
+n_d = [.5, 2., 2., 2., 2.]
 n_d = np.multiply(n_d,10**11) #in m^-3
 
 ########################
@@ -148,7 +148,7 @@ T_n = 0.025#eV
 
 '''    Ion Mean free Path (Mittlere freie Weglänge, m^-4)    '''
 T_i_reduction = 1
-E_0_multiplyer = np.array([1,.4,.22,.22,0])
+E_0_multiplyer = np.array([1,1,.2,0,0])
 l_i = np.divide(T_n*k_b(),np.multiply(p,sigma_neon()))
 T_i_tilde = np.multiply(2/9 * abs(np.multiply(E_0, E_0_multiplyer)) * e() / k_b(), l_i)
 T_i = (T_i_tilde + 0.03)
@@ -160,8 +160,8 @@ n_e0 = [n_e_interpolation(15,I), n_e_interpolation(20,I), n_e_interpolation(25,I
 n_e0 = np.multiply(n_e0,10**14) #in m^-3
 
 '''    Neutral Number Density    '''
-n_0 = p/(k_b()*T_n*11600)*10**(-6) #cm^-3
-n_0_m = (p)/(k_b()*T_n*11600) #m^-3
+n_0 = p/(k_b()*T_n*11606)*10**(-6) #cm^-3
+n_0_m = (p)/(k_b()*T_n*11606) #m^-3
 T_d = T_n#eV
 
 '''    Dust mass and Neutral mass    '''
@@ -177,31 +177,30 @@ m_e = 0.000548579909 * u #*u = kg
 #############
 
 '''    Neutral thermal temperature    '''
-v_tn = np.sqrt(8*k_b()*T_n*11600/(np.pi*m_neon))
+v_tn = np.sqrt(8*k_b()*T_n*11606/(np.pi*m_neon))
 
 '''    Dust thermal temperature    '''
 v_td = v_tn
 
 '''    Ion thermal temperature    '''
-v_ti = np.sqrt(8*k_b()*T_i*11600/(np.pi*m_neon)) #(k_b*T_i/m_d)**(1/2) #particle thermal temperature
+v_ti = np.sqrt(8*k_b()*T_i*11606/(np.pi*m_neon)) #(k_b*T_i/m_d)**(1/2) #particle thermal temperature
 
-u_i = np.multiply(np.sqrt(k_b()/m_neon),T_e) #boom velocity
+u_boom = np.multiply(np.sqrt(k_b()/m_neon),T_e*11606) #boom velocity
 
 '''    Particle charge    '''
 Z_d = []
 for i in range(len(T_e)):
-    Z_d = np.append(Z_d,((4*np.pi*eps_0()*k_b()*T_e[i]*11600*a*z[i])/(e()**2)))
+    Z_d = np.append(Z_d,((4*np.pi*eps_0()*k_b()*T_e[i]*11606*a*z[i])/(e()**2)))
     
-'''    Ion number density    '''   
-n_i0 = np.add(n_e0, np.multiply(Z_d, n_d)) #m^-3 = n_e0 + Z_d*n_d ;melzer2019
+
 
 '''    Debye electrons, ions and dust    '''
-debye_De = np.sqrt(np.divide(np.multiply((eps_0()*k_b()),np.multiply(T_e,11600)),np.multiply(n_e0,e()**2)))
-debye_Di = np.sqrt(np.divide(np.multiply(eps_0()*k_b()*11600,T_i),np.multiply(n_i0,e()**2)))
+debye_De = np.sqrt(np.divide(np.multiply((eps_0()*k_b()),np.multiply(T_e,11606)),np.multiply(n_e0,e()**2)))
+debye_Di = np.sqrt(np.divide(np.multiply(eps_0()*k_b()*11606,T_i),np.multiply(n_i0,e()**2)))
 debye_Dd = np.sqrt(np.divide(np.multiply(eps_0()*k_b(),v_td),np.multiply(n_d,e()**2)))
 debye_D  = np.divide(np.multiply(debye_De,debye_Di),np.sqrt(debye_De**2 + debye_Di**2))
 '''    Ion-Debye radius    '''
-r_di = np.sqrt((eps_0()*k_b()*T_i)/(n_i0*e()**2))
+r_di = np.sqrt((eps_0()*k_b()*T_i*11606)/(n_i0*e()**2))
 
 '''    Scattering parameter (ion coupling param) https://doi.org/10.1063/1.1947027    '''
 beta = np.divide(Z_d, debye_D) * (e()**2/(4*np.pi*eps_0()*m_neon*v_ti**2))
@@ -226,28 +225,31 @@ if charge_depletion == True:
         root_p0 = fsolve(oml_func_p0, 0.4)
         root = fsolve(oml_func, 0.4)
         z_depl = np.append(z_depl,(((100 / root_p0) *root)/100) *z[i])
-        Z_d[i] = ((4*np.pi*eps_0()*k_b()*T_e[i]*11600*a*z_depl[i])/(e()**2))
+        Z_d[i] = ((4*np.pi*eps_0()*k_b()*T_e[i]*11606*a*z_depl[i])/(e()**2))
     n_i0 = np.add(n_e0, np.multiply(Z_d, n_d)) #m^-3 = n_e0 + Z_d*n_d ;melzer2019
-    debye_De = np.sqrt(np.divide(np.multiply((eps_0()*k_b()),np.multiply(T_e,11600)),np.multiply(n_e0,e()**2)))
-    debye_Di = np.sqrt(np.divide(np.multiply(eps_0()*k_b()*11600,T_i),np.multiply(n_i0,e()**2)))
+    debye_De = np.sqrt(np.divide(np.multiply((eps_0()*k_b()),np.multiply(T_e,11606)),np.multiply(n_e0,e()**2)))
+    debye_Di = np.sqrt(np.divide(np.multiply(eps_0()*k_b()*11606,T_i),np.multiply(n_i0,e()**2)))
     debye_Dd = np.sqrt(np.divide(np.multiply(eps_0()*k_b(),v_td),np.multiply(n_d,e()**2)))
     debye_D  = np.divide(np.multiply(debye_De,debye_Di),np.sqrt(debye_De**2 + debye_Di**2))
 else:
     z_depl = np.ones(len(T_e))*z
     Z_d_0 = Z_d
+    
+'''    Ion number density    '''   
+n_i0 = np.add(n_e0, np.multiply(Z_d, n_d)) #m^-3 = n_e0 + Z_d*n_d ;melzer2019
 
 '''    Modified Frost Formular    '''
 A = 0.0321
 B = 0.012
 C = 1.181
-EN = (-E_0_vcm/n_0)*(10**17) #????????????????????????????????????????????????????
+EN = (-E_0_vcm/n_0)*(10**17) #10^17 from Vcm^2 to Td
 M = A * np.abs((1 + np.abs((B*EN)**C))**(-1/(2*C))) * EN
-v_ti2 = np.sqrt(k_b()*T_i*11600/m_neon)
-u_i2 = M*v_ti2*(-1) * dc_value
+v_ti2 = np.sqrt(k_b()*T_i*11606/m_neon)
+u_i = M*v_ti2*(-1) * dc_value
 
 '''    Force Equations    '''
 #
-roh_0 = np.divide(Z_d , T_i) * (e()**2/(4*np.pi*eps_0()*k_b()))
+roh_0 = np.divide(Z_d , T_i*11606) * (e()**2/(4*np.pi*eps_0()*k_b()))
 def function(x):
     return 2* np.exp(-x) * np.log((2*debye_Di[0]*x+roh_0[0])/(2*a*x+roh_0[0]))
 def function1(x):
@@ -277,14 +279,15 @@ correction_ui = 1
 correction_cdaw = [.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9, .95, 1.]
 
 '''    Electric force    '''
-F_e = -(E_0*e()*(Z_d)) * reduction_F_e
+F_e = -E_0*e()*(Z_d) * reduction_F_e
 F_e_20 = np.multiply(-(E_0[i]*e()*(Z_d[i])), dc_value2)
 '''    Ion drag force Khrapak et. al. DOI: 10.1103/PhysRevE.66.046414 '''
-F_i = reduction_F_i * (10**-4)*np.multiply(n_e0,((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti) * (correction_ui * u_i2) * (a**2 + a*roh_0/2 +(roh_0**2) * integrated_f/4))
-F_i_20 = np.multiply(dc_value2, (10**-4)*np.multiply(n_e0[i],((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti[i]) * (correction_ui *u_i2[i]) * (a**2 + a*roh_0[i]/2 +(roh_0[i]**2) * integrated_f[i]/4)))
+F_i = reduction_F_i * np.multiply(n_i0,((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti) * (correction_ui * u_i) * (a**2 + a*roh_0/2 +(roh_0**2) * integrated_f/4))
+F_i2 = np.multiply(n_i0,((4*np.sqrt(2*np.pi))/3) * m_neon * v_ti * roh_0**2 * u_i * integrated_f)
+F_i_20 = np.multiply(dc_value2, (10**-4)*np.multiply(n_i0[i],((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti[i]) * (correction_ui *u_i[i]) * (a**2 + a*roh_0[i]/2 +(roh_0[i]**2) * integrated_f[i]/4)))
 '''    Particle velocity without ion drag force    '''
-factor = (np.multiply(epstein,(4/3)*np.pi*a**2*m_neon*v_tn*(p/(T_n*11600*k_b()))))
-factor_20 = (np.multiply(epstein[i],(4/3)*np.pi*a**2*m_neon*v_tn*(p[i]/(T_n*11600*k_b()))))
+factor = (np.multiply(epstein,(4/3)*np.pi*a**2*m_neon*v_tn*(p/(T_n*11606*k_b()))))
+factor_20 = (np.multiply(epstein[i],(4/3)*np.pi*a**2*m_neon*v_tn*(p[i]/(T_n*11606*k_b()))))
 v_dust = np.divide(F_e,factor)
 
 
@@ -300,11 +303,11 @@ beta_damp = np.multiply(p,epstein)*(8/(np.pi*a*roh*v_tn))    # with v_{th,n} = 3
 
 '''    DAW - phase velocity    '''
 v_0 = np.sqrt(2*(e()*(Z_d))**2/(m_d*a))
-aplha =(np.multiply(k_b()*11600,T_i)/m_d)
+aplha =(np.multiply(k_b()*11606,T_i)/m_d)
 epsilon = np.divide((n_d),(n_i0))
 C_daw = np.sqrt(aplha * epsilon * Z_d**2) * 10**(3) #mm/s
 C_daw_2 = w_pd * debye_Di * 10**(3) #mm/s
-aplha =(np.multiply(k_b()*11600,T_i[i])/m_d)
+aplha =(np.multiply(k_b()*11606,T_i[i])/m_d)
 epsilon = np.divide((n_d[i]),(n_i0[i]))
 C_daw_red = np.multiply(correction_cdaw, np.sqrt(aplha * epsilon * Z_d[i]**2) * 10**(3)) #mm/s 
 
@@ -312,7 +315,7 @@ C_daw_red = np.multiply(correction_cdaw, np.sqrt(aplha * epsilon * Z_d[i]**2) * 
 w_pi = np.sqrt(4*np.pi*e()**2*np.divide(n_i0,m_neon))
 
 '''    Dust-Neutral collision frequency    '''
-nu_dn = 8*(np.sqrt(2*np.pi)/3) * a**2 * v_tn * (m_neon/m_d) * np.divide(p,k_b()*(T_n*11600))
+nu_dn = 8*(np.sqrt(2*np.pi)/3) * a**2 * v_tn * (m_neon/m_d) * np.divide(p,k_b()*(T_n*11606))
 '''    Ion-Neutral collision frequency    '''
 nu_in = v_ti * sigma_neon() * np.divide(p,k_b()*(T_n))
 
@@ -323,14 +326,14 @@ F_ie_ratio = delta * l_i / debye_D
 
 '''    Critical Electric Field for DAWs    '''
 constant_rsy = np.multiply(debye_Di,w_pd)
-constant_rsy2 = np.sqrt(Z_d*((k_b()*T_i*11600)/m_d))
+constant_rsy2 = np.sqrt(Z_d*((k_b()*T_i*11606)/m_d))
 #
-E_crit = np.divide((k_b()/e()) * (T_i*11600/debye_Di),np.sqrt(np.add((w_pd/nu_dn)**2,(w_pi/nu_in)**2)))
+E_crit = np.divide((k_b()/e()) * (T_i*11606/debye_Di),np.sqrt(np.add((w_pd/nu_dn)**2,(w_pi/nu_in)**2)))
 #
-E_crit2 = np.multiply((k_b()*(T_i*11600)/e()) , np.divide(nu_dn, C_daw*10**(-3))) #V/cm
+E_crit2 = np.multiply((k_b()*(T_i*11606)/e()) , np.divide(nu_dn, C_daw*10**(-3))) #V/cm
 #
 epst_temp = np.divide((Z_d*e()*E_0),np.multiply(m_d,C_daw*10**(-3)))
-E_crit3 = np.divide(epst_temp,C_daw*10**(-3)) * (k_b()*T_i*11600)/e()
+E_crit3 = np.divide(epst_temp,C_daw*10**(-3)) * (k_b()*T_i*11606)/e()
 
 '''    ID Lattice c_s calculations    '''
 M_correction = 1
@@ -357,7 +360,7 @@ c_100_error = [data_v['15pa']['c_daw_100_error'], data_v['20pa']['c_daw_100_erro
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(4, 3)
 ax.errorbar([15, 20, 25, 30, 40], v_group_100, yerr=v_group_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.75, capsize=1)
-ax.scatter(p[:], v_dust_ink_iondrag[:]*1000, marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
+ax.scatter(p[0:], v_dust_ink_iondrag[0:]*1000, marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
 ax.legend(['E100','Theory $v_{group}$'])
 #adds major gridlines
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
