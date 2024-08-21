@@ -93,9 +93,9 @@ trial = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 
 '''    Charge Potential    '''
 #z = [.35, .34, .32, .32, .3] #F2
-z = [0.48, 0.43, 0.42, 0.40, 0.32] #F1
+z = [0.48, 0.43, 0.42, 0.41, 0.32] #F1
 #z = [.45, .35, .28, .24, .3] #Theory
-z_inkl_error = [[0.545, 0.04],[0.397, 0.012],[0.377, 0.020],[0.378, 0.020],[0.345, 0.035]]
+z_inkl_error = [[0.48, 0.05],[0.43, 0.03],[0.42, 0.02],[0.41, 0.02],[0.32, 0.03]]
 
 '''    Duty-Cycle    '''
 dc_value = 1 
@@ -112,8 +112,8 @@ a = (1.3/2) *10**(-6) #micrometer particle radius
 
 '''    Dust number density    '''
 #n_d = [1.0, 1.0, 1.0, 1.0, 1.0] #F2
-#n_d = [.8, 1.5, 1.9, 2.2, 2.5] #F1
-n_d = [2., 2., 2., 2., 2.] #Theory
+n_d = [.8, 1.5, 1.9, 2.3, 2.5] #F1
+#n_d = [2., 2., 2., 2., 2.] #Theory
 n_d = np.multiply(n_d,10**11) #in m^-3
 
 ##########################
@@ -166,9 +166,9 @@ v_tn = np.sqrt(8 * k * T_n * 11606 / (np.pi * m_neon))
 v_ti = np.sqrt(8 * k * T_i * 11606 / (np.pi * m_neon))
 
 '''    Particle charge    '''
-Z_d = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z / (e**2)
+Z_d_0 = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z / (e**2)
 
-n_i0 = np.add(n_e0, np.multiply(Z_d, n_d)) #m^-3 = n_e0 + Z_d*n_d ;melzer2019
+n_i0 = np.add(n_e0, np.multiply(Z_d_0, n_d)) #m^-3 = n_e0 + Z_d*n_d ;melzer2019
 
 '''    Debye electrons, ions and dust    '''
 debye_De = np.sqrt(np.divide(epsilon_0 * k * T_e * 11606 , n_e0 * e**2))
@@ -176,11 +176,11 @@ debye_Di = np.sqrt(np.divide(epsilon_0 * k * T_i * 11606 , n_i0 * e**2))
 debye_D  = np.divide(np.multiply(debye_De,debye_Di),np.sqrt(debye_De**2 + debye_Di**2))
 
 '''    Scattering parameter (ion coupling param) https://doi.org/10.1063/1.1947027    '''
-beta = np.divide(Z_d, debye_Di) * (e**2 / (4 * np.pi * epsilon_0 * m_neon * v_ti**2))
+beta = np.divide(Z_d_0, debye_Di) * (e**2 / (4 * np.pi * epsilon_0 * m_neon * v_ti**2))
 
 '''    Havnes Parameter    '''
 P = np.multiply(np.multiply(695*(1.3/2),T_e),np.divide(n_d,n_i0))
-P2 = np.multiply(Z_d/z,np.divide(n_d,n_i0))
+P2 = np.multiply(Z_d_0/z,np.divide(n_d,n_i0))
 
 '''    Charge depletion adjustment    '''
 # New z from Havnes Parameter Physics Reports 421 (2005) 1 – 103#
@@ -193,6 +193,7 @@ tau = np.divide(T_e,T_i)
 n_de = np.divide(n_d,n_e0)
 #
 z_depl = []
+Z_d = Z_d_0
 if 1 in charge_depletion:   
     for i in range(len(charge_depletion)):
         if charge_depletion[i] == 1:
@@ -365,6 +366,160 @@ ax.legend(['Theory $C_{DAW}$', 'E100'])
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()
 #
+# Write System Parameters Json #
+data = {
+        "neon" : { "cross-section" : sigma_neon
+    },
+        "15pa" : {
+            "w_pd" : w_pd[0],
+            "w_pi" : w_pi[0],
+            "debye_De" : debye_De[0],
+            "debye_Di" : debye_Di[0],
+            "debye_D" : debye_D[0],
+            "beta_damp" : beta_damp[0],
+            "havnes" : P[0],
+            "e-field-vm" : E_0[0],
+            "Z_d_0" : Z_d_0[0],
+            "Z_d" : Z_d[0],
+            "z" : z_inkl_error[0][0],
+            "z_error" : z_inkl_error[0][1],
+            "z_depl" : z_depl[0],
+            "l_i" : l_i[0],
+            "n_d" : n_d[0],
+            "n_i" : n_i0[0],
+            "n_e" : n_e0[0],
+            "T_i" : T_i[0],
+            "T_e" : T_e[0],
+            "n_0" : n_0_m[0],
+            "u_i" : u_i[0]
+            
+    },
+        "20pa" : {
+            "w_pd" : w_pd[1],
+            "w_pi" : w_pi[1],
+            "debye_De" : debye_De[1],
+            "debye_Di" : debye_Di[1],
+            "debye_D" : debye_D[1],
+            "beta_damp" : beta_damp[1],
+            "havnes" : P[1] ,
+            "e-field-vm" : E_0[1],
+            "Z_d_0" : Z_d_0[1],
+            "Z_d" : Z_d[1],
+            "z" : z_inkl_error[1][0],
+            "z_error" : z_inkl_error[1][1],
+            "z_depl" : z_depl[1],
+            "l_i" : l_i[1],
+            "n_d" : n_d[1],
+            "n_i" : n_i0[1],
+            "n_e" : n_e0[1],
+            "T_i" : T_i[1],
+            "T_e" : T_e[1],
+            "n_0" : n_0_m[1],
+            "u_i" : u_i[1]    
+    },
+        "25pa" : {
+            "w_pd" : w_pd[2],
+            "w_pi" : w_pi[2],
+            "debye_De" : debye_De[2],
+            "debye_Di" : debye_Di[2],
+            "debye_D" : debye_D[2],
+            "beta_damp" : beta_damp[2],
+            "havnes" : P[2],
+            "e-field-vm" : E_0[2],
+            "Z_d_0" : Z_d_0[2],
+            "Z_d" : Z_d[2],
+            "z" : z_inkl_error[2][0],
+            "z_error" : z_inkl_error[2][1],
+            "z_depl" : z_depl[2],
+            "l_i" : l_i[2],
+            "n_d" : n_d[2],
+            "n_i" : n_i0[2],
+            "n_e" : n_e0[2],
+            "T_i" : T_i[2],
+            "T_e" : T_e[2],
+            "n_0" : n_0_m[2],
+            "u_i" : u_i[2]
+    },
+        "30pa" : {
+            "w_pd" : w_pd[3],
+            "w_pi" : w_pi[3],
+            "debye_De" : debye_De[3],
+            "debye_Di" : debye_Di[3],
+            "debye_D" : debye_D[3],
+            "beta_damp" : beta_damp[3],
+            "havnes" : P[3],
+            "e-field-vm" : E_0[3],
+            "Z_d_0" : Z_d_0[3],
+            "Z_d" : Z_d[3],
+            "z" : z_inkl_error[3][0],
+            "z_error" : z_inkl_error[3][1],
+            "z_depl" : z_depl[3],
+            "l_i" : l_i[3],
+            "n_d" : n_d[3],
+            "n_i" : n_i0[3],
+            "n_e" : n_e0[3],
+            "T_i" : T_i[3],
+            "T_e" : T_e[3],
+            "n_0" : n_0_m[3],
+            "u_i" : u_i[3]
+    },
+        "40pa" : {
+            "w_pd" : w_pd[4],
+            "w_pi" : w_pi[4],
+            "debye_De" : debye_De[4],
+            "debye_Di" : debye_Di[4],
+            "debye_D" : debye_D[4],
+            "beta_damp" : beta_damp[4],
+            "havnes" : P[4],
+            "e-field-vm" : E_0[4],
+            "Z_d_0" : Z_d_0[4],
+            "Z_d" : Z_d[4],
+            "z" : z_inkl_error[4][0],
+            "z_error" : z_inkl_error[4][1],
+            "z_depl" : z_depl[4],
+            "l_i" : l_i[4],
+            "n_d" : n_d[4],
+            "n_i" : n_i0[4],
+            "n_e" : n_e0[4],
+            "T_i" : T_i[4],
+            "T_e" : T_e[4],
+            "n_0" : n_0_m[4],
+            "u_i" : u_i[4]
+    }
+}
+with open('resultsC17/parameters/system-parameter-C15-230125.json', 'w') as filehandle:
+    json.dump(data, filehandle)
+forces = {
+    "15pa" : {
+        "F_i_exp" : F_i[0],
+        "F_e_exp" : F_e[0],
+        "n_d" : n_d[0]
+        
+        },
+    "20pa" : {
+        "F_i_exp" : F_i[1],
+        "F_e_exp" : F_e[1],
+        "n_d" : n_d[1]
+        },
+    "25pa" : {
+        "F_i_exp" : F_i[2],
+        "F_e_exp" : F_e[2],
+        "n_d" : n_d[2]
+        },
+    "30pa" : {
+        "F_i_exp" : F_i[3],
+        "F_e_exp" : F_e[3],
+        "n_d" : n_d[3]
+        },
+    "40pa" : {
+        "F_i" : F_i[4],
+        "F_e" : F_e[4],
+        "n_d" : n_d[4]
+        }
+}
+with open('Final-Results/forces.json', 'w') as filehandle:
+    json.dump(forces, filehandle)
+#
 #%%
 ###############
 #function to minimize
@@ -377,48 +532,72 @@ global_error = []
 charge_depletion = [1, 1, 1, 1, 1]
 #
 # Example functions that need proper definitions
-def oml_func_p0(x, tau, i):
-    return np.sqrt(m_e / m_neon) * (1 + x * tau) - np.sqrt(tau) * np.exp(-x)
+def oml_func_p0(x, tauf):
+    return np.sqrt(m_e / m_neon) * (1 + x * tauf) - np.sqrt(tauf) * np.exp(-x)
 
-def oml_func(x, P, tau, i):
-    return np.sqrt(m_e / m_neon) * (1 + x * tau) * (1 + P) - np.sqrt(tau) * np.exp(-x)
+def oml_func(x, Pf, tauf):
+    return np.sqrt(m_e / m_neon) * (1 + x * tauf) * (1 + Pf) - np.sqrt(tauf) * np.exp(-x)
 
-def deplete_z(z, P, tau):
-    z_deplet = np.empty_like(charge_depletion)  # Preallocate the array with the same shape as z
+def deplete_z(z1, Pf, tauf):
+    z_deplet = np.ones(len(charge_depletion))  # Preallocate the array with the same shape as z
     for i in range(len(charge_depletion)):
         if charge_depletion[i] == 1:
-            root_p0 = fsolve(oml_func_p0, 0.4, args=(tau[i], i))[0]
-            root = fsolve(oml_func, 0.4, args=(P[i], tau[i], i))[0]
-            z_deplet[i] = (((100 / root_p0) * root) / 100) * z[i]
+            root_p0 = fsolve(oml_func_p0, 0.4, args=(tauf[i]))[0]
+            root = fsolve(oml_func, 0.4, args=(Pf[i], tauf[i]))[0]
+            value = ((((100 / root_p0) * root) / 100) * z1)
+            z_deplet[i] = value  # Assign the float directly
         else:
-            z_deplet[i] = z[i]
+            z_deplet[i] = z1
     return z_deplet
 #
-def theory_v_c(z, n_d_f, pressure):
+def theory_v_c(z1, n_d_f, pressure):
     '''Calculates particle velocity and speed of sound (C_daw) based on given parameters.'''
-    Z_d = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z / (e**2)
+    Z_d = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z1 / (e**2)
     n_d = n_d_f*10**11
-    tau = np.divide(T_e,T_i)
+    tauf = np.divide(T_e,T_i)
     n_i0 = np.add(n_e0, np.multiply(Z_d, n_d))
-    P = np.multiply(Z_d/z,np.divide(n_d,n_i0))
-    z_depl = deplete_z(z,P,tau)
-    Z_d_new = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z_depl / (e**2)
+    Pf = np.multiply(Z_d/z1,np.divide(n_d,n_i0))
+    z_deplf = deplete_z(z1,Pf,tauf)
+    Z_d_new = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z_deplf / (e**2)
     #
-    print(z_depl)
+    n_i0 = np.add(n_e0, np.multiply(Z_d_new, n_d)) #m^-3
     #
-    n_i0 = np.add(n_e0, np.multiply(Z_d_new, n_d*10**11)) #m^-3
+    F_e = Z_d_new * e * E_0
+    EN = (-E_0_vcm / n_0) * (10**17)  # Convert V/cm^2 to Td (Townsend)
+    M = A * np.abs((1 + np.abs((B * EN)**C))**(-1 / (2 * C))) * EN
+    v_ti2 = np.sqrt(k * T_i * 11606 / m_neon)
+    u_i = M * v_ti2 * dc_value
+    
+    roh_0 = np.divide(Z_d_new, T_i * 11606) * e**2 / (4 * np.pi * epsilon_0 * k)
+    
+    integration_temp = integrate(function, 0, np.inf)[0]
+    integration_temp1 = integrate(function1, 0, np.inf)[0]
+    integration_temp2 = integrate(function2, 0, np.inf)[0]
+    integration_temp3 = integrate(function3, 0, np.inf)[0]
+    integration_temp4 = integrate(function4, 0, np.inf)[0]
+    
+    integrated_f = np.array([integration_temp, integration_temp1, integration_temp2, integration_temp3, integration_temp4])
+    
+    F_i = np.multiply(n_i0, ((8 * np.sqrt(2 * np.pi)) / 3) * m_neon * v_ti * u_i * (a**2 + a * roh_0 / 2 + (roh_0**2) * integrated_f / 4))
+    
+    v_dust = ((F_e + F_i) / factor) * (-1000)
+    alpha = (np.multiply(k * 11606, T_i) / m_d)
+    epsilon = np.divide(n_d, n_i0)
+    C_daw = np.sqrt(alpha * epsilon * np.array(Z_d)**2) * 10**3  # Convert to mm/s
+    
+    return v_dust.item(pressure), C_daw.item(pressure)
     
 
 def objective(trial, pressure):
     try:
         # Parameter space
-        z = trial.suggest_float('z', 0.3, 0.6)
-        n_d = trial.suggest_float('n_d', 1., 2.)
+        z = trial.suggest_float('z', 0.4, 0.7)
+        n_d = trial.suggest_float('n_d', 1., 2.3)
         
         v_dust, c_daw = theory_v_c(z, n_d, pressure)
 
-        expectation_v = v_group_100[pressure]*(-1)
-        expectation_c = abs(c_100[pressure])
+        expectation_v = v_group_100[pressure]
+        expectation_c = c_100[pressure]
         verror = abs(expectation_v - v_dust)
         cerror = abs(expectation_c - c_daw)
         #print(verror + cerror)
@@ -432,8 +611,8 @@ def objective(trial, pressure):
         print(f"Exception: {e}")
         return float('inf')
 
-trials = 10
-pressure = 4  # Trial pressure
+trials = 10000
+pressure = 1  # Trial pressure
 
 # Create a partial function to pass additional fixed parameters to the objective function
 objective_partial = partial(objective, pressure=pressure)
@@ -452,7 +631,7 @@ print("Best Parameters:", best_params)
 print("Best Error:", best_error)
 print('----------------------------------------------------------')
 
-# Visualization
+#%% Visualization
 optimization_history_plot = vis.plot_optimization_history(study)
 optimization_history_plot.show()
 
