@@ -93,8 +93,8 @@ trial = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 
 '''    Charge Potential    '''
 #z = [.35, .34, .32, .32, .3] #F2
-#z = [0.451, 0.32, 0.29, 0.29, 0.3] #F1
-z = [.45, .35, .28, .24, .3] #Theory
+z = [0.48, 0.43, 0.42, 0.40, 0.32] #F1
+#z = [.45, .35, .28, .24, .3] #Theory
 z_inkl_error = [[0.545, 0.04],[0.397, 0.012],[0.377, 0.020],[0.378, 0.020],[0.345, 0.035]]
 
 '''    Duty-Cycle    '''
@@ -105,15 +105,15 @@ epstein = [1.4, 1.4, 1.4, 1.4, 1.4]
 
 '''    Particle Charge Depletion    '''
 #charge_depletion = [0, 0, 0, 0, 1] #F1 & F2
-charge_depletion = [0, 0, 0, 0, 0] #Theory
+charge_depletion = [1, 1, 1, 1, 1] #Theory
 
 '''    Particle Size    '''
 a = (1.3/2) *10**(-6) #micrometer particle radius
 
 '''    Dust number density    '''
 #n_d = [1.0, 1.0, 1.0, 1.0, 1.0] #F2
-#n_d = [1.05, 1.3, 1.8, 2., 2.] #F1
-n_d = [1.28, 2., 2., 2., 2.] #Theory
+#n_d = [.8, 1.5, 1.9, 2.2, 2.5] #F1
+n_d = [2., 2., 2., 2., 2.] #Theory
 n_d = np.multiply(n_d,10**11) #in m^-3
 
 ##########################
@@ -134,7 +134,7 @@ T_e = T_e
 T_n = 0.025#eV
 
 '''    Ion Mean free Path (Mittlere freie Weglänge, m^-4)    '''
-E_0_multiplyer = np.array([0,0,0,0,0]) #F1
+E_0_multiplyer = np.array([1,0,0,0,0]) #F1
 #E_0_multiplyer = np.array([1,1,0,0,0]) #F2
 l_i = np.divide(T_n * k, p*sigma_neon)
 T_i_tilde = np.multiply(2/9 * abs(np.multiply(E_0, E_0_multiplyer)) * e/k, l_i)
@@ -273,7 +273,7 @@ mu_id = (np.sqrt(np.pi) * a**2 * n_i0 * v_ti**2 / zetta) * (np.sqrt(np.pi/2) * e
 F_e = Z_d * e * E_0
 
 '''    Ion drag force Khrapak et. al. DOI: 10.1103/PhysRevE.66.046414 '''
-F_i = np.multiply(n_i0,((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti2) * (u_i) * (a**2 + a*roh_0/2 +(roh_0**2) * integrated_f/4))
+F_i = np.multiply(n_i0,((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti) * (u_i) * (a**2 + a*roh_0/2 +(roh_0**2) * integrated_f/4))
 F_i2 = np.multiply(n_i0,((4*np.sqrt(2*np.pi))/3) * debye_Di**2 * m_neon * v_ti2 * beta_T**2 * u_i * integrated_bc)
 F_i3 = mu_id * m_neon * u_i
 '''    Particle velocity without ion drag force    '''
@@ -307,6 +307,13 @@ aplha =(np.multiply(k*11606,T_i)/m_d)
 epsilon = np.divide((n_d),(n_i0))
 C_daw = np.sqrt(aplha * epsilon * Z_d**2) * 10**(3) #mm/s
 C_daw_2 = w_pd * debye_Di * 10**(3) #mm/s
+
+# Dispersion relation function
+def dispersion_relation(w, k):
+    chi_e = 1 / (k * debye_De)**2
+    chi_i = w_pi**2 / (k**2 * v_ti2**2 + k * u_i *(1j * nu_in - k * u_i))
+    chi_d = -w_pd**2 / (w + k*np.array(v_group_100)) * (w + k*np.array(v_group_100) + 1j*nu_in)  # Assuming dust-neutral collision frequency is 0.1 * nu_in
+    return 1 + chi_e + chi_i + chi_d
 
 '''    Plasma-Ion interaction frequency    '''
 w_pi = np.sqrt(4*np.pi*e**2*np.divide(n_i0,m_neon))
@@ -342,9 +349,9 @@ plt.show()
 #
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(4, 3)
-ax.errorbar(p, np.array(v_group_100)*(-1), yerr=v_group_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.75, capsize=1)
-ax.scatter(p[0:], v_d[0:]*1000, marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
-ax.legend(['Theory $v_{group}$', 'E100'])
+ax.errorbar(p, np.array(v_group_100), yerr=v_group_100_error, fmt='^', color='#00429d', markersize=1, linewidth=.75, capsize=1)
+ax.scatter(p[0:], v_d[0:]*(-1000), marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
+ax.legend(['Theory1 $v_{group}$', 'E100'])
 #adds major gridlines
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()
@@ -367,46 +374,50 @@ plt.show()
 global_vspeed = []
 global_cspeed = []
 global_error = []
+charge_depletion = [1, 1, 1, 1, 1]
+#
+# Example functions that need proper definitions
+def oml_func_p0(x, tau, i):
+    return np.sqrt(m_e / m_neon) * (1 + x * tau) - np.sqrt(tau) * np.exp(-x)
 
-def theory_v_c(z, n_d, pressure):
+def oml_func(x, P, tau, i):
+    return np.sqrt(m_e / m_neon) * (1 + x * tau) * (1 + P) - np.sqrt(tau) * np.exp(-x)
+
+def deplete_z(z, P, tau):
+    z_deplet = np.empty_like(charge_depletion)  # Preallocate the array with the same shape as z
+    for i in range(len(charge_depletion)):
+        if charge_depletion[i] == 1:
+            root_p0 = fsolve(oml_func_p0, 0.4, args=(tau[i], i))[0]
+            root = fsolve(oml_func, 0.4, args=(P[i], tau[i], i))[0]
+            z_deplet[i] = (((100 / root_p0) * root) / 100) * z[i]
+        else:
+            z_deplet[i] = z[i]
+    return z_deplet
+#
+def theory_v_c(z, n_d_f, pressure):
     '''Calculates particle velocity and speed of sound (C_daw) based on given parameters.'''
     Z_d = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z / (e**2)
-    n_i0 = np.add(n_e0, np.multiply(Z_d, n_d * 10**11))
+    n_d = n_d_f*10**11
+    tau = np.divide(T_e,T_i)
+    n_i0 = np.add(n_e0, np.multiply(Z_d, n_d))
+    P = np.multiply(Z_d/z,np.divide(n_d,n_i0))
+    z_depl = deplete_z(z,P,tau)
+    Z_d_new = 4 * np.pi * epsilon_0 * k * T_e * 11606 * a * z_depl / (e**2)
+    #
+    print(z_depl)
+    #
+    n_i0 = np.add(n_e0, np.multiply(Z_d_new, n_d*10**11)) #m^-3
     
-    F_e = Z_d * e * E_0
-    EN = (-E_0_vcm / n_0) * (10**17)  # Convert V/cm^2 to Td (Townsend)
-    M = A * np.abs((1 + np.abs((B * EN)**C))**(-1 / (2 * C))) * EN
-    v_ti2 = np.sqrt(k * T_i * 11606 / m_neon)
-    u_i = M * v_ti2 * dc_value
-    
-    roh_0 = np.divide(Z_d, T_i * 11606) * e**2 / (4 * np.pi * epsilon_0 * k)
-    
-    integration_temp = integrate(function, 0, np.inf)[0]
-    integration_temp1 = integrate(function1, 0, np.inf)[0]
-    integration_temp2 = integrate(function2, 0, np.inf)[0]
-    integration_temp3 = integrate(function3, 0, np.inf)[0]
-    integration_temp4 = integrate(function4, 0, np.inf)[0]
-    
-    integrated_f = np.array([integration_temp, integration_temp1, integration_temp2, integration_temp3, integration_temp4])
-    
-    F_i = np.multiply(n_i0, ((8 * np.sqrt(2 * np.pi)) / 3) * m_neon * v_ti2 * u_i * (a**2 + a * roh_0 / 2 + (roh_0**2) * integrated_f / 4))
-    
-    v_dust = np.abs((F_e + F_i) / factor) * 1000
-    alpha = (np.multiply(k * 11606, T_i) / m_d)
-    epsilon = np.divide(n_d * 10**11, n_i0)
-    C_daw = np.sqrt(alpha * epsilon * Z_d**2) * 10**3  # Convert to mm/s
-    
-    return v_dust.item(pressure), C_daw.item(pressure)
 
 def objective(trial, pressure):
     try:
         # Parameter space
-        z = trial.suggest_float('z', 0.2, 0.4)
+        z = trial.suggest_float('z', 0.3, 0.6)
         n_d = trial.suggest_float('n_d', 1., 2.)
         
         v_dust, c_daw = theory_v_c(z, n_d, pressure)
 
-        expectation_v = abs(v_group_100[pressure])
+        expectation_v = v_group_100[pressure]*(-1)
         expectation_c = abs(c_100[pressure])
         verror = abs(expectation_v - v_dust)
         cerror = abs(expectation_c - c_daw)
@@ -421,8 +432,8 @@ def objective(trial, pressure):
         print(f"Exception: {e}")
         return float('inf')
 
-trials = 1000
-pressure = 3  # Trial pressure
+trials = 10
+pressure = 4  # Trial pressure
 
 # Create a partial function to pass additional fixed parameters to the objective function
 objective_partial = partial(objective, pressure=pressure)
