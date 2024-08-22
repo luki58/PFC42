@@ -1181,7 +1181,7 @@ def group_bigploterror_6_3ov3_theory(v_group, v_group_pfc, theory, havnes, title
     ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     ax2.plot(p, havnes, color='#9A0CCA', linewidth=.5, linestyle='dashed')
     #
-    ax2.legend(["Havnes-Parameter"], bbox_to_anchor=(0.15, 0.6, .85, 0.1))#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    ax2.legend(["Havnes-Parameter"], bbox_to_anchor=(0.15, 0.6, .85, 0.1) , loc='upper right')#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
     #
     plt.ylabel('P')
     #

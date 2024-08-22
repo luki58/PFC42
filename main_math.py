@@ -93,9 +93,9 @@ trial = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 
 '''    Charge Potential    '''
 #z = [.35, .34, .32, .32, .3] #F2
-z = [0.48, 0.43, 0.42, 0.41, 0.32] #F1
+z = [0.54, 0.43, 0.42, 0.41, 0.32] #F1
 #z = [.45, .35, .28, .24, .3] #Theory
-z_inkl_error = [[0.48, 0.05],[0.43, 0.03],[0.42, 0.02],[0.41, 0.02],[0.32, 0.03]]
+z_inkl_error = [[0.54, 0.05],[0.43, 0.03],[0.42, 0.02],[0.41, 0.02],[0.32, 0.03]]
 
 '''    Duty-Cycle    '''
 dc_value = 1 
@@ -112,7 +112,7 @@ a = (1.3/2) *10**(-6) #micrometer particle radius
 
 '''    Dust number density    '''
 #n_d = [1.0, 1.0, 1.0, 1.0, 1.0] #F2
-n_d = [.8, 1.5, 1.9, 2.3, 2.5] #F1
+n_d = [.65, 1.5, 1.9, 2.3, 2.5] #F1
 #n_d = [2., 2., 2., 2., 2.] #Theory
 n_d = np.multiply(n_d,10**11) #in m^-3
 
@@ -611,7 +611,7 @@ def objective(trial, pressure):
         print(f"Exception: {e}")
         return float('inf')
 
-trials = 10000
+trials = 100
 pressure = 1  # Trial pressure
 
 # Create a partial function to pass additional fixed parameters to the objective function
