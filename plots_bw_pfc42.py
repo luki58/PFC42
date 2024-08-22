@@ -353,14 +353,14 @@ def v_group_5(theory20, theory25, theory30, theory40, data20, error20, data25, e
     E_trial = [30, 40, 60, 80, 100]
     E_trial_30 = [40, 50, 60, 80, 100]
     E_trial_40 = [30, 50, 70, 90, 100]
-    arr_referenc = np.arange(10, 105, 5)
+    arr_referenc = np.arange(0, 110, 10)
     #
     #ax.plot(arr_referenc, theory20*1000, color ='#D81B1B', linestyle=':', linewidth=.9)
     #ax.plot(arr_referenc, theory25*1000, color='#48A2F1', linestyle='--', linewidth=.9)
     #ax.plot(arr_referenc, theory30*1000, color ='#FFC107', linestyle='-.', linewidth=.9)
     #ax.plot(arr_referenc, theory40*1000, color ='#000000', linestyle='-', linewidth=.9)
     # Fill the region between theory20 and theory40
-    ax.fill_between(arr_referenc, theory20*1000+1, theory40*1000-2, color='grey', alpha=0.3)
+    ax.fill_between(arr_referenc, theory20*1000, theory40*1000-3, color='grey', alpha=0.3)
     #
     ax.errorbar(E_trial, data20, yerr=error20, fmt='s', color='#D81B1B', linewidth=.9, markersize=3, capsize=1, mfc='w')
     ax.errorbar(E_trial, data25, yerr=error25, fmt='^', color='#48A2F1', linewidth=.9, markersize=3, capsize=1, mfc='w')
@@ -1122,7 +1122,7 @@ def bigploterror_12_3(x1, dx1, x2, dx2, x3, dx3, x4, dx4, x5, dx5, x6, dx6, x7, 
 def cdaw_bigploterror_6_3ov3_theory(data, error, data_pfc, error_pfc, theory, z, title, legend):
     #
     fig, ax = plt.subplots(dpi=600)
-    fig.set_size_inches(6, 3)
+    fig.set_size_inches(6, 3.5)
     #
     p = [20, 25, 30]
     p_pfc = [15, 20, 25, 30, 40]
@@ -1133,7 +1133,16 @@ def cdaw_bigploterror_6_3ov3_theory(data, error, data_pfc, error_pfc, theory, z,
     #
     ax.legend(['Theory','ISS Data','Pfc Data'])
     #
-    #adds a title and axes labels
+    #
+    #Edit tick 
+    ax.xaxis.set_minor_locator(MultipleLocator(2.5))
+    ax.yaxis.set_minor_locator(MultipleLocator(5))
+    #
+    #adds major gridlines
+    #ax.minorticks_on()
+    ax.grid(which='major', linestyle='--', linewidth='0.2', color='gray')
+    ax.grid(which='minor', linestyle='--', linewidth='0.1', color='gray')
+    #
     #ax.set_title(title)
     plt.xlabel('Pressure [Pa]')
     plt.ylabel('$C_{Daw}$ [mm/s]')
@@ -1141,19 +1150,10 @@ def cdaw_bigploterror_6_3ov3_theory(data, error, data_pfc, error_pfc, theory, z,
     ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     ax2.plot(p_pfc, z, color='#9A0CCA', linewidth=.5, linestyle='dashed')
     #
-    ax2.legend(["Charge potential"], bbox_to_anchor=(0.15, 0.6, .85, 0.1))#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    ax2.legend(["Charge potential"], bbox_to_anchor=(0.15, 0.64, .85, 0.1) , loc='upper right')#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
     #
     plt.ylabel('z')
-    #
-    #Edit tick 
-    ax.xaxis.set_minor_locator(MultipleLocator(2.5))
-    ax.yaxis.set_minor_locator(MultipleLocator(5))
-
-    #adds major gridlines
-    #ax.minorticks_on()
-    ax.grid(which='major', linestyle='--', linewidth='0.2', color='gray')
-    ax.grid(which='minor', linestyle='--', linewidth='0.1', color='gray')
-    
+    #    
     #ax2.set_ylim(ymax=.4)
     ax.set_ylim(ymax=80)
     
@@ -1162,14 +1162,14 @@ def cdaw_bigploterror_6_3ov3_theory(data, error, data_pfc, error_pfc, theory, z,
 def group_bigploterror_6_3ov3_theory(v_group, v_group_pfc, theory, havnes, title, legend):
     
     fig, ax = plt.subplots(dpi=600)
-    fig.set_size_inches(6, 3)
+    fig.set_size_inches(6, 3.5)
     #
     p = [15, 20, 25, 30, 40]
     p2 = [20, 25, 30]
     #
     ax.errorbar(p2, v_group[0], yerr=v_group[1], fmt='x', color='#48A2F1', markersize=2, linewidth=1, capsize=2) 
     ax.errorbar(p, v_group_pfc[0], yerr=v_group_pfc[1], fmt='^', color='#D81B1B', markersize=2, linewidth=1, capsize=2)        
-    ax.scatter(p, theory, marker='o', color='#000000', linewidth=1, s=30, facecolors='none')#, facecolors='none'
+    ax.scatter(p, abs(theory), marker='o', color='#000000', linewidth=1, s=30, facecolors='none')#, facecolors='none'
     #
     ax.legend(['Theory','ISS Data','Pfc Data'])
     #
@@ -1177,32 +1177,26 @@ def group_bigploterror_6_3ov3_theory(v_group, v_group_pfc, theory, havnes, title
     #
     plt.xlabel('Pressure [Pa]')
     #
-    # Create a second y-axis sharing the same x-axis
-    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-    ax2.plot(p, havnes, color='#9A0CCA', linewidth=.5, linestyle='dashed')
-    #
-    ax2.legend(["Havnes-Parameter"], bbox_to_anchor=(0.15, 0.6, .85, 0.1) , loc='upper right')#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
-    #
-    plt.ylabel('P')
-    #
     #Edit tick 
     ax.xaxis.set_minor_locator(MultipleLocator(2.5))
     ax.yaxis.set_minor_locator(MultipleLocator(5))
-
     #adds major gridlines
     #ax.minorticks_on()
     ax.grid(which='major', linestyle='--', linewidth='0.2', color='gray')
     ax.grid(which='minor', linestyle='--', linewidth='0.1', color='gray')
-    
-    # Create combined legend
-    #lines_labels = [data, theory, plot]
-    #labels = [line.get_label() for line in lines_labels]
-    #ax2.legend(lines_labels, labels, loc='upper right')
-    
+    #
+    # Create a second y-axis sharing the same x-axis
+    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+    ax2.plot(p, havnes, color='#9A0CCA', linewidth=.5, linestyle='dashed')
+    #
+    ax2.legend(["Havnes-Parameter"], bbox_to_anchor=(0.15, 0.64, .85, 0.1) , loc='upper right')#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
+    #
+    plt.ylabel('P')
+    #
     ax.set_title(title)
     #ax limit
     ax.set_ylim(ymin=30, ymax=100)
-    ax2.set_ylim(ymax=2.632)
+    ax2.set_ylim(ymax=3.132)
     
     plt.show() 
 
@@ -1668,7 +1662,7 @@ bigploterror_3(data_15_average, error_15_average, data_20_average, error_20_aver
 #%% PLOT
 
 # Import Math #
-obj_text_f = codecs.open('resultsC17/theory/theo_ dustspeed_neutralandiondrag_dc100_z_adjusted_depleted.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_dustspeed_neutralandiondrag_dc100_z_depleted.txt', 'r', encoding='utf-8').read()
 parameters = json.load(open('resultsC17/parameters/system-parameter-C15-230125.json'))
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
@@ -1854,7 +1848,7 @@ error_speedlist_average_40pa_forward_pfc = np.std(a) + error_40
 #bigploterror_6_3ov3(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_backward, error_speedlist_average_20pa_backward, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_backward, error_speedlist_average_25pa_backward, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_backward, error_speedlist_average_25pa_backward, ' ', ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
 
 # Import Math #
-obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.271.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.285_depleted.txt', 'r', encoding='utf-8').read()
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
@@ -1984,7 +1978,7 @@ v_error_trial_30 = [error30_t14, error30_t15, error30_t16, error30_t18, error_30
 v_data_trial_40 = [data40_t13, data40_t15, data40_t17, data40_t19, data_40_average]
 v_error_trial_40 = [error40_t13, error40_t15, error40_t17, error40_t19-2, error_40_average]                     
 #
-v_group_5(theory_cloud_speed_20pa, theory_cloud_speed_25pa, theory_cloud_speed_30pa, theory_cloud_speed_40pa, v_data_trial_20, v_error_trial_20, v_data_trial_25, v_error_trial_25, v_data_trial_30, v_error_trial_30, v_data_trial_40, v_error_trial_40,'', ['Linear Theory', 'Exp 20pa', 'Exp 25pa', 'Exp 30pa', 'Exp 40pa'])
+v_group_5(theory_cloud_speed_20pa, theory_cloud_speed_25pa, theory_cloud_speed_30pa, theory_cloud_speed_40pa, v_data_trial_20, v_error_trial_20, v_data_trial_25, v_error_trial_25, v_data_trial_30, v_error_trial_30, v_data_trial_40, v_error_trial_40,'', ['Theory', 'Exp 20pa', 'Exp 25pa', 'Exp 30pa', 'Exp 40pa'])
 #v_group_5(theory_cloud_speed_25pa, data25_t13, error25_t13, data25_t14, error25_t14, data25_t16, error20_t16, data25_t18, error25_t18, data_25_average, error_25_average, '', ['Theory 25pa', 'E30%', 'E40%', 'E60%', 'E80%', 'E100%'])
 #v_group_5_30pa(theory_cloud_speed_30pa, data30_t14, error30_t14, data30_t15, error30_t15, data30_t16, error30_t16, data30_t18, error30_t18, data_30_average, error_30_average, '', ['Theory 30pa', 'E40%', 'E50%', 'E60%', 'E80%', 'E100%'])
 #vgroup_p40(data40_t13, error40_t13, abs(data40_t15), error40_t15, data40_t17, error40_t17, data40_t19, error40_t19, data_40_average, error_40_average, '', ['E30%', 'E50%', 'E70%', 'E90%', 'E100%'])
@@ -2500,16 +2494,57 @@ collisionality = [parameters["15pa"]["debye_D"]/ion_mean[0], parameters["20pa"][
 #
 charge_plot(z, z_0, z_error, z_external, collisionality)
 
-#%%
+#%% Force Balance Graph
 
-### todo ###
+exp_data  = json.load(open('resultsC17/theory/forces.json'))
+theory1_data  = json.load(open('resultsC17/theory/forces_theory1_nodepl.json'))
+theory2_data  = json.load(open('resultsC17/theory/forces_theory2_nodepl.json'))
 
-#theory compare 30% efield pressure drop
-#theory compare 40% efield pressure drop
-#theory compare 60% efield pressure drop
-#theory compare 80% efield pressure drop
-#theory compare 100% efield pressure drop
+# Extract data
+pressures = list(exp_data .keys())
+F_i_exp = [exp_data [p]["F_i"] for p in pressures if "F_i" in exp_data [p]]
+F_e_exp = [exp_data [p]["F_e"] for p in pressures if "F_e" in exp_data [p]]
 
+F_i_theory1 = [theory1_data[p]["F_i"] for p in pressures if "F_i" in theory1_data[p]]
+F_e_theory1 = [theory1_data[p]["F_e"] for p in pressures if "F_e" in theory1_data[p]]
+
+F_i_theory2 = [theory2_data[p]["F_i"] for p in pressures if "F_i" in theory2_data[p]]
+F_e_theory2 = [theory2_data[p]["F_e"] for p in pressures if "F_e" in theory2_data[p]]
+
+# Calculate the error bars (20% of the experimental data)
+F_i_err = [0.1 * np.abs(f) for f in F_i_exp]
+F_e_err = [0.1 * np.abs(f) for f in F_e_exp]
+
+# Convert pressure labels to numeric values (assuming "15pa" corresponds to 15, etc.)
+pressure_values = [int(p[:-2]) for p in pressures]
+
+
+fig, ax = plt.subplots(dpi=600)
+fig.set_size_inches(6, 3.5)
+#
+ax.errorbar(pressure_values, F_i_exp, yerr=F_i_err, fmt='x', color='#48A2F1', markersize=4, linewidth=1, capsize=2) 
+ax.errorbar(pressure_values, np.abs(F_e_exp), yerr=F_e_err, fmt='x', color='#000000', markersize=4, linewidth=1, capsize=2) 
+#
+ax.plot(pressure_values, F_i_theory1, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
+ax.plot(pressure_values, F_i_theory2, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
+#      
+ax.plot(pressure_values, np.abs(F_e_theory1), marker='o', color='#000000', markersize=4, linewidth=.5, linestyle='-')
+#
+#ax.legend(['Theory','ISS Data','Pfc Data'])
+#
+plt.ylabel('$v_{group}$ [mm/s]')
+#
+plt.xlabel('Pressure [Pa]')
+#
+#Edit tick 
+#ax.xaxis.set_minor_locator(MultipleLocator(10))
+#ax.yaxis.set_minor_locator(MultipleLocator(50))
+#adds major gridlines
+#ax.minorticks_on()
+ax.grid(which='major', linestyle='--', linewidth='0.2', color='gray')
+#ax.grid(which='minor', linestyle='--', linewidth='0.1', color='gray')
+
+plt.show() 
 #%% Save Data
 # Write System Parameters Json #
 data = {
@@ -2620,4 +2655,10 @@ data = {
 with open('resultsC17/finaldatastack.json', 'w') as filehandle:
     json.dump(data, filehandle)
 
+### todo ###
 
+#theory compare 30% efield pressure drop
+#theory compare 40% efield pressure drop
+#theory compare 60% efield pressure drop
+#theory compare 80% efield pressure drop
+#theory compare 100% efield pressure drop

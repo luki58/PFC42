@@ -381,7 +381,7 @@ plt.show()
 #
 # Group Velocity #
 v_dust = np.column_stack((v_dust,z_depl))
-path = 'theo_ dustspeed_neutraldrag_dc' + str(int(dc_value*100)) + '_z' + str(round(np.average(z_depl), 3)) + 'adj_damping_1p15'
+path = 'theo_dustspeed_neutraldrag_dc' + str(int(dc_value*100)) + '_z' + str(round(np.average(z_depl), 3)) + 'adj_damping_1p15'
 if charge_depletion == True:
     path = path + '_depleted.txt'
 else: path = path + '.txt'

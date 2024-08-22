@@ -88,13 +88,12 @@ I = .5 #mA
 '''    Pressure    '''
 p = np.array([15, 20, 25, 30, 40]) #pa
 
-trial_nr = 0
+trial_nr = 4
 trial = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 
 '''    Charge Potential    '''
-#z = [.35, .34, .32, .32, .3] #F2
-z = [0.54, 0.43, 0.42, 0.41, 0.32] #F1
-#z = [.45, .35, .28, .24, .3] #Theory
+z = [0.54, 0.43, 0.42, 0.41, 0.32] #Exp F1
+#z = [.3, .3, .3, .3, .3] #Theory1
 z_inkl_error = [[0.54, 0.05],[0.43, 0.03],[0.42, 0.02],[0.41, 0.02],[0.32, 0.03]]
 
 '''    Duty-Cycle    '''
@@ -104,16 +103,16 @@ dc_value = 1
 epstein = [1.4, 1.4, 1.4, 1.4, 1.4]
 
 '''    Particle Charge Depletion    '''
-#charge_depletion = [0, 0, 0, 0, 1] #F1 & F2
-charge_depletion = [1, 1, 1, 1, 1] #Theory
+#charge_depletion = [0, 0, 0, 0, 0] #Theory
+charge_depletion = [1, 1, 1, 1, 1] #Exp F1
 
 '''    Particle Size    '''
 a = (1.3/2) *10**(-6) #micrometer particle radius
 
 '''    Dust number density    '''
-#n_d = [1.0, 1.0, 1.0, 1.0, 1.0] #F2
-n_d = [.65, 1.5, 1.9, 2.3, 2.5] #F1
-#n_d = [2., 2., 2., 2., 2.] #Theory
+n_d = [.65, 1.5, 1.9, 2.3, 2.5] #Exp^F1
+#n_d = [1., 1., 1., 1., 1.] #Theory1
+#n_d = [2., 2., 2., 2., 2.] #Theory2
 n_d = np.multiply(n_d,10**11) #in m^-3
 
 ##########################
@@ -366,7 +365,24 @@ ax.legend(['Theory $C_{DAW}$', 'E100'])
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()
 #
-# Write System Parameters Json #
+# Group Velocity #
+v_d = np.column_stack((v_d,z_depl))
+path = 'theo_dustspeed_neutralandiondrag_dc' + str(int(dc_value*100)) + '_z' + str(round(np.average(z_depl), 3))
+if 1 in charge_depletion:
+    path = path + '_depleted.txt'
+else: path = path + '.txt'
+with open(path, 'w') as filehandle:
+    json.dump(v_d.tolist(), filehandle) 
+# Dust-accoustic wave velocity linear #
+C_daw_2 = np.column_stack((C_daw_2,z_depl))
+path = 'theo_cdaw_dc100_z' + str(round(np.average(z_depl), 3)) + '.txt'
+with open(path, 'w') as filehandle:
+    json.dump(C_daw_2.tolist(), filehandle)
+# Electric-Field depletion #
+path = 'theo_v_group_40pa_ef-reduce.txt'
+with open(path, 'w') as filehandle:
+    json.dump(v_trial.tolist(), filehandle)
+#%% Write System Parameters Json #
 data = {
         "neon" : { "cross-section" : sigma_neon
     },
@@ -491,24 +507,24 @@ with open('resultsC17/parameters/system-parameter-C15-230125.json', 'w') as file
     json.dump(data, filehandle)
 forces = {
     "15pa" : {
-        "F_i_exp" : F_i[0],
-        "F_e_exp" : F_e[0],
+        "F_i" : F_i[0],
+        "F_e" : F_e[0],
         "n_d" : n_d[0]
         
         },
     "20pa" : {
-        "F_i_exp" : F_i[1],
-        "F_e_exp" : F_e[1],
+        "F_i" : F_i[1],
+        "F_e" : F_e[1],
         "n_d" : n_d[1]
         },
     "25pa" : {
-        "F_i_exp" : F_i[2],
-        "F_e_exp" : F_e[2],
+        "F_i" : F_i[2],
+        "F_e" : F_e[2],
         "n_d" : n_d[2]
         },
     "30pa" : {
-        "F_i_exp" : F_i[3],
-        "F_e_exp" : F_e[3],
+        "F_i" : F_i[3],
+        "F_e" : F_e[3],
         "n_d" : n_d[3]
         },
     "40pa" : {
