@@ -2511,9 +2511,9 @@ F_e_theory1 = [theory1_data[p]["F_e"] for p in pressures if "F_e" in theory1_dat
 F_i_theory2 = [theory2_data[p]["F_i"] for p in pressures if "F_i" in theory2_data[p]]
 F_e_theory2 = [theory2_data[p]["F_e"] for p in pressures if "F_e" in theory2_data[p]]
 
-# Calculate the error bars (20% of the experimental data)
+# Calculate the error bars (X% of the experimental data)
 F_i_err = [0.1 * np.abs(f) for f in F_i_exp]
-F_e_err = [0.1 * np.abs(f) for f in F_e_exp]
+F_e_err = [0.05 * np.abs(f) for f in F_e_exp]
 
 # Convert pressure labels to numeric values (assuming "15pa" corresponds to 15, etc.)
 pressure_values = [int(p[:-2]) for p in pressures]
@@ -2522,17 +2522,20 @@ pressure_values = [int(p[:-2]) for p in pressures]
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(6, 3.5)
 #
-ax.errorbar(pressure_values, F_i_exp, yerr=F_i_err, fmt='x', color='#48A2F1', markersize=4, linewidth=1, capsize=2) 
-ax.errorbar(pressure_values, np.abs(F_e_exp), yerr=F_e_err, fmt='x', color='#000000', markersize=4, linewidth=1, capsize=2) 
+ax.errorbar(pressure_values, np.multiply(F_e_exp,-10**(14)), yerr=np.multiply(F_e_err,10**(14)), fmt='^', color='#48A2F1', markersize=3.5, linewidth=1, capsize=2, mfc='w') 
+ax.errorbar(pressure_values, np.multiply(F_i_exp,10**(14)), yerr=np.multiply(F_i_err,10**(14)), fmt='x', color='#D81B1B', markersize=3.5, linewidth=1, capsize=2) 
 #
-ax.plot(pressure_values, F_i_theory1, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
-ax.plot(pressure_values, F_i_theory2, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
+ax.legend(["$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')
+#
+ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
+#ax.plot(pressure_values, F_i_theory1, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
+#ax.plot(pressure_values, F_i_theory2, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
 #      
-ax.plot(pressure_values, np.abs(F_e_theory1), marker='o', color='#000000', markersize=4, linewidth=.5, linestyle='-')
+ax.plot(pressure_values, np.multiply(F_e_theory1,-10**(14)), color='grey', markersize=0, linewidth=.7, linestyle='--')
 #
-#ax.legend(['Theory','ISS Data','Pfc Data'])
+#ax.legend(["$F_i$", "$F_e$"], loc='upper right')
 #
-plt.ylabel('$v_{group}$ [mm/s]')
+plt.ylabel(' $F_{e,i}$ [$10^{-14}$N]')
 #
 plt.xlabel('Pressure [Pa]')
 #
