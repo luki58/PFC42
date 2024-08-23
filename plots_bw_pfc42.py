@@ -2499,33 +2499,36 @@ charge_plot(z, z_0, z_error, z_external, collisionality)
 exp_data  = json.load(open('resultsC17/theory/forces.json'))
 theory1_data  = json.load(open('resultsC17/theory/forces_theory1_nodepl.json'))
 theory2_data  = json.load(open('resultsC17/theory/forces_theory2_nodepl.json'))
+a = json.load(open('ext-data/Yaroshenko2005_fi.json'))
 
 # Extract data
 pressures = list(exp_data .keys())
 F_i_exp = [exp_data [p]["F_i"] for p in pressures if "F_i" in exp_data [p]]
 F_e_exp = [exp_data [p]["F_e"] for p in pressures if "F_e" in exp_data [p]]
-
+#
 F_i_theory1 = [theory1_data[p]["F_i"] for p in pressures if "F_i" in theory1_data[p]]
 F_e_theory1 = [theory1_data[p]["F_e"] for p in pressures if "F_e" in theory1_data[p]]
-
+#
 F_i_theory2 = [theory2_data[p]["F_i"] for p in pressures if "F_i" in theory2_data[p]]
 F_e_theory2 = [theory2_data[p]["F_e"] for p in pressures if "F_e" in theory2_data[p]]
-
+#
 # Calculate the error bars (X% of the experimental data)
 F_i_err = [0.1 * np.abs(f) for f in F_i_exp]
 F_e_err = [0.05 * np.abs(f) for f in F_e_exp]
-
+#
 # Convert pressure labels to numeric values (assuming "15pa" corresponds to 15, etc.)
 pressure_values = [int(p[:-2]) for p in pressures]
-
+#
+F_i_external = [a['x'],a['y']]
 
 fig, ax = plt.subplots(dpi=600)
-fig.set_size_inches(6, 3.5)
+fig.set_size_inches(4.5, 3)
 #
 ax.errorbar(pressure_values, np.multiply(F_e_exp,-10**(14)), yerr=np.multiply(F_e_err,10**(14)), fmt='^', color='#48A2F1', markersize=3.5, linewidth=1, capsize=2, mfc='w') 
 ax.errorbar(pressure_values, np.multiply(F_i_exp,10**(14)), yerr=np.multiply(F_i_err,10**(14)), fmt='x', color='#D81B1B', markersize=3.5, linewidth=1, capsize=2) 
+ax.scatter(F_i_external[0], F_i_external[1], marker='s', color='#000000', linewidth=.8, s=25, facecolors='none')
 #
-ax.legend(["$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')
+ax.legend(["$F_i$ Yaroshenko2005", "$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')
 #
 ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
 #ax.plot(pressure_values, F_i_theory1, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
