@@ -486,6 +486,9 @@ def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30,
     #ax.set_title(title)
     plt.xlabel('$E_{eff}$ [%]')
     plt.ylabel('$C_{DAW}$ [mm]')
+    #
+    ax.yaxis.set_label_position("right")
+    ax.yaxis.tick_right()
  
     # Edit tick 
     ax.xaxis.set_minor_locator(MultipleLocator(10))
@@ -1146,6 +1149,7 @@ def cdaw_bigploterror_6_3ov3_theory(data, error, data_pfc, error_pfc, theory, z,
     #ax.set_title(title)
     plt.xlabel('Pressure [Pa]')
     plt.ylabel('$C_{Daw}$ [mm/s]')
+
     # Create a second y-axis sharing the same x-axis
     ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     ax2.plot(p_pfc, z, color='#9A0CCA', linewidth=.5, linestyle='dashed')
