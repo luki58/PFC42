@@ -2526,21 +2526,20 @@ pressure_values = [int(p[:-2]) for p in pressures]
 F_i_external = [a['x'],a['y']]
 
 fig, ax = plt.subplots(dpi=600)
-fig.set_size_inches(4.5, 3)
+fig.set_size_inches(5, 3.5)
 #
+ax.scatter(F_i_external[0], F_i_external[1], marker='s', color='#000000', linewidth=.8, s=25, facecolors='none')
 ax.errorbar(pressure_values, np.multiply(F_e_exp,-10**(14)), yerr=np.multiply(F_e_err,10**(14)), fmt='^', color='#48A2F1', markersize=3.5, linewidth=1, capsize=2, mfc='w') 
 ax.errorbar(pressure_values, np.multiply(F_i_exp,10**(14)), yerr=np.multiply(F_i_err,10**(14)), fmt='x', color='#D81B1B', markersize=3.5, linewidth=1, capsize=2) 
-ax.scatter(F_i_external[0], F_i_external[1], marker='s', color='#000000', linewidth=.8, s=25, facecolors='none')
 #
-ax.legend(["$F_i$ Yaroshenko2005", "$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')
+ax.legend(["$F_i^{Yaroshenko}$", "$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')#, prop={'size': 8})
+#ax.legend(["$F_i^{theo^*}$", "$F_e^{theo^*}$"], loc='lower left')
 #
 ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
-#ax.plot(pressure_values, F_i_theory1, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
-#ax.plot(pressure_values, F_i_theory2, marker='^', color='#D81B1B', markersize=4, linewidth=.5, linestyle='-')  
-#      
-ax.plot(pressure_values, np.multiply(F_e_theory1,-10**(14)), color='grey', markersize=0, linewidth=.7, linestyle='--')
 #
-#ax.legend(["$F_i$", "$F_e$"], loc='upper right')
+ax.plot(pressure_values, np.multiply(F_e_theory1,-10**(14)), color='grey', markersize=0, linewidth=.7, linestyle='--') 
+#
+#ax.legend(["$F_i$", "$F_e$"], loc='lower left')
 #
 plt.ylabel(' $F_{e,i}$ [$10^{-14}$N]')
 #
