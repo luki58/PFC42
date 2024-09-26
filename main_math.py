@@ -21,7 +21,7 @@ from functools import partial
 data_v = json.load(open('Final-Results/finaldatastack.json'))
 
 ###############
-#%% Constants #
+# Constants #
 ###############
 
 eV_K = 11606
@@ -80,7 +80,7 @@ def e_field(x,I):
     return poly1d_fn(x)
 
 #########################
-#%% Variable Parameters #
+# Variable Parameters #
 #########################
 
 I = .5 #mA
@@ -133,7 +133,7 @@ T_e = T_e
 T_n = 0.025#eV
 
 '''    Ion Mean free Path (Mittlere freie Weglänge, m^-4)    '''
-E_0_multiplyer = np.array([1,0,0,0,0]) #F1
+E_0_multiplyer = np.array([1,1,1,1,1]) #F1
 #E_0_multiplyer = np.array([1,1,0,0,0]) #F2
 l_i = np.divide(T_n * k, p*sigma_neon)
 T_i_tilde = np.multiply(2/9 * abs(np.multiply(E_0, E_0_multiplyer)) * e/k, l_i)
@@ -217,6 +217,11 @@ M = A * np.abs((1 + np.abs((B * EN)**C))**(-1/(2*C))) * EN
 v_ti2 = np.sqrt(k * T_i * 11606 / m_neon)
 u_i = M*v_ti2 * dc_value
 
+cos_teta = 0
+cos_2_teta = np.array([.5, .6, .7, .8, .9])
+
+F_bgk = debye_Di**2 * (-np.sqrt(8/np.pi) * u/v_tn * cos_teta + (2-np.pi/2) * u**2/v_tn**2 * (1 - 3 * cos_2_teta))
+
 '''    Force Equations    '''
 #
 roh_0 = np.divide(Z_d , T_i*11606) * e**2 / (4 * np.pi * epsilon_0 * k)
@@ -284,17 +289,180 @@ v_d = (F_e+F_i)/factor
 v_d2 = (F_e+F_i2)/factor
 v_d3 = abs((F_e+F_i3)/factor)
 
-v_trial = []
-if trial_nr < len(z):
-    for i_trial in trial:
-        F_e_trial = Z_d[trial_nr] * e * E_0[trial_nr] * i_trial
-        EN = (-E_0_vcm*i_trial/n_0)*(10**17) #10^17 from Vcm^2 to Td
-        M = A * np.abs((1 + np.abs((B * EN)**C))**(-1/(2*C))) * EN
-        v_ti2 = np.sqrt(k * T_i * 11606 / m_neon)
-        u_i = M*v_ti2 * dc_value
-        F_i_trial = np.multiply(n_i0[trial_nr],((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti[trial_nr]) * (u_i[trial_nr]) * (a**2 + a*roh_0[trial_nr]/2 +(roh_0[trial_nr]**2) * integrated_f[trial_nr]/4))
-        v_trial = np.append(v_trial, abs((F_e_trial+F_i_trial)/factor[trial_nr]))
+''' Modeling Charge for Polarity switching trails '''
+#%%
+def poly_function(input_value, a1,b1,c1,d1):
+    #Recale x from duty-cycle to eff eletric field 0 dc -> 1. efield; .5 dc -> 0 efield
+    x = abs(.5 - input_value/2)
+    # Calculate the value of the cubic polynomial
+    #return (2-np.pi/2)*(1 - (a1 * x**3 + b1 * x**2 + c1 * x + d1))
+    return abs((2-np.pi/2)*(3*(a1 * x**3 + b1 * x**2 + c1 * x + d1) - 1))
+def poly_raw(input_value, a5,b5,c5,d5):
+    x = abs(.5 - input_value/2)
+    # Calculate the value of the cubic polynomial
+    return abs(a1 * x**3 + b1 * x**2 + c1 * x + d1)
 
+def objective(trial, trial_nr, data_trial, data_trial_error, data_trial_axis):
+    try:
+        # Parameter space
+        da = 9
+        a3 = trial.suggest_float('a', (-8.61111111)-da, (-8.61111111)+da)
+        db = 7
+        b2 = trial.suggest_float('b', (6.76190476)-db, (6.76190476)+db)
+        dc = .5
+        c1 = trial.suggest_float('c', (-0.32579365)-dc, (-0.32579365)+dc)
+        dd = .4
+        d0 = trial.suggest_float('d', (0.45119048)-dd, (0.45119048)+dd)
+
+        v_trial = v_trial_function(trial_nr, a3, b2, c1, d0)
+        verror = 0
+        for i in range(len(data_trial_axis)):
+            index = int(data_trial_axis[i] * 10)
+            if index < len(v_trial):
+                expected_value = data_trial[i] / 1000
+                error_margin = data_trial_error[i] / 1000
+                # Fit within the data range considering the error
+                if v_trial[index] < expected_value - error_margin or v_trial[index] > expected_value + error_margin:
+                    verror += abs(expected_value - v_trial[index]) - error_margin
+                else:
+                    verror += 0 #in the rror coridor
+                
+        return verror
+
+    except Exception as e:
+        print(f"Exception: {e}")
+        return float('inf')
+
+def v_trial_function(trial_nr, a1,b1,c1,d1):
+    v_trial = []
+    if trial_nr < len(z):
+        for i_trial in trial:
+            #
+            Z_d_new = Z_d[trial_nr] * poly_function(i_trial/2, a1,b1,c1,d1)
+            F_e_trial = Z_d_new * e * E_0[trial_nr] * i_trial
+            EN = (-E_0_vcm*i_trial/n_0)*(10**17) #10^17 from Vcm^2 to Td
+            M = A * np.abs((1 + np.abs((B * EN)**C))**(-1/(2*C))) * EN
+            v_ti2 = np.sqrt(k * T_i * 11606 / m_neon)
+            u_i = M*v_ti2 * dc_value
+            #
+            '''    Force Equations    '''
+            #
+            roh_0 = np.divide(Z_d_new , T_i*11606) * e**2 / (4 * np.pi * epsilon_0 * k)
+            #
+            beta_T = np.divide(Z_d_new * e**2, T_i*11606 * debye_Di * (4 * np.pi * epsilon_0 * k))
+            #
+            integration_temp = integrate(function, 0, np.inf)[0]
+            integration_temp1 = integrate(function1, 0, np.inf)[0]
+            integration_temp2 = integrate(function2, 0, np.inf)[0]
+            integration_temp3 = integrate(function3, 0, np.inf)[0]
+            integration_temp4 = integrate(function4, 0, np.inf)[0]
+            #
+            integrated_f = np.array([integration_temp, integration_temp1, integration_temp2, integration_temp3, integration_temp4])
+            #
+            F_i_trial = np.multiply(n_i0[trial_nr],((8*np.sqrt(2*np.pi))/3) * m_neon * (v_ti[trial_nr]) * (u_i[trial_nr]) * (a**2 + a*roh_0[trial_nr]/2 +(roh_0[trial_nr]**2) * integrated_f[trial_nr]/4))
+            v_trial = np.append(v_trial, abs((F_e_trial+F_i_trial)/factor[trial_nr]))
+            #
+    return v_trial
+#
+trial_data_20 = np.array([data_v['20pa']['v_group_30'], data_v['20pa']['v_group_40'], data_v['20pa']['v_group_60'], data_v['20pa']['v_group_80'], data_v['20pa']['v_group_100']])
+trial_data_20_error = np.array([data_v['20pa']['v_group_30_error'], data_v['20pa']['v_group_40_error'], data_v['20pa']['v_group_60_error'], data_v['20pa']['v_group_80_error'], data_v['20pa']['v_group_100_error']])
+trial_data_25 = np.array([data_v['25pa']['v_group_30'], data_v['25pa']['v_group_40'], data_v['25pa']['v_group_60'], data_v['25pa']['v_group_80'], data_v['25pa']['v_group_100']])
+trial_data_25_error = np.array([data_v['25pa']['v_group_30_error'], data_v['25pa']['v_group_40_error'], data_v['25pa']['v_group_60_error'], data_v['25pa']['v_group_80_error'], data_v['25pa']['v_group_100_error']])
+trial_data_30 = np.array([data_v['30pa']['v_group_40'], data_v['30pa']['v_group_50'], data_v['30pa']['v_group_60'], data_v['30pa']['v_group_80'], data_v['30pa']['v_group_100']])
+trial_data_30_error = np.array([data_v['30pa']['v_group_40_error'], data_v['30pa']['v_group_50_error'], data_v['30pa']['v_group_60_error'], data_v['30pa']['v_group_80_error'], data_v['30pa']['v_group_100_error']])
+trial_data_40 = np.array([data_v['40pa']['v_group_30'], data_v['40pa']['v_group_50'], data_v['40pa']['v_group_70'], data_v['40pa']['v_group_90'], data_v['40pa']['v_group_100']])
+trial_data_40_error = np.array([data_v['40pa']['v_group_30_error'], data_v['40pa']['v_group_50_error'], data_v['40pa']['v_group_70_error'], data_v['40pa']['v_group_90_error'], data_v['40pa']['v_group_100_error']])
+#
+data_trial = [np.array([0]), trial_data_20, trial_data_25, trial_data_30, trial_data_40]
+trial_data_40_error[-2] = trial_data_40_error[-2] -2
+data_trial_error = [np.array([0]), trial_data_20_error, trial_data_25_error, trial_data_30_error, trial_data_40_error]
+data_trial_axis = [[0], np.array([30, 40, 60, 80, 100])/100, np.array([30, 40, 60, 80, 100])/100, np.array([40, 50, 60, 80, 100])/100, np.array([30, 50, 70, 90, 100])/100]
+#
+# Optimization and plotting for trial_nr from 1 to 4
+# Create side-by-side subplots
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), dpi=600)
+poly_legend = []
+#
+for trial_nr in range(1, 5):
+    objective_partial = partial(objective, trial_nr=trial_nr, data_trial=data_trial[trial_nr], data_trial_error=data_trial_error[trial_nr], data_trial_axis=data_trial_axis[trial_nr])
+
+
+    # Bayesian optimization with optuna
+    study = optuna.create_study(direction='minimize')
+    study.optimize(objective_partial, n_trials=100)
+
+    # Extract best parameters from the created study
+    best_params = study.best_params
+    a1, b1, c1, d1 = best_params['a'], best_params['b'], best_params['c'], best_params['d']
+
+    # Generate input values for the plot
+    input_values = np.linspace(0, 1, 100)
+    polynomial_values = [poly_raw(val, a1, b1, c1, d1) for val in input_values]
+    
+    # Create a string for the polynomial function to display in the legend
+    poly_legend.append(f"$f_{trial_nr}(x)$ = ${a1:.2f}x^3 + {b1:.2f}x^2 {c1:.2f}x + {d1:.2f}$")
+    
+    color_codes = ['#D81B1B', '#48A2F1', '#FFC107', '#004D40']
+    fmt_codes = ['s', '^', 'o', 'd']
+    linestyle_codes = ['dotted', 'dashed', 'dashdot', 'solid']
+
+    # First subplot: Scatter plot of trial vs v_trial_function
+    ax1.plot(trial, v_trial_function(trial_nr, a1, b1, c1, d1), linestyle=linestyle_codes[trial_nr-1], color=color_codes[trial_nr-1], linewidth=.8)
+    #ax1.scatter(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, marker='o', linestyle='solid', color=color_codes[trial_nr-1], linewidth=.7)
+    ax1.errorbar(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, yerr=data_trial_error[trial_nr] / 1000, fmt=fmt_codes[trial_nr-1], color=color_codes[trial_nr-1], markersize=3, linewidth=.8, capsize=1, mfc='w') 
+    #ax1.set_title(f"v_trial_function vs trial (Trial #{trial_nr})")
+    ax1.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+
+    # Second subplot: Polynomial plot
+    ax2.plot(input_values, polynomial_values, label="Polynomial", color=color_codes[trial_nr-1], linestyle=linestyle_codes[trial_nr-1], linewidth=.8)
+    #ax2.set_title(f"Polynomial Function (Trial #{trial_nr})")
+    ax2.grid(color='grey', linestyle=linestyle_codes[trial_nr-1], linewidth=0.4, alpha=0.5)
+#  
+# Legend
+ax1.legend(['20 Pa','25 Pa', '30 Pa', '40 Pa'], loc='upper left')
+#ax2.legend( poly_legend, loc='upper right')
+print(poly_legend)
+# Add axis labels to the first subplot
+ax1.set_xlabel("$E_{eff}$[%]")
+ax1.set_ylabel("$v_{group}$[m/s]")
+# Swap y-axis to the right side of the second subplot
+ax2.yaxis.set_label_position("right")
+ax2.yaxis.tick_right()
+# Add axis labels to the second subplot
+ax2.set_ylabel("$F_{charge}$")
+ax2.set_xlabel("$E_{eff}$[%]")
+# Show the plots side by side
+plt.tight_layout()
+plt.show()
+#%%
+#trial_nr=4
+#
+a1= best_params['a']
+b1= best_params['b']
+c1= best_params['c']
+d1= best_params['d']
+#
+# Generate input values for the plot
+input_values = np.linspace(0, 1, 100)
+polynomial_values = [poly_function(val, a1, b1, c1, d1) for val in input_values]
+#
+# Create side-by-side subplots
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), dpi=600)
+# First subplot: Scatter plot of trial vs v_trial_function
+ax1.scatter(trial, v_trial_function(trial_nr, a1, b1, c1, d1), marker='x', linestyle='solid', color='#00cc00', linewidth=.7)
+ax1.scatter(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, marker='o', linestyle='solid', color='#000000', linewidth=.7)
+ax1.set_title("v_trial_function vs trial")
+ax1.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+
+# Second subplot: Polynomial plot
+ax2.plot(input_values, polynomial_values, label="Polynomial", color='#00cc00')
+ax2.set_title("Polynomial Function")
+ax2.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
+
+# Show the plots side by side
+plt.tight_layout()
+plt.show()
+#%%
 '''    Plasma-Dust interaction frequency    '''
 w_pd = np.sqrt(np.divide((np.multiply(Z_d**2,n_d*e**2)),(m_d*epsilon_0)))
 
@@ -505,6 +673,7 @@ data = {
 }
 with open('resultsC17/parameters/system-parameter-C15-230125.json', 'w') as filehandle:
     json.dump(data, filehandle)
+#%%
 forces = {
     "15pa" : {
         "F_i" : F_i[0],

@@ -1666,7 +1666,7 @@ bigploterror_3(data_15_average, error_15_average, data_20_average, error_20_aver
 #%% PLOT
 
 # Import Math #
-obj_text_f = codecs.open('resultsC17/theory/theo_dustspeed_neutralandiondrag_dc100_z_depleted.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_dustspeed_neutralandiondrag_dc100_z_depleted_1.txt', 'r', encoding='utf-8').read()
 parameters = json.load(open('resultsC17/parameters/system-parameter-C15-230125.json'))
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
@@ -1852,7 +1852,7 @@ error_speedlist_average_40pa_forward_pfc = np.std(a) + error_40
 #bigploterror_6_3ov3(speedlist_average_20pa_forward, error_speedlist_average_20pa_forward, speedlist_average_20pa_backward, error_speedlist_average_20pa_backward, speedlist_average_25pa_forward, error_speedlist_average_25pa_forward, speedlist_average_25pa_backward, error_speedlist_average_25pa_backward, speedlist_average_30pa_forward, error_speedlist_average_30pa_forward, speedlist_average_30pa_backward, error_speedlist_average_25pa_backward, ' ', ['20pa F', '20pa B', '25pa F', '25pa B', '30pa F', '30pa B'])
 
 # Import Math #
-obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.285_depleted.txt', 'r', encoding='utf-8').read()
+obj_text_f = codecs.open('resultsC17/theory/theo_cdaw_dc100_z0.287_depleted.txt', 'r', encoding='utf-8').read()
 theory = np.array(json.loads(obj_text_f)) #This reads json to list
 theo_plot = theory[:,0]
 z = theory[:,1]
@@ -2528,12 +2528,16 @@ F_i_external = [a['x'],a['y']]
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(5, 3.5)
 #
+ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
+#
+ax.plot(pressure_values, np.multiply(F_e_theory1,-10**(14)), color='grey', markersize=0, linewidth=.7, linestyle='--') 
+#
 ax.scatter(F_i_external[0], F_i_external[1], marker='s', color='#000000', linewidth=.8, s=25, facecolors='none')
 ax.errorbar(pressure_values, np.multiply(F_e_exp,-10**(14)), yerr=np.multiply(F_e_err,10**(14)), fmt='^', color='#48A2F1', markersize=3.5, linewidth=1, capsize=2, mfc='w') 
 ax.errorbar(pressure_values, np.multiply(F_i_exp,10**(14)), yerr=np.multiply(F_i_err,10**(14)), fmt='x', color='#D81B1B', markersize=3.5, linewidth=1, capsize=2) 
 #
-ax.legend(["$F_i^{Yaroshenko}$", "$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')#, prop={'size': 8})
-#ax.legend(["$F_i^{theo^*}$", "$F_e^{theo^*}$"], loc='lower left')
+#ax.legend(["$F_i^{Yaroshenko}$", "$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')#, prop={'size': 8})
+ax.legend(["$F_i^{theo^*}$", "$F_e^{theo^*}$"], loc='lower left')
 #
 ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
 #
@@ -2655,6 +2659,14 @@ data = {
                 "40pa" : {
                     "v_group_100" : data_40_average,
                     "v_group_100_error" : error_40_average,
+                    "v_group_90" : data40_t19,
+                    "v_group_90_error" : error40_t19,
+                    "v_group_70" : data40_t17,
+                    "v_group_70_error" : error40_t17,
+                    "v_group_50" : data40_t15,
+                    "v_group_50_error" : error40_t15,
+                    "v_group_30" : data40_t13,
+                    "v_group_30_error" : error40_t13,
                     "k_100" : k_40pa,
                     "k_100_error" : k_40pa_error,
                     "c_daw_100" : speedlist_average_40pa_forward_pfc,
