@@ -294,9 +294,10 @@ v_d3 = abs((F_e+F_i3)/factor)
 def poly_function(input_value, a1,b1,c1,d1):
     #Recale x from duty-cycle to eff eletric field 0 dc -> 1. efield; .5 dc -> 0 efield
     x = abs(.5 - input_value/2)
+    #x = input_value
     # Calculate the value of the cubic polynomial
     #return (2-np.pi/2)*(1 - (a1 * x**3 + b1 * x**2 + c1 * x + d1))
-    return abs((2-np.pi/2)*(3*(a1 * x**3 + b1 * x**2 + c1 * x + d1) - 1))
+    return abs(-(2-np.pi/2)*(3*(a1 * x**3 + b1 * x**2 + c1 * x + d1) - 1))
 def poly_raw(input_value, a5,b5,c5,d5):
     x = abs(.5 - input_value/2)
     # Calculate the value of the cubic polynomial
@@ -305,11 +306,11 @@ def poly_raw(input_value, a5,b5,c5,d5):
 def objective(trial, trial_nr, data_trial, data_trial_error, data_trial_axis):
     try:
         # Parameter space
-        da = 9
+        da = 11
         a3 = trial.suggest_float('a', (-8.61111111)-da, (-8.61111111)+da)
-        db = 7
+        db = 9
         b2 = trial.suggest_float('b', (6.76190476)-db, (6.76190476)+db)
-        dc = .5
+        dc = .3
         c1 = trial.suggest_float('c', (-0.32579365)-dc, (-0.32579365)+dc)
         dd = .4
         d0 = trial.suggest_float('d', (0.45119048)-dd, (0.45119048)+dd)
@@ -389,7 +390,7 @@ for trial_nr in range(1, 5):
 
     # Bayesian optimization with optuna
     study = optuna.create_study(direction='minimize')
-    study.optimize(objective_partial, n_trials=100)
+    study.optimize(objective_partial, n_trials=800)
 
     # Extract best parameters from the created study
     best_params = study.best_params
@@ -407,33 +408,45 @@ for trial_nr in range(1, 5):
     linestyle_codes = ['dotted', 'dashed', 'dashdot', 'solid']
 
     # First subplot: Scatter plot of trial vs v_trial_function
-    ax1.plot(trial, v_trial_function(trial_nr, a1, b1, c1, d1), linestyle=linestyle_codes[trial_nr-1], color=color_codes[trial_nr-1], linewidth=.8)
+    ax1.plot(np.array(trial), v_trial_function(trial_nr, a1, b1, c1, d1), linestyle=linestyle_codes[trial_nr-1], color=color_codes[trial_nr-1], linewidth=.8)
     #ax1.scatter(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, marker='o', linestyle='solid', color=color_codes[trial_nr-1], linewidth=.7)
     ax1.errorbar(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, yerr=data_trial_error[trial_nr] / 1000, fmt=fmt_codes[trial_nr-1], color=color_codes[trial_nr-1], markersize=3, linewidth=.8, capsize=1, mfc='w') 
     #ax1.set_title(f"v_trial_function vs trial (Trial #{trial_nr})")
     ax1.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 
     # Second subplot: Polynomial plot
-    ax2.plot(input_values, polynomial_values, label="Polynomial", color=color_codes[trial_nr-1], linestyle=linestyle_codes[trial_nr-1], linewidth=.8)
+    ax2.plot(np.array(input_values), polynomial_values, label="Polynomial", color=color_codes[trial_nr-1], linestyle=linestyle_codes[trial_nr-1], linewidth=.8)
     #ax2.set_title(f"Polynomial Function (Trial #{trial_nr})")
     ax2.grid(color='grey', linestyle=linestyle_codes[trial_nr-1], linewidth=0.4, alpha=0.5)
-#  
-# Legend
-ax1.legend(['20 Pa','25 Pa', '30 Pa', '40 Pa'], loc='upper left')
-#ax2.legend( poly_legend, loc='upper right')
-print(poly_legend)
-# Add axis labels to the first subplot
-ax1.set_xlabel("$E_{eff}$[%]")
-ax1.set_ylabel("$v_{group}$[m/s]")
-# Swap y-axis to the right side of the second subplot
+# 
+# Configure ax1 top x-axis for duty-cycle
+ax2_top = ax2.twiny()  # Create a twin x-axis sharing the y-axis with ax2
+ax2_top.set_xlim(ax2.get_xlim())  # Sync limits with ax2
+duty_cycle_values = [60, 50, 40, 30, 20, 10, 0]
+ax2_top.set_xticklabels([f"{int(dc)}" for dc in duty_cycle_values])  # Labels as duty cycle
+ax2_top.set_xlabel("Duty-Cycle [%]")
+#
+# Adjust E_eff labels on x-axis to show percentage format
+ax1.set_xticklabels([f"{int(x*100)}" for x in ax1.get_xticks()])
+ax2.set_xticklabels([f"{int(x*100)}" for x in ax2.get_xticks()])
+#
+# Adjust v_group labels on y-axis to show values *1000
+ax1.set_yticklabels([f"{int(y*1000)}" for y in ax1.get_yticks()])
+#
+# Legend and other labels remain the same
+ax1.legend(['$v^{20Pa} (f_{charge})$', '$v^{25Pa} (f_{charge})$', '$v^{30Pa} (f_{charge})$', '$v^{40Pa} (f_{charge})$'], loc='upper left')
+ax1.set_xlabel("$E_{eff}$ [%]")
+ax1.set_ylabel("$v_{group}$ [mm/s]")
 ax2.yaxis.set_label_position("right")
 ax2.yaxis.tick_right()
-# Add axis labels to the second subplot
-ax2.set_ylabel("$F_{charge}$")
-ax2.set_xlabel("$E_{eff}$[%]")
-# Show the plots side by side
+ax2.set_ylabel("$f_{charge}$")
+ax2.set_xlabel("$E_{eff}$ [%]")
+#
 plt.tight_layout()
 plt.show()
+#
+print(poly_legend)
+#
 #%%
 #trial_nr=4
 #
@@ -532,7 +545,7 @@ ax.legend(['Theory $C_{DAW}$', 'E100'])
 #adds major gridlines
 ax.grid(color='grey', linestyle='--', linewidth=0.4, alpha=0.5)
 plt.show()
-#
+#%%
 # Group Velocity #
 v_d = np.column_stack((v_d,z_depl))
 path = 'theo_dustspeed_neutralandiondrag_dc' + str(int(dc_value*100)) + '_z' + str(round(np.average(z_depl), 3))

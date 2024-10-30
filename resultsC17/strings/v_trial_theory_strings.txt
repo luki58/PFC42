@@ -1,0 +1,24 @@
+E_0:
+trial: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+
+v_trial_function(trial_nr, a1, b1, c1, d1)[2] 20%
+8.977188810157171 mm/s
+
+v_trial_function(trial_nr, a1, b1, c1, d1)[3] 25%
+13.321754441689473 mm/s
+
+E_0 + 15%
+
+v_trial_function(trial_nr, a1, b1, c1, d1)[2] 20%
+15.83726812926949 mm/s
+
+v_trial_function(trial_nr, a1, b1, c1, d1)[3] 25%
+24.41485499306488 mm/s
+
+E_0 + 5%
+
+v_trial_function(trial_nr, a1, b1, c1, d1)[2] 20%
+10.42057093271649 mm/s
+
+v_trial_function(trial_nr, a1, b1, c1, d1)[3] 25%
+17.64632059242753 mm/s

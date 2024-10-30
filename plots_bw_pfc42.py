@@ -409,7 +409,7 @@ def v_group_5(theory20, theory25, theory30, theory40, data20, error20, data25, e
     # adds a title and axes labels
     ax.set_title(title)
     plt.xlabel('$E_{eff}$ [%]')
-    plt.ylabel('$v_{group}$ [mm]')
+    plt.ylabel('$v_{group}$ [mm/s]')
  
     # Edit tick 
     ax.xaxis.set_minor_locator(MultipleLocator(10))
@@ -485,7 +485,7 @@ def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30,
     # adds a title and axes labels
     #ax.set_title(title)
     plt.xlabel('$E_{eff}$ [%]')
-    plt.ylabel('$C_{DAW}$ [mm]')
+    plt.ylabel('$C_{DAW}$ [mm/s]')
     #
     ax.yaxis.set_label_position("right")
     ax.yaxis.tick_right()
@@ -1156,7 +1156,7 @@ def cdaw_bigploterror_6_3ov3_theory(data, error, data_pfc, error_pfc, theory, z,
     #
     ax2.legend(["Charge potential"], bbox_to_anchor=(0.15, 0.64, .85, 0.1) , loc='upper right')#, prop={'size': 9})#, bbox_to_anchor=(0.08, 0.85, .85, .102))
     #
-    plt.ylabel('z')
+    plt.ylabel('$z_{depleted}$')
     #    
     #ax2.set_ylim(ymax=.4)
     ax.set_ylim(ymax=80)
