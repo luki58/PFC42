@@ -83,7 +83,7 @@ def e_field(x,I):
 # Variable Parameters #
 #########################
 
-I = .5 #mA
+I = 1. #mA
 
 '''    Pressure    '''
 p = np.array([15, 20, 25, 30, 40]) #pa
@@ -107,7 +107,7 @@ epstein = [1.4, 1.4, 1.4, 1.4, 1.4]
 charge_depletion = [1, 1, 1, 1, 1] #Exp F1
 
 '''    Particle Size    '''
-a = (1.3/2) *10**(-6) #micrometer particle radius
+a = (3.3/2) *10**(-6) #micrometer particle radius
 
 '''    Dust number density    '''
 n_d = [.65, 1.5, 1.9, 2.3, 2.5] #Exp^F1
@@ -139,6 +139,7 @@ l_i = np.divide(T_n * k, p*sigma_neon)
 T_i_tilde = np.multiply(2/9 * abs(np.multiply(E_0, E_0_multiplyer)) * e/k, l_i)
 T_i = (T_i_tilde + 0.03)
 T_iroom = [0.03, 0.03, 0.03, 0.03] #eV 
+l_i = l_i * 11606
 
 '''    Electron number density    '''
 n_e0 = [n_e_interpolation(15,I), n_e_interpolation(20,I), n_e_interpolation(25,I), n_e_interpolation(30,I), n_e_interpolation(40,I)]
@@ -497,7 +498,7 @@ def dispersion_relation(w, k):
     return 1 + chi_e + chi_i + chi_d
 
 '''    Plasma-Ion interaction frequency    '''
-w_pi = np.sqrt(4*np.pi*e**2*np.divide(n_i0,m_neon))
+w_pi = np.sqrt(e**2*np.divide(n_i0,m_neon*epsilon_0))
 
 '''    Dust-Neutral collision frequency    '''
 nu_dn = 8*(np.sqrt(2*np.pi)/3) * a**2 * v_tn * (m_neon/m_d) * np.divide(p,k*(T_n*11606))
