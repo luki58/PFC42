@@ -292,13 +292,13 @@ v_d3 = abs((F_e+F_i3)/factor)
 
 ''' Modeling Charge for Polarity switching trails '''
 #%%
-def poly_function(input_value, a1,b1,c1,d1):
+def poly_function(input_value, a1,b1,c1,d1, vactor):
     #Recale x from duty-cycle to eff eletric field 0 dc -> 1. efield; .5 dc -> 0 efield
     x = abs(.5 - input_value/2)
     #x = input_value
     # Calculate the value of the cubic polynomial
     #return (2-np.pi/2)*(1 - (a1 * x**3 + b1 * x**2 + c1 * x + d1))
-    return abs(-(2-np.pi/2)*(3*(a1 * x**3 + b1 * x**2 + c1 * x + d1) - 1))
+    return vactor * (-(2-np.pi/2)*(3*(a1 * x**3 + b1 * x**2 + c1 * x + d1) - 1))
 def poly_raw(input_value, a5,b5,c5,d5):
     x = abs(.5 - input_value/2)
     # Calculate the value of the cubic polynomial
@@ -308,15 +308,16 @@ def objective(trial, trial_nr, data_trial, data_trial_error, data_trial_axis):
     try:
         # Parameter space
         da = 11
-        a3 = trial.suggest_float('a', (-8.61111111)-da, (-8.61111111)+da)
+        a3 = trial.suggest_float('a', (-9.61111111)-da, (-9.61111111)+da)
         db = 9
         b2 = trial.suggest_float('b', (6.76190476)-db, (6.76190476)+db)
         dc = .3
         c1 = trial.suggest_float('c', (-0.32579365)-dc, (-0.32579365)+dc)
         dd = .4
         d0 = trial.suggest_float('d', (0.45119048)-dd, (0.45119048)+dd)
+        v = trial.suggest_float('vactor', 0, 20)
 
-        v_trial = v_trial_function(trial_nr, a3, b2, c1, d0)
+        v_trial = v_trial_function(trial_nr, a3, b2, c1, d0, v)
         verror = 0
         for i in range(len(data_trial_axis)):
             index = int(data_trial_axis[i] * 10)
@@ -335,12 +336,12 @@ def objective(trial, trial_nr, data_trial, data_trial_error, data_trial_axis):
         print(f"Exception: {e}")
         return float('inf')
 
-def v_trial_function(trial_nr, a1,b1,c1,d1):
+def v_trial_function(trial_nr, a1,b1,c1,d1, v):
     v_trial = []
     if trial_nr < len(z):
         for i_trial in trial:
             #
-            Z_d_new = Z_d[trial_nr] * poly_function(i_trial/2, a1,b1,c1,d1)
+            Z_d_new = Z_d[trial_nr] - Z_d[trial_nr] * poly_function(i_trial/2, a1,b1,c1,d1, v)
             F_e_trial = Z_d_new * e * E_0[trial_nr] * i_trial
             EN = (-E_0_vcm*i_trial/n_0)*(10**17) #10^17 from Vcm^2 to Td
             M = A * np.abs((1 + np.abs((B * EN)**C))**(-1/(2*C))) * EN
@@ -379,7 +380,7 @@ data_trial = [np.array([0]), trial_data_20, trial_data_25, trial_data_30, trial_
 trial_data_40_error[-2] = trial_data_40_error[-2] -2
 data_trial_error = [np.array([0]), trial_data_20_error, trial_data_25_error, trial_data_30_error, trial_data_40_error]
 data_trial_axis = [[0], np.array([30, 40, 60, 80, 100])/100, np.array([30, 40, 60, 80, 100])/100, np.array([40, 50, 60, 80, 100])/100, np.array([30, 50, 70, 90, 100])/100]
-#
+#%%
 # Optimization and plotting for trial_nr from 1 to 4
 # Create side-by-side subplots
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), dpi=600)
@@ -391,11 +392,11 @@ for trial_nr in range(1, 5):
 
     # Bayesian optimization with optuna
     study = optuna.create_study(direction='minimize')
-    study.optimize(objective_partial, n_trials=800)
+    study.optimize(objective_partial, n_trials=600)
 
     # Extract best parameters from the created study
     best_params = study.best_params
-    a1, b1, c1, d1 = best_params['a'], best_params['b'], best_params['c'], best_params['d']
+    a1, b1, c1, d1, v = best_params['a'], best_params['b'], best_params['c'], best_params['d'], best_params['vactor']
 
     # Generate input values for the plot
     input_values = np.linspace(0, 1, 100)
@@ -409,7 +410,7 @@ for trial_nr in range(1, 5):
     linestyle_codes = ['dotted', 'dashed', 'dashdot', 'solid']
 
     # First subplot: Scatter plot of trial vs v_trial_function
-    ax1.plot(np.array(trial), v_trial_function(trial_nr, a1, b1, c1, d1), linestyle=linestyle_codes[trial_nr-1], color=color_codes[trial_nr-1], linewidth=.8)
+    ax1.plot(np.array(trial), v_trial_function(trial_nr, a1, b1, c1, d1, v), linestyle=linestyle_codes[trial_nr-1], color=color_codes[trial_nr-1], linewidth=.8)
     #ax1.scatter(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, marker='o', linestyle='solid', color=color_codes[trial_nr-1], linewidth=.7)
     ax1.errorbar(data_trial_axis[trial_nr], data_trial[trial_nr] / 1000, yerr=data_trial_error[trial_nr] / 1000, fmt=fmt_codes[trial_nr-1], color=color_codes[trial_nr-1], markersize=3, linewidth=.8, capsize=1, mfc='w') 
     #ax1.set_title(f"v_trial_function vs trial (Trial #{trial_nr})")

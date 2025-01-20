@@ -421,6 +421,14 @@ def v_group_5(theory20, theory25, theory30, theory40, data20, error20, data25, e
     # ax limit
     ax.set_xlim(xmin=0)
     ax.set_ylim(ymin=0)
+    
+    # Configure ax1 top x-axis for duty-cycle
+    ax_top = ax.twiny()  # Create a twin x-axis sharing the y-axis with ax2
+    ax_top.set_xlim(ax.get_xlim())  # Sync limits with ax2
+    duty_cycle_values = [50, 40, 30, 20, 10, 0]
+    ax_top.set_xticklabels([f"{int(dc)}" for dc in duty_cycle_values])  # Labels as duty cycle
+    ax_top.set_xlabel("Duty-Cycle [%]")
+    
     plt.show()    
 
 def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30, data40, error40, title, legend):
@@ -499,7 +507,15 @@ def c_all(theory20, theory30, data20, error20, data25, error25, data30, error30,
     
     # ax limit
     ax.set_xlim(xmin=0)
-    ax.set_ylim(ymin=0)
+    ax.set_ylim(ymin=0, ymax=64)
+    
+    # Configure ax1 top x-axis for duty-cycle
+    ax_top = ax.twiny()  # Create a twin x-axis sharing the y-axis with ax2
+    ax_top.set_xlim(ax.get_xlim())  # Sync limits with ax2
+    duty_cycle_values = [50, 40, 30, 20, 10, 0]
+    ax_top.set_xticklabels([f"{int(dc)}" for dc in duty_cycle_values])  # Labels as duty cycle
+    ax_top.set_xlabel("Duty-Cycle [%]")
+    
     plt.show()    
 
 def v_group_5_30pa(theory, data1, error1, data2, error2, data3, error3, data4, error4, data5, error5, title, legend):
@@ -2528,16 +2544,16 @@ F_i_external = [a['x'],a['y']]
 fig, ax = plt.subplots(dpi=600)
 fig.set_size_inches(5, 3.5)
 #
-ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
+ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='lightgrey', alpha=0.3, linewidth=.7)
 #
 ax.plot(pressure_values, np.multiply(F_e_theory1,-10**(14)), color='grey', markersize=0, linewidth=.7, linestyle='--') 
 #
-ax.scatter(F_i_external[0], F_i_external[1], marker='s', color='#000000', linewidth=.8, s=25, facecolors='none')
 ax.errorbar(pressure_values, np.multiply(F_e_exp,-10**(14)), yerr=np.multiply(F_e_err,10**(14)), fmt='^', color='#48A2F1', markersize=3.5, linewidth=1, capsize=2, mfc='w') 
 ax.errorbar(pressure_values, np.multiply(F_i_exp,10**(14)), yerr=np.multiply(F_i_err,10**(14)), fmt='x', color='#D81B1B', markersize=3.5, linewidth=1, capsize=2) 
+ax.scatter(F_i_external[0], F_i_external[1], marker='s', color='#000000', linewidth=.8, s=25, facecolors='none')
 #
-#ax.legend(["$F_i^{Yaroshenko}$", "$F_e^{exp}$", "$F_i^{exp}$"], loc='upper right')#, prop={'size': 8})
-ax.legend(["$F_i^{theo^*}$", "$F_e^{theo^*}$"], loc='lower left')
+ax.legend(["$F_{id}^{theory*}$", "$F_{id}^{Yaroshenko}$", "$F_{id}^{exp}$"], loc='upper right', prop={'size': 12})#)
+#ax.legend(["$F_E^{theory*}$", "$F_E^{exp}$"], loc='lower left', prop={'size': 12})
 #
 ax.fill_between(pressure_values, np.multiply(F_i_theory1,10**(14)), np.multiply(F_i_theory2,10**(14)), color='grey', alpha=0.3, linewidth=.7)
 #
@@ -2545,7 +2561,7 @@ ax.plot(pressure_values, np.multiply(F_e_theory1,-10**(14)), color='grey', marke
 #
 #ax.legend(["$F_i$", "$F_e$"], loc='lower left')
 #
-plt.ylabel(' $F_{e,i}$ [$10^{-14}$N]')
+plt.ylabel(' $F_{id}, F_E$ [$10^{-14}$N]')
 #
 plt.xlabel('Pressure [Pa]')
 #
